@@ -5,7 +5,7 @@
     "postinstall": "npm run bootstrap",
     "test": "lerna exec --concurrency 1 -- npm test",
     "build": "eslint .",
-    "customPublish": "lerna exec --concurrency 1 -- npm run customPublish",
+    "customPublish": "lerna exec --concurrency 1 -- npm-ci publish",
     "createVersion": "node scripts/createVersion"
   },
   "devDependencies": {
@@ -17,6 +17,7 @@
     "eslint-plugin-prettier": "^2.6.0",
     "lerna": "^2.11.0",
     "lodash": "^4.17.10",
+    "npm-ci-scripts": "^1.0.20",
     "prettier": "^1.12.1",
     "prompts": "^0.1.8",
     "rimraf": "^2.6.2",
