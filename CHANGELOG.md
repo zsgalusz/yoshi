@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.2.3 (Jun 5, 2018)
+## 1.2.6 (Jun 5, 2018)
 * [#331](https://github.com/wix-private/yoshi/pull/331) Update all haste dependencies to have `~` so patches on haste tasks/core will get to the users
 
 ## 1.2.2 (May 8, 2018)
