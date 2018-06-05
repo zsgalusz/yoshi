@@ -1,7 +1,10 @@
 # Changelog
 
+## 1.2.3 (Jun 5, 2018)
+* [#331](https://github.com/wix-private/yoshi/pull/331) Update all haste dependencies to have `~` so patches on haste tasks/core will get to the users
+
 ## 1.2.2 (May 8, 2018)
-* update haste-task-typescript to v0.2.7 to support running on windows.
+* update haste-task-typescript to v0.2.7 to support running on windows
 
 ## 1.2.1 (April 8, 2018)
 * start releasing on `yoshi` exclusively, update release script to publish one package, and updated relatived paths from `haste-preset-yoshi` to `yoshi`.
