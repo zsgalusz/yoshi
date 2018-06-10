@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.0 (Jun 10, 2018)
+* [#346](https://github.com/wix-private/yoshi/pull/346) UglifyJs encoding non ascii characters.
+
 ## 1.2.6 (Jun 5, 2018)
 * [#331](https://github.com/wix-private/yoshi/pull/331) Update all haste dependencies to have `~` so patches on haste tasks/core will get to the users
 
