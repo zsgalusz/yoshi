@@ -72,6 +72,11 @@ const config = ({debug, separateCss = projectConfig.separateCss(), analyze, disa
           compress: {
             warnings: false,
           },
+          output: {
+            // Turned on because emoji and regex is not minified properly using default (for IE11)
+            // https://github.com/facebook/create-react-app/issues/2488
+            ascii_only: true, // eslint-disable-line camelcase
+          },
         })
       ],
     ],
