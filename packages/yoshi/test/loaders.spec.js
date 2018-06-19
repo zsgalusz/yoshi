@@ -123,10 +123,7 @@ describe('Loaders', () => {
           }`,
           'pom.xml': fx.pom(),
         })
-        .execute('build', [], {
-          RESOLVE_URL_LOADER: true,
-          ...getMockedCI({ ci: false }),
-        });
+        .execute('build', [], getMockedCI({ ci: false }));
     });
     after(() => test.teardown());
 
@@ -263,20 +260,6 @@ describe('Loaders', () => {
               '-webkit-appearance: "none"',
             );
           });
-        });
-      });
-    });
-
-    describe('Resolve url loader', () => {
-      describe('with RESOLVE_URL_LOADER env variable', () => {
-        it('should resolve relative paths in url() statements based on the original source file', () => {
-          expect(test.content('dist/statics/app.css')).to.contain('appearance');
-        });
-
-        it('should run after wix-tpa-style loader', () => {
-          expect(test.content('dist/statics/app.css')).to.not.contain(
-            'unquote("{{color-1}}")',
-          );
         });
       });
     });
@@ -486,7 +469,7 @@ describe('Loaders', () => {
       expect(resp.stderr).to.contain('error TS1003: Identifier expected');
     });
 
-    it('should not resolve url() correctly without RESOLVE_URL_LOADER flag', () => {
+    it('should resolve url() correctly using resolve url loader', () => {
       const res = test
         .setup({
           'src/client.js': `require('./some-css.scss');`,
@@ -496,7 +479,7 @@ describe('Loaders', () => {
           'package.json': fx.packageJson(),
         })
         .execute('build');
-      expect(res.code).to.equal(1);
+      expect(res.code).to.equal(0);
     });
 
     describe('Wix TPA style', () => {
