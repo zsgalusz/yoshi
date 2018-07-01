@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.1 (Jul 1, 2018)
+* [#407](https://github.com/wix-private/yoshi/pull/407) Stop `depkeeper` from failing on yoshi version updates.
+
 ## 1.3.0 (Jun 10, 2018)
 * [#346](https://github.com/wix-private/yoshi/pull/346) UglifyJs encoding non ascii characters.
 
