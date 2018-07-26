@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.13.0 (Jul 26, 2018)
+
+#### :nail_care: Enhancement
+* [#458](https://github.com/wix/yoshi/pull/458) Add an option to disable `threadLoader` for typescript projects.
+
 ## 2.12.0 (Jul 3, 2018)
 
 #### :nail_care: Enhancement
