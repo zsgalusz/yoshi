@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.13.1 (Jul 29, 2018)
+
+#### :bug: Bug
+* `yoshi`
+  * [#469](https://github.com/wix/yoshi/pull/469) Fixed mocha to not throw an error and exit while in watch mode
+
 ## 2.13.0 (Jul 26, 2018)
 
 #### :nail_care: Enhancement
