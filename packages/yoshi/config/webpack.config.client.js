@@ -5,7 +5,7 @@ const RtlCssPlugin = require('rtlcss-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const DuplicatePackageCheckerPlugin = require('duplicate-package-checker-webpack-plugin');
 const { isObject } = require('lodash');
-const StylableWebpackPlugin = require('stylable-webpack-plugin');
+const StylableWebpackPlugin = require('@stylable/webpack-plugin');
 const DynamicPublicPath = require('../src/webpack-plugins/dynamic-public-path');
 const {
   mergeByConcat,
