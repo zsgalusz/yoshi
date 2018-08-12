@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.13.3 (Aug 12, 2018)
+
+* `yoshi`
+  * [#494](https://github.com/wix/yoshi/pull/488) Revert [#488 Upgrade `stylable` to new scoped package](https://github.com/wix/yoshi/pull/488)
+
 ## 2.13.2 (Aug 12, 2018)
 
 * `yoshi`
