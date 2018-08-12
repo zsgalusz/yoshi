@@ -1,8 +1,14 @@
 # Changelog
 
+## 2.13.2 (Aug 12, 2018)
+
+* `yoshi`
+  * [#488](https://github.com/wix/yoshi/pull/488) Upgrade `stylable` to new scoped package
+
 ## 2.13.1 (Jul 29, 2018)
 
 #### :bug: Bug
+
 * `yoshi`
   * [#469](https://github.com/wix/yoshi/pull/469) Fixed mocha to not throw an error and exit while in watch mode
 
