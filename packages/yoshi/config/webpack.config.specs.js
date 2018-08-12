@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const glob = require('glob');
-const StylableWebpackPlugin = require('@stylable/webpack-plugin');
+const StylableWebpackPlugin = require('stylable-webpack-plugin');
 const webpackConfigCommon = require('./webpack.config.common');
 const mergeByConcat = require('../src/utils').mergeByConcat;
 const { cssModules, tpaStyle } = require('./project');

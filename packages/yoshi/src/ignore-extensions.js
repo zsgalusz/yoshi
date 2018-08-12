@@ -2,12 +2,11 @@ const fs = require('fs');
 const path = require('path');
 const graphqlLoader = require('graphql-tag/loader');
 const { noop } = require('lodash');
-const { stylableModuleFactory } = require('@stylable/node');
+const {
+  stylableToModuleFactory,
+} = require('stylable-integration/dist/src/stylable-to-module-factory');
 
-const stylableToModule = stylableModuleFactory({
-  fileSystem: fs,
-  requireModule: require,
-});
+const stylableToModule = stylableToModuleFactory(fs, require, null);
 
 require.extensions['.css'] = mockCss;
 require.extensions['.scss'] = mockCssModules;
