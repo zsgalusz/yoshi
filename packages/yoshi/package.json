@@ -15,6 +15,7 @@
     "customPublish": "node ../../scripts/customPublish.js"
   },
   "dependencies": {
+    "@wix/depkeeper-preset-yoshi": "^1.0.0",
     "@wix/externalize-relative-module-loader": "~1.0.0",
     "autoprefixer": "~7.1.2",
     "babel-jest": "~20.0.3",
@@ -80,6 +81,7 @@
     "mkdirp": "~0.5.1",
     "mocha": "^3.4.2",
     "mocha-teamcity-reporter": "~1.1.1",
+    "mock-require": "^2.0.0",
     "ng-annotate-loader": "~0.6.1",
     "node-sass": "~4.5.3",
     "nyc": "^12.0.1",
