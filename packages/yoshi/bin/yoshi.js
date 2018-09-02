@@ -1,14 +1,42 @@
 #!/usr/bin/env node
+
+process.on('unhandledRejection', error => {
+  if (insight) {
+    insight.trackEvent({
+      category: 'error',
+      action: 'n/a',
+      label: error.stack,
+    });
+  }
+
+  throw error;
+});
+
 const prog = require('commander');
-const runCLI = require('../src/cli');
-const { version } = require('../package');
+const Insight = require('insight');
+const createRunCLI = require('../src/cli');
+const pkg = require('../package');
+const { inTeamCity } = require('../src/utils');
+
+const insight = new Insight({
+  trackingCode: 'UA-120893726-1',
+  pkg,
+});
+
+if (inTeamCity()) {
+  insight.optOut = true;
+}
+
+const runCLI = createRunCLI(insight);
 
 const infoCommand = require('../src/commands/info');
 
 // IDEs start debugging with '--inspect' or '--inspect-brk' option. We are setting --debug instead
 require('./normalize-debugging-args')();
 
-prog.version(version).description('A toolkit for building applications in Wix');
+prog
+  .version(pkg.version)
+  .description('A toolkit for building applications in Wix');
 
 prog
   .command('lint [files...]')
@@ -80,7 +108,3 @@ prog
   .action(infoCommand);
 
 prog.parse(process.argv);
-
-process.on('unhandledRejection', error => {
-  throw error;
-});

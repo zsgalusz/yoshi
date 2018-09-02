@@ -3,7 +3,7 @@ const { warnOnConfigValidationErrors } = require('../config/project');
 
 const presetPath = require.resolve('../src/index.js');
 
-module.exports = async command => {
+module.exports = insight => async command => {
   warnOnConfigValidationErrors();
   const appDirectory = fs.realpathSync(process.cwd());
   const action = require(`./commands/${command}`);
@@ -18,6 +18,15 @@ module.exports = async command => {
       process.exit(0);
     }
   } catch (error) {
+    insight.trackEvent({
+      category: 'error',
+      action: command,
+      label: error.stack || error,
+    });
+
+    // tell insight to send the request to the worker immediately (used with setImmediate)
+    insight._send();
+
     if (error.name !== 'WorkerError') {
       console.error(error);
     }
