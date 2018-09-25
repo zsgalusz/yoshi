@@ -18,7 +18,7 @@
     "babel-loader": "~7.1.1",
     "babel-plugin-transform-es2015-modules-commonjs": "~6.24.1",
     "babel-polyfill": "~6.23.0",
-    "babel-preset-wix": "~1.0.0",
+    "babel-preset-wix": "^2.0.0",
     "babel-register": "~6.24.1",
     "caporal": "~0.9.0",
     "case-sensitive-paths-webpack-plugin": "~2.1.1",
