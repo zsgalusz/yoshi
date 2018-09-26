@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 const prog = require('commander');
 const runCLI = require('../src/cli');
 const { version } = require('../package');
@@ -48,6 +49,12 @@ prog
   .action(() => runCLI('build'));
 
 prog
+  .command('build-app')
+  .description('Experimental way of building an app to production')
+  .option('--analyze', 'Run webpack-bundle-analyzer plugin')
+  .action(() => runCLI('build-app'));
+
+prog
   .command('start')
   .description('Run the app in development mode (also spawns npm test)')
   .option('-e, --entry-point', 'Entry point for the app')
@@ -65,6 +72,13 @@ prog
   )
   .option('--ssl', 'Serve the app bundle on https')
   .action(() => runCLI('start'));
+
+prog
+  .command('start-app')
+  .description('Experimental local development experience')
+  .option('-e, --entry-point', 'Entry point for the app')
+  .option('--production', 'start using unminified production build')
+  .action(() => runCLI('start-app'));
 
 prog
   .command('release')

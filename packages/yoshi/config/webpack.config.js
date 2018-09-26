@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const { isObject } = require('lodash');
+const nodeExternals = require('webpack-node-externals');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -70,6 +71,19 @@ const splitChunksConfig = isObject(useSplitChunks)
   : defaultSplitChunksConfig;
 
 const entry = project.entry || project.defaultEntry;
+
+function overrideRules(rules, patch) {
+  return rules.map(ruleToPatch => {
+    let rule = patch(ruleToPatch);
+    if (rule.rules) {
+      rule = { ...rule, rules: overrideRules(rule.rules, patch) };
+    }
+    if (rule.oneOf) {
+      rule = { ...rule, oneOf: overrideRules(rule.oneOf, patch) };
+    }
+    return rule;
+  });
+}
 
 // Common function to get style loaders
 const getStyleLoaders = ({
@@ -540,8 +554,108 @@ function createClientWebpackConfig({ isAnalyze = false, isDebug = true } = {}) {
   return clientConfig;
 }
 
+//
+// Configuration for the server-side bundle (server.js)
+// -----------------------------------------------------------------------------
+function createServerWebpackConfig({ isDebug = true } = {}) {
+  const config = createCommonWebpackConfig({ isDebug });
+
+  const styleLoaders = getStyleLoaders({ embedCss: false, isDebug });
+
+  const serverConfig = {
+    ...config,
+
+    name: 'server',
+
+    target: 'node',
+
+    entry: {
+      server: './server.js',
+    },
+
+    output: {
+      ...config.output,
+      path: BUILD_DIR,
+      filename: '[name].js',
+      chunkFilename: 'chunks/[name].js',
+      libraryTarget: 'umd',
+      libraryExport: 'default',
+      globalObject: "(typeof self !== 'undefined' ? self : this)",
+      hotUpdateMainFilename: 'updates/[hash].hot-update.json',
+      hotUpdateChunkFilename: 'updates/[id].[hash].hot-update.js',
+    },
+
+    // Webpack mutates resolve object, so clone it to avoid issues
+    // https://github.com/webpack/webpack/issues/4817
+    resolve: {
+      ...config.resolve,
+    },
+
+    module: {
+      ...config.module,
+
+      rules: [
+        ...overrideRules(config.module.rules, rule => {
+          // Override paths to static assets
+          if (rule.loader === 'file-loader' || rule.loader === 'url-loader') {
+            return {
+              ...rule,
+              options: {
+                ...rule.options,
+                emitFile: false,
+              },
+            };
+          }
+
+          return rule;
+        }),
+
+        // Rules for Style Sheets
+        ...styleLoaders,
+      ],
+    },
+
+    externals: [
+      nodeExternals({
+        whitelist: [reStyle, reAssets, /bootstrap-hot-loader/],
+      }),
+    ],
+
+    plugins: [
+      ...config.plugins,
+
+      // https://webpack.js.org/plugins/banner-plugin/
+      new webpack.BannerPlugin({
+        banner: 'require("source-map-support").install();',
+        raw: true,
+        entryOnly: false,
+      }),
+    ],
+
+    // https://webpack.js.org/configuration/optimization
+    optimization: {
+      // Do not modify/set the value of `process.env.NODE_ENV`
+      nodeEnv: false,
+    },
+
+    // Do not replace node globals with polyfills
+    // https://webpack.js.org/configuration/node/
+    node: {
+      console: false,
+      global: false,
+      process: false,
+      Buffer: false,
+      __filename: false,
+      __dirname: false,
+    },
+  };
+
+  return serverConfig;
+}
+
 module.exports = {
   createCommonWebpackConfig,
   createClientWebpackConfig,
+  createServerWebpackConfig,
   getStyleLoaders,
 };
