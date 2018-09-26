@@ -1,0 +1,101 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Yoshi 2.0 · Yoshi</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content=":tada: We are very excited to bring you our next version - `Yoshi 2`."/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Yoshi 2.0 · Yoshi"/><meta property="og:type" content="website"/><meta property="og:url" content="https://wix.github.io/yoshi/blog/2018/03/15/yoshi-2"/><meta property="og:description" content=":tada: We are very excited to bring you our next version - `Yoshi 2`."/><meta property="og:image" content="https://wix.github.io/yoshi/img/yoshi.png"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://wix.github.io/yoshi/img/yoshi.png"/><link rel="shortcut icon" href="/yoshi/img/favicon/favicon.ico"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css"/><link rel="alternate" type="application/atom+xml" href="https://wix.github.io/yoshi/blog/atom.xml" title="Yoshi Blog ATOM Feed"/><link rel="alternate" type="application/rss+xml" href="https://wix.github.io/yoshi/blog/feed.xml" title="Yoshi Blog RSS Feed"/><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><link rel="stylesheet" href="/yoshi/css/main.css"/></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/yoshi/"><img class="logo" src="/yoshi/img/yoshi.png" alt="Yoshi"/><h2 class="headerTitleWithLogo">Yoshi</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class=""><a href="/yoshi/docs/getting-started/create-app" target="_self">Getting Started</a></li><li class=""><a href="/yoshi/docs/api/configuration" target="_self">API</a></li><li class="siteNavGroupActive"><a href="/yoshi/blog/" target="_self">Blog</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="container docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><i></i></div><h2><i>›</i><span>Recent Posts</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Recent Posts</h3><ul><li class="navListItem"><a class="navItem" href="/yoshi/blog/2018/06/3/yoshi-3">Yoshi 3.0</a></li><li class="navListItem navListItemActive"><a class="navItem" href="/yoshi/blog/2018/03/15/yoshi-2">Yoshi 2.0</a></li><li class="navListItem"><a class="navItem" href="/yoshi/blog/2018/03/14/yoshi-is-not-dead">Yoshi Is Not Dead</a></li><li class="navListItem"><a class="navItem" href="/yoshi/blog/2018/03/14/semantic-versioning">Moving To Semantic Versioning</a></li></ul></div></div></section></div><script>
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              const headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                if (event.target.tagName === 'A') {
+                  document.body.classList.remove('tocActive');
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer postContainer blogContainer"><div class="wrapper"><div class="lonePost"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle"><a href="/yoshi/blog/2018/03/15/yoshi-2">Yoshi 2.0</a></h1><p class="post-meta">March 15, 2018</p><div class="authorBlock"><p class="post-authorName"><a href="http://github.com/ranyitz" target="_blank" rel="noreferrer noopener">Ran Yitzhaki</a></p></div></header><div><span><p>:tada: We are very excited to bring you our next version - <code>Yoshi 2</code>.</p>
+<p><strong>There are going to be two big changes:</strong></p>
+<h2><a class="anchor" aria-hidden="true" id="webpack-4"></a><a href="#webpack-4" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Webpack@4</h2>
+<p>I can explain what's good in webpack 4, but <a href="https://medium.com/webpack/webpack-4-released-today-6cdb994702d4">Sean T. Larkin does it better</a>, also, have a look at the <a href="https://github.com/webpack/webpack/releases/tag/v4.0.0">release notes</a>.</p>
+<p>Because Yoshi is using webpack under the hood, we encapsulate the API changes for you, and you will enjoy the faster build time and more from the webpack team. For most of the use cases, no change required.</p>
+<h2><a class="anchor" aria-hidden="true" id="eslint-4"></a><a href="#eslint-4" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>ESLint@4</h2>
+<p>We are a bit behind on the <code>eslint</code> version, the <a href="https://github.com/eslint/eslint/releases/tag/v4.0.0">4th release</a> was on <code>Jun 12, 2017</code> which is almost a year ago. This is the <a href="https://eslint.org/docs/user-guide/migrating-to-4.0.0">migration guide</a>, it has some bug fixes and it will enable us to improve our linting in the future.</p>
+<p>This is a <strong>Breaking Change</strong>, mostly because of the <a href="https://eslint.org/docs/user-guide/migrating-to-4.0.0#-the-indent-rule-is-more-strict">indent rule</a> but there could be some other <a href="https://eslint.org/docs/user-guide/migrating-to-4.0.0#breaking-changes-for-users">breaking changes</a> in your projects. Usually running <code>npx haste lint --fix</code> would run <code>eslint --fix</code> under the hood and will fix all the autofixable errors.</p>
+<hr>
+<h2><a class="anchor" aria-hidden="true" id="upgrade-today"></a><a href="#upgrade-today" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Upgrade today!</h2>
+<p>If you are using <code>haste-preset-yoshi</code> remove it from the dependencies field, and install the next version of Yoshi instead (<a href="https://github.com/wix-private/fed-handbook/wiki/Yoshi-is-not-dead">why we are going back to Yoshi?</a>). Also, replace all the usages of <code>haste</code> to <code>yoshi</code>. This is an <a href="https://github.com/wix-private/guineapig2/pull/487">example of a successful migration</a></p>
+<ol>
+<li>Install our next version</li>
+<li>Remove <code>node_modules</code></li>
+<li>Remove any lock file if exists</li>
+<li>Reinstall dependencies</li>
+</ol>
+<pre><code class="hljs css language-bash">npm i --save-dev yoshi@2
+rm -rf node_modules package-lock.js
+npm i
+</code></pre>
+<p>:raised_hand: Get it before everyone else!</p>
+<p>:ear: Feel free to ask us questions in <a href="https://wix.slack.com/messages/fed-infra">#fed-infra</a>.</p>
+<p>:smirk_cat: Let us know how was the migration, how faster your build became?</p>
+<p>:bookmark_tabs: For the full feature list, head to our <a href="https://github.com/wix-private/wix-haste/blob/2.0.0/CHANGELOG.md">changelog.md</a></p>
+<p>:heart: Big thanks to <a href="https://github.com/yavorsky">Artem Yavorsky</a> for doing most of the work on this version!</p>
+<hr>
+<h1><a class="anchor" aria-hidden="true" id="migration-guide"></a><a href="#migration-guide" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Migration guide</h1>
+<ol>
+<li>Install <code>yoshi 2</code> (and verify change in <code>package.json</code>):</li>
+</ol>
+<pre><code class="hljs css language-bash">npm i -D yoshi@2
+</code></pre>
+<ol start="2">
+<li>Remove and reinstall your <code>node_modules</code> (do not use an old lockfile).</li>
+<li>Yoshi 2 does not support <code>haste</code> bin anymore, replace all your <code>haste [cmd]</code> in npm scripts to <code>yoshi [cmd]</code>.</li>
+</ol>
+<pre><code class="hljs css language-diff"><span class="hljs-deletion">-haste start</span>
+<span class="hljs-addition">+yoshi start</span>
+</code></pre>
+<ol start="4">
+<li>Remove the following as it's not needed:</li>
+</ol>
+<pre><code class="hljs css language-json">"haste": {
+    "preset": "yoshi"
+}
+</code></pre>
+<ol start="5">
+<li>Fix all the lint errors (use the autofixer for all fixable errors):</li>
+</ol>
+<pre><code class="hljs css language-bash">npm run lint -- --fix
+</code></pre>
+<h3><a class="anchor" aria-hidden="true" id="faq"></a><a href="#faq" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>FAQ</h3>
+<h2><a class="anchor" aria-hidden="true" id="i-have-two-eslint-rules-that-are-clashing"></a><a href="#i-have-two-eslint-rules-that-are-clashing" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>I have two eslint rules that are clashing!</h2>
+<p>This is probably because of the new indent rule which is clashing with the <code>jsx-closing-bracket-location</code> from <code>eslint-plugin-react</code> which is used under the hood when extending <code>eslint-config-wix/react</code>. To solve it add the following to your <code>.eslintrc</code> or <code>eslintConfig</code> field in <code>package.json</code>.</p>
+<pre><code class="hljs css language-json">"react/jsx-closing-bracket-location": ["error", {
+      "nonEmpty": "tag-aligned",
+      "selfClosing": false
+    }]
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="i-have-a-storybook-configuration-which-runs-using-webpack-3"></a><a href="#i-have-a-storybook-configuration-which-runs-using-webpack-3" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>I have a storybook configuration, which runs using webpack 3.</h2>
+<p>Webpack is one of those packages you want to have only once. (just one version in your node_modules), which means you should update the storybook version to a webpack4 compatible one, any <a href="https://github.com/storybooks/storybook/releases/tag/v4.0.0-alpha.3">v4.0.0</a> would do.</p>
+<ol>
+<li>Update the storybook version in <code>package.json</code> before installing dependencies.</li>
+<li>If you have a custom storybook configuration (probably in <code>.storybook</code> directory), please modify it to use get the <a href="https://storybook.js.org/configurations/custom-webpack-config/#full-control-mode--default">default configuration</a> as an argument as in the following example:</li>
+</ol>
+<pre><code class="hljs css language-js"><span class="hljs-keyword">const</span> yoshiWebpackConfig = <span class="hljs-built_in">require</span>(<span class="hljs-string">'yoshi/config/webpack.config.storybook'</span>);
+
+<span class="hljs-built_in">module</span>.exports = <span class="hljs-function">(<span class="hljs-params">config, env, defaultConfig</span>) =&gt;</span> {
+  <span class="hljs-keyword">return</span> yoshiWebpackConfig(defaultConfig);
+};
+
+</code></pre>
+</span></div></div><div class="blogSocialSection"></div></div><div class="blog-recent"><a class="button" href="/yoshi/blog">Recent Posts</a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#webpack-4">Webpack@4</a></li><li><a href="#eslint-4">ESLint@4</a></li><li><a href="#upgrade-today">Upgrade today!</a><ul class="toc-headings"><li><a href="#faq">FAQ</a></li></ul></li><li><a href="#i-have-two-eslint-rules-that-are-clashing">I have two eslint rules that are clashing!</a></li><li><a href="#i-have-a-storybook-configuration-which-runs-using-webpack-3">I have a storybook configuration, which runs using webpack 3.</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/yoshi/" class="nav-home"><img src="/yoshi/img/yoshi.png" alt="Yoshi" width="66" height="58"/></a><div><h5>Docs</h5><a href="/yoshi/docs/en/getting-started/create-app.html">Getting Started</a><a href="/yoshi/docs/en/api/configuration.html">API Reference</a></div><div><h5>More</h5><a href="/yoshi/blog">Blog</a><a href="https://github.com/wix/yoshi">GitHub</a><a class="github-button" data-icon="octicon-star" data-count-href="/wix/yoshi/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">Star</a></div></section><section class="copyright">Copyright © 2018 Wix.com</section></footer></div></body></html>

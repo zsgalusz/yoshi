@@ -1,0 +1,274 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Blog · Yoshi</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="A Toolkit that supports building all kinds of applications in wix"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Blog · Yoshi"/><meta property="og:type" content="website"/><meta property="og:url" content="https://wix.github.io/yoshi/index.html"/><meta property="og:description" content="A Toolkit that supports building all kinds of applications in wix"/><meta property="og:image" content="https://wix.github.io/yoshi/img/yoshi.png"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://wix.github.io/yoshi/img/yoshi.png"/><link rel="shortcut icon" href="/yoshi/img/favicon/favicon.ico"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css"/><link rel="alternate" type="application/atom+xml" href="https://wix.github.io/yoshi/blog/atom.xml" title="Yoshi Blog ATOM Feed"/><link rel="alternate" type="application/rss+xml" href="https://wix.github.io/yoshi/blog/feed.xml" title="Yoshi Blog RSS Feed"/><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><link rel="stylesheet" href="/yoshi/css/main.css"/></head><body class="blog"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/yoshi/"><img class="logo" src="/yoshi/img/yoshi.png" alt="Yoshi"/><h2 class="headerTitleWithLogo">Yoshi</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class=""><a href="/yoshi/docs/getting-started/create-app" target="_self">Getting Started</a></li><li class=""><a href="/yoshi/docs/api/configuration" target="_self">API</a></li><li class="siteNavGroupActive siteNavItemActive"><a href="/yoshi/blog/" target="_self">Blog</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="container docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><i></i></div><h2><i>›</i><span>Recent Posts</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Recent Posts</h3><ul><li class="navListItem"><a class="navItem" href="/yoshi/blog/2018/06/3/yoshi-3">Yoshi 3.0</a></li><li class="navListItem"><a class="navItem" href="/yoshi/blog/2018/03/15/yoshi-2">Yoshi 2.0</a></li><li class="navListItem"><a class="navItem" href="/yoshi/blog/2018/03/14/yoshi-is-not-dead">Yoshi Is Not Dead</a></li><li class="navListItem"><a class="navItem" href="/yoshi/blog/2018/03/14/semantic-versioning">Moving To Semantic Versioning</a></li></ul></div></div></section></div><script>
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              const headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                if (event.target.tagName === 'A') {
+                  document.body.classList.remove('tocActive');
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer postContainer blogContainer"><div class="wrapper"><div class="posts"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle"><a href="/yoshi/blog/2018/06/3/yoshi-3">Yoshi 3.0</a></h1><p class="post-meta">June 3, 2018</p><div class="authorBlock"><p class="post-authorName"><a target="_blank" rel="noreferrer noopener">Ran Yitzhaki, Ronen Amiel, Yair Haimovitch</a></p></div></header><article class="post-content"><div><span><h1><a class="anchor" aria-hidden="true" id="release-notes"></a><a href="#release-notes" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Release notes</h1>
+<p>We're proud to announce our third major release, focusing on zero config, improved npm install time, tree shaking, code splitting and bumping the versions of Jest, Jasmine and more.</p>
+<h2><a class="anchor" aria-hidden="true" id="zero-configuration"></a><a href="#zero-configuration" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>🧞‍ Zero configuration</h2>
+<p>Today, Yoshi takes care of <strong>some</strong> configurations, for example, <code>webpack</code> and <code>mocha</code>, but leaves the users to configure <code>lint</code> and <code>babel</code> without supplying good defaults.</p>
+<p>In this release, we provide default configurations which are handcrafted and well maintained by the Yoshi team. While supplying these configurations as part of Yoshi, we'll be able to make sure they'll justWork™.</p>
+<h2><a class="anchor" aria-hidden="true" id="lint"></a><a href="#lint" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>👀 Lint</h2>
+<p>Our lint configurations aim to help to find errors, improve readability, enforce best practices and maintain consistency in the codebase.</p>
+<ul>
+<li><a href="https://github.com/prettier/prettier">Prettier</a> - All of our lint configurations comes with built-in prettier support</li>
+<li>Autofixable - We try to use mostly autofixable rules, so lint won't be much of a hassle</li>
+<li>Strict &amp; balanced - Add non-fixable rules only if they will help to find bugs</li>
+</ul>
+<h3><a class="anchor" aria-hidden="true" id="choose-the-proper-linting-configuration-for-your-project"></a><a href="#choose-the-proper-linting-configuration-for-your-project" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Choose the proper linting configuration for your project</h3>
+<h4><a class="anchor" aria-hidden="true" id="javascript"></a><a href="#javascript" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>JavaScript</h4>
+<p><code>eslint-config-yoshi</code> - An eslint config for full-stack and client applications using react</p>
+<p>Extend it from <code>package.json</code>:</p>
+<pre><code class="hljs css language-json">{
+  <span class="hljs-attr">"eslintConfig"</span>: {
+    <span class="hljs-attr">"extends"</span>: <span class="hljs-string">"yoshi"</span>
+  }
+}
+</code></pre>
+<h4><a class="anchor" aria-hidden="true" id="typescript"></a><a href="#typescript" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>TypeScript</h4>
+<p><code>tslint-config-yoshi</code> - A tslint config for full-stack and client applications using react</p>
+<p>In your <code>tslint.json</code> file:</p>
+<pre><code class="hljs css language-json">{
+  <span class="hljs-attr">"extends"</span>: <span class="hljs-string">"tslint-config-yoshi"</span>
+}
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="shorter-npm-installs"></a><a href="#shorter-npm-installs" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>🤞 Shorter NPM Installs</h2>
+<p>Yoshi, in its current state, is a solution for all types of projects and technologies: client and server, component and node libraries, Babel and Typescript, Angular and React.</p>
+<p>This entails installing multiple dependencies that your specific project might not need, thus increasing your install size and CI build time. Therefore, we've decided to split some of Yoshi's dependencies to external packages which will let you tune the dependencies of your project according to your specific needs.</p>
+<p>We have created two such dependency packages:</p>
+<ul>
+<li><code>yoshi-angular-dependencies</code> - for an <code>angular</code> application</li>
+<li><code>yoshi-style-dependencies</code> - install if you are developing client facing applications</li>
+</ul>
+<h3><a class="anchor" aria-hidden="true" id="protractor"></a><a href="#protractor" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Protractor</h3>
+<p>As part of this effort, we have also removed <code>protractor</code> from Yoshi's dependencies. It comes with the <code>yoshi-angular-dependencies</code> package but can be installed separately.</p>
+<h3><a class="anchor" aria-hidden="true" id="karma"></a><a href="#karma" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Karma</h3>
+<p>As <code>PhantomJS</code> is no longer supported, we have changed <code>Karma</code>'s default browser to <code>Chrome</code>. See the <a href="https://github.com/karma-runner/karma-chrome-launcher">karma-chrome-launcher</a> readme for more information. If you have used <code>PhantomJS</code> and <s>insist</s> wish to continue using it you will need to install it as a separate package.</p>
+<h2><a class="anchor" aria-hidden="true" id="tree-shaking"></a><a href="#tree-shaking" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>🌲 Tree shaking</h2>
+<p>Tree shaking is a way to reduce the size of your bundle by excluding code that isn't actually used (<a href="https://webpack.js.org/guides/tree-shaking">learn more</a>).</p>
+<p>Tree shaking in Webpack relies on the static syntax of ECMAScript modules and will only work if you use ECMAScript modules (<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import">learn more</a>). From version 3, Yoshi pre-configures its Babel and TypeScript loaders to support tree shaking.</p>
+<p>If you are writing a client-side library, you should follow <a href="https://github.com/wix/yoshi/blob/master/docs/faq/EXPORT-MODULES.md">these instructions</a> to publish an ECMAScript modules version of your library.</p>
+<h2><a class="anchor" aria-hidden="true" id="code-splitting"></a><a href="#code-splitting" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>📟 Code splitting</h2>
+<p>Code splitting is one of the features provided by Webpack. It allows you to split your bundle into a few smaller bundles that can be loaded on demand (<a href="https://webpack.js.org/guides/code-splitting">learn more</a>).</p>
+<p>In version 3, Yoshi configures Webpack, your testing framework and related tools to support code splitting (hopefully) without any hassle.</p>
+<h2><a class="anchor" aria-hidden="true" id="easier-debugging-faster-development-production-optimizations"></a><a href="#easier-debugging-faster-development-production-optimizations" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>🎛 Easier debugging, Faster development, Production optimizations</h2>
+<p>From version 3, Yoshi will pre-configure Babel/TypeScript to include the minimal amount of polyfills, according to its environment.</p>
+<p>In a test environment, Yoshi will transpile for current Node version for fast testing and easier debugging. In development, transpile your code for modern browsers for fast builds. In production, Yoshi will optimize your bundle, compile for all possible targets from IE10, prepare for uglification and include polyfills.</p>
+<p>For React users, babel will <a href="https://github.com/oliviertassinari/babel-plugin-transform-react-remove-prop-types">remove propTypes from the production build</a></p>
+<p>If you're using Babel, you'll need configure <a href="https://github.com/wix/yoshi/blob/version_3.x/packages/babel-preset-yoshi/README.md">babel-preset-yoshi</a>.</p>
+<p>In <code>package.json</code>:</p>
+<pre><code class="hljs css language-json">{
+  <span class="hljs-attr">"babel"</span>: {
+    <span class="hljs-attr">"presets"</span>: [<span class="hljs-string">"yoshi"</span>]
+  }
+}
+</code></pre>
+<p>If you're using TypeScript, you don't need to change anything.</p>
+<h2><a class="anchor" aria-hidden="true" id="jest-23"></a><a href="#jest-23" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>🤹 Jest 23</h2>
+<p>Yoshi jumps from Jest 20 to 23 :tada:</p>
+<p>We believe in Jest, in the future want to make it the default test runner for yoshi.</p>
+<p>Please refer to <a href="https://github.com/facebook/jest/blob/master/CHANGELOG.md">Jest's changelog</a> and the release notes of <a href="http://jestjs.io/blog/2017/12/18/jest-22">Jest 22</a> and <a href="http://jestjs.io/blog/2018/05/29/jest-23-blazing-fast-delightful-testing">Jest 23</a> for new features and breaking changes.</p>
+<h2><a class="anchor" aria-hidden="true" id="url-resolve-loader"></a><a href="#url-resolve-loader" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>🔍 URL resolve loader</h2>
+<p>A webpack loader that resolves relative paths in <code>url()</code> statements based on the original source file (<a href="https://github.com/bholloway/resolve-url-loader">learn-more</a>). We think it's useful enough to be used as default. Just note it might be breaking for your project.</p>
+<h2><a class="anchor" aria-hidden="true" id="jasmine-3"></a><a href="#jasmine-3" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>💎 Jasmine 3</h2>
+<p>Our oldest test runner has a new version :tada:
+If you use Jasmine, please read the <a href="https://github.com/jasmine/jasmine/blob/master/release_notes/3.0.md#breaking-changes">release notes</a> (Jasmine now runs tests in random order)</p>
+<p>Yours, Yoshi Team ❤️</p>
+<hr>
+<h1><a class="anchor" aria-hidden="true" id="migration-guide"></a><a href="#migration-guide" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Migration guide</h1>
+<p>Before you start, commit all your current changes.</p>
+<ol>
+<li>Remove <code>node_modules</code> and any lock file:</li>
+</ol>
+<pre><code class="hljs css language-bash">rm -rf node_modules package-lock.json
+</code></pre>
+<ol start="2">
+<li>Install Yoshi v3</li>
+</ol>
+<pre><code class="hljs css language-bash">npm i yoshi@3
+</code></pre>
+<ol start="3">
+<li><p>Add the relevant dependencies packages:</p>
+<ul>
+<li>React projects:</li>
+</ul>
+<pre><code class="hljs css language-bash">npm i -D yoshi-style-dependencies
+</code></pre>
+<ul>
+<li>React projects that use Protractor:</li>
+</ul>
+<pre><code class="hljs css language-bash">npm i -D yoshi-style-dependencies protractor
+</code></pre>
+<ul>
+<li>Angular projects:</li>
+</ul>
+<pre><code class="hljs css language-bash">npm i -D yoshi-angular-dependencies yoshi-style-dependencies
+</code></pre></li>
+<li><p>Install the rest of the dependencies:</p></li>
+</ol>
+<pre><code class="hljs css language-bash">npm i
+</code></pre>
+<ol start="5">
+<li>For TypeScript projects:
+Configure <code>tslint</code> in <code>tslint.json</code></li>
+</ol>
+<pre><code class="hljs css language-json">{
+  <span class="hljs-attr">"extends"</span>: <span class="hljs-string">"tslint-config-yoshi"</span>
+}
+</code></pre>
+<ol start="6">
+<li>For JavaScript projects:
+Configure <code>babel-preset-yoshi</code> in <code>package.json</code></li>
+</ol>
+<pre><code class="hljs css language-json">{
+  <span class="hljs-attr">"babel"</span>: {
+    <span class="hljs-attr">"presets"</span>: [<span class="hljs-string">"yoshi"</span>]
+  }
+}
+</code></pre>
+<p>Configure <code>eslint-config-yoshi</code> in <code>package.json</code></p>
+<pre><code class="hljs css language-json">{
+  <span class="hljs-attr">"eslintConfig"</span>: {
+    <span class="hljs-attr">"extends"</span>: <span class="hljs-string">"yoshi"</span>
+  }
+}
+</code></pre>
+<p><strong>Note:</strong> If you have an <code>.eslintrc</code> file, please remove it and use <code>eslintConfig</code> in <code>package.json</code> instead.</p>
+<ol start="7">
+<li><p>Run <code>npx yoshi lint --fix</code>, the linter will try to fix all autofixable errors. Some errors might not be autofixable, and you’ll have to fix them manually.</p></li>
+<li><p>Run <code>build</code>, <code>test</code> &amp; <code>start</code> commands to verify that everything works properly.</p></li>
+<li><p>Commit and push your changes 🤙</p></li>
+</ol>
+<p>For full changes list, head to our <a href="https://github.com/wix/yoshi/blob/master/CHANGELOG.md#300-beta2-jun-25-2018">changelog</a> 🔖</p>
+<p>Hope the migration went <s>smooshly</s> smoothly. Let us know if there are any problems in the <a href="https://wix.slack.com/messages/yoshi">#yoshi</a> channel or open issue in <a href="https://github.com/wix/yoshi">Yoshi repo</a></p>
+</span></div></article></div><div class="post"><header class="postHeader"><h1 class="postHeaderTitle"><a href="/yoshi/blog/2018/03/15/yoshi-2">Yoshi 2.0</a></h1><p class="post-meta">March 15, 2018</p><div class="authorBlock"><p class="post-authorName"><a href="http://github.com/ranyitz" target="_blank" rel="noreferrer noopener">Ran Yitzhaki</a></p></div></header><article class="post-content"><div><span><p>:tada: We are very excited to bring you our next version - <code>Yoshi 2</code>.</p>
+<p><strong>There are going to be two big changes:</strong></p>
+<h2><a class="anchor" aria-hidden="true" id="webpack-4"></a><a href="#webpack-4" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Webpack@4</h2>
+<p>I can explain what's good in webpack 4, but <a href="https://medium.com/webpack/webpack-4-released-today-6cdb994702d4">Sean T. Larkin does it better</a>, also, have a look at the <a href="https://github.com/webpack/webpack/releases/tag/v4.0.0">release notes</a>.</p>
+<p>Because Yoshi is using webpack under the hood, we encapsulate the API changes for you, and you will enjoy the faster build time and more from the webpack team. For most of the use cases, no change required.</p>
+<h2><a class="anchor" aria-hidden="true" id="eslint-4"></a><a href="#eslint-4" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>ESLint@4</h2>
+<p>We are a bit behind on the <code>eslint</code> version, the <a href="https://github.com/eslint/eslint/releases/tag/v4.0.0">4th release</a> was on <code>Jun 12, 2017</code> which is almost a year ago. This is the <a href="https://eslint.org/docs/user-guide/migrating-to-4.0.0">migration guide</a>, it has some bug fixes and it will enable us to improve our linting in the future.</p>
+<p>This is a <strong>Breaking Change</strong>, mostly because of the <a href="https://eslint.org/docs/user-guide/migrating-to-4.0.0#-the-indent-rule-is-more-strict">indent rule</a> but there could be some other <a href="https://eslint.org/docs/user-guide/migrating-to-4.0.0#breaking-changes-for-users">breaking changes</a> in your projects. Usually running <code>npx haste lint --fix</code> would run <code>eslint --fix</code> under the hood and will fix all the autofixable errors.</p>
+<hr>
+<h2><a class="anchor" aria-hidden="true" id="upgrade-today"></a><a href="#upgrade-today" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Upgrade today!</h2>
+<p>If you are using <code>haste-preset-yoshi</code> remove it from the dependencies field, and install the next version of Yoshi instead (<a href="https://github.com/wix-private/fed-handbook/wiki/Yoshi-is-not-dead">why we are going back to Yoshi?</a>). Also, replace all the usages of <code>haste</code> to <code>yoshi</code>. This is an <a href="https://github.com/wix-private/guineapig2/pull/487">example of a successful migration</a></p>
+<ol>
+<li>Install our next version</li>
+<li>Remove <code>node_modules</code></li>
+<li>Remove any lock file if exists</li>
+<li>Reinstall dependencies</li>
+</ol>
+<pre><code class="hljs css language-bash">npm i --save-dev yoshi@2
+rm -rf node_modules package-lock.js
+npm i
+</code></pre>
+<p>:raised_hand: Get it before everyone else!</p>
+<p>:ear: Feel free to ask us questions in <a href="https://wix.slack.com/messages/fed-infra">#fed-infra</a>.</p>
+<p>:smirk_cat: Let us know how was the migration, how faster your build became?</p>
+<p>:bookmark_tabs: For the full feature list, head to our <a href="https://github.com/wix-private/wix-haste/blob/2.0.0/CHANGELOG.md">changelog.md</a></p>
+<p>:heart: Big thanks to <a href="https://github.com/yavorsky">Artem Yavorsky</a> for doing most of the work on this version!</p>
+<hr>
+<h1><a class="anchor" aria-hidden="true" id="migration-guide"></a><a href="#migration-guide" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Migration guide</h1>
+<ol>
+<li>Install <code>yoshi 2</code> (and verify change in <code>package.json</code>):</li>
+</ol>
+<pre><code class="hljs css language-bash">npm i -D yoshi@2
+</code></pre>
+<ol start="2">
+<li>Remove and reinstall your <code>node_modules</code> (do not use an old lockfile).</li>
+<li>Yoshi 2 does not support <code>haste</code> bin anymore, replace all your <code>haste [cmd]</code> in npm scripts to <code>yoshi [cmd]</code>.</li>
+</ol>
+<pre><code class="hljs css language-diff"><span class="hljs-deletion">-haste start</span>
+<span class="hljs-addition">+yoshi start</span>
+</code></pre>
+<ol start="4">
+<li>Remove the following as it's not needed:</li>
+</ol>
+<pre><code class="hljs css language-json">"haste": {
+    "preset": "yoshi"
+}
+</code></pre>
+<ol start="5">
+<li>Fix all the lint errors (use the autofixer for all fixable errors):</li>
+</ol>
+<pre><code class="hljs css language-bash">npm run lint -- --fix
+</code></pre>
+<h3><a class="anchor" aria-hidden="true" id="faq"></a><a href="#faq" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>FAQ</h3>
+<h2><a class="anchor" aria-hidden="true" id="i-have-two-eslint-rules-that-are-clashing"></a><a href="#i-have-two-eslint-rules-that-are-clashing" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>I have two eslint rules that are clashing!</h2>
+<p>This is probably because of the new indent rule which is clashing with the <code>jsx-closing-bracket-location</code> from <code>eslint-plugin-react</code> which is used under the hood when extending <code>eslint-config-wix/react</code>. To solve it add the following to your <code>.eslintrc</code> or <code>eslintConfig</code> field in <code>package.json</code>.</p>
+<pre><code class="hljs css language-json">"react/jsx-closing-bracket-location": ["error", {
+      "nonEmpty": "tag-aligned",
+      "selfClosing": false
+    }]
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="i-have-a-storybook-configuration-which-runs-using-webpack-3"></a><a href="#i-have-a-storybook-configuration-which-runs-using-webpack-3" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>I have a storybook configuration, which runs using webpack 3.</h2>
+<p>Webpack is one of those packages you want to have only once. (just one version in your node_modules), which means you should update the storybook version to a webpack4 compatible one, any <a href="https://github.com/storybooks/storybook/releases/tag/v4.0.0-alpha.3">v4.0.0</a> would do.</p>
+<ol>
+<li>Update the storybook version in <code>package.json</code> before installing dependencies.</li>
+<li>If you have a custom storybook configuration (probably in <code>.storybook</code> directory), please modify it to use get the <a href="https://storybook.js.org/configurations/custom-webpack-config/#full-control-mode--default">default configuration</a> as an argument as in the following example:</li>
+</ol>
+<pre><code class="hljs css language-js"><span class="hljs-keyword">const</span> yoshiWebpackConfig = <span class="hljs-built_in">require</span>(<span class="hljs-string">'yoshi/config/webpack.config.storybook'</span>);
+
+<span class="hljs-built_in">module</span>.exports = <span class="hljs-function">(<span class="hljs-params">config, env, defaultConfig</span>) =&gt;</span> {
+  <span class="hljs-keyword">return</span> yoshiWebpackConfig(defaultConfig);
+};
+
+</code></pre>
+</span></div></article></div><div class="post"><header class="postHeader"><h1 class="postHeaderTitle"><a href="/yoshi/blog/2018/03/14/yoshi-is-not-dead">Yoshi Is Not Dead</a></h1><p class="post-meta">March 14, 2018</p><div class="authorBlock"><p class="post-authorName"><a target="_blank" rel="noreferrer noopener">Ran Yitzhaki &amp; Ronen Amiel</a></p></div></header><article class="post-content"><div><span><p>Hey Feds,
+We made some changes recently in <code>haste</code>/<code>yoshi</code>/<code>generators</code>. We’ll try to shed some light on the topic.</p>
+<h3><a class="anchor" aria-hidden="true" id="some-history"></a><a href="#some-history" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Some history</h3>
+<p>A few months ago we moved from <a href="https://github.com/wix/yoshi"><code>yoshi</code></a> to <a href="https://github.com/wix-private/wix-haste/blob/master/README.md"><code>haste-preset-yoshi</code></a>.
+<code>haste-preset-yoshi</code> is practically <code>yoshi</code>, nothing changed, same yoshi config, same behaviour, we actually used the same test suite. We only replaced the engine that runs yoshi, to help us deliver faster builds.</p>
+<h3><a class="anchor" aria-hidden="true" id="moving-back-to-yoshi"></a><a href="#moving-back-to-yoshi" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Moving back to yoshi</h3>
+<p><strong>TL;DR - We are going back to use <code>yoshi</code> in our <code>package.json</code> and as a dependency. Haste will be used internally by Yoshi as its engine</strong></p>
+<p>Using a <code>haste</code> bin was a mistake, Haste is just an engine that helps to create and run toolkits.
+For example, <code>yoshi</code> is a toolkit, and we could have changed Yoshi’s implementation without affecting you, our users. We understand that this change led to a lot of confusion and we are sorry about it.</p>
+<p>We understand that naming our toolkit <code>haste-preset-yoshi</code> was wrong. We don’t want the users to know how their toolkit work under the hood. Each toolkit (Yoshi including) will have its own binary file (different command name in <code>package.json</code>).</p>
+<p>In the future, we plan to remove the <code>haste</code> binary and change the name of the toolkit back to <code>yoshi</code>. We’ve already removed the requirement to specify a <code>preset</code> in <code>package.json</code> and added <code>yoshi</code> as a working binary to <code>haste-preset-yoshi</code>. We’ve also changed it in the generators.</p>
+<hr>
+<p><em>P.S.</em> Watch <a href="https://www.youtube.com/watch?v=G39lKaONAlA">Dan Abramov’s talk</a> if you’re interested in the idea of toolkits.</p>
+</span></div></article></div><div class="post"><header class="postHeader"><h1 class="postHeaderTitle"><a href="/yoshi/blog/2018/03/14/semantic-versioning">Moving To Semantic Versioning</a></h1><p class="post-meta">March 14, 2018</p><div class="authorBlock"><p class="post-authorName"><a target="_blank" rel="noreferrer noopener">Ran Yitzhaki &amp; Ronen Amiel</a></p></div></header><article class="post-content"><div><span><h2><a class="anchor" aria-hidden="true" id="tl-dr"></a><a href="#tl-dr" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>TL;DR</h2>
+<p><strong>Do not use <code>latest</code> when using <code>yoshi</code> or any of our libraries. Instead, use a valid semantic version. This way, when we release breaking changes, your app will not get the latest version, thus won't break.</strong></p>
+<p>Until not long ago, we worked in a <em>&quot;latest is the greatest&quot;</em> manner, which meant that we all need to put <code>latest</code> in our <code>package.json</code> regarding internal packages like <code>yoshi</code> or <code>wix-style-react</code>.</p>
+<h3><a class="anchor" aria-hidden="true" id="what-were-the-problems"></a><a href="#what-were-the-problems" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>What were the problems?</h3>
+<p>Whenever we had to release a breaking change, we made it available only with a feature toggle which required an action from you. Then we had to ask you to opt-into it, and eventually remove the old way and ask you to opt-out again. Also, it didn't work for changes like bumping the version of a major dependency like <code>eslint</code> or <code>jest</code>. This made it really hard for us to move forward, and our tools and you suffered because of it.</p>
+<h3><a class="anchor" aria-hidden="true" id="the-solution"></a><a href="#the-solution" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>The solution</h3>
+<p>With <a href="https://semver.org/">semver</a>, whenever we need to release a breaking change we can release it as a new major version. You and all other users won't be affected, you'll have to go to our <code>CHANGELOG.md</code>, see what has changed, and adjust to the changes. This makes the process much simpler. We will do our best to make it as easy as we can.</p>
+<h3><a class="anchor" aria-hidden="true" id="what-is-semver"></a><a href="#what-is-semver" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>what is <code>semver</code></h3>
+<blockquote>
+<ul>
+<li>MAJOR version when you make incompatible API changes,</li>
+<li>MINOR version when you add functionality in a backwards-compatible manner, and</li>
+<li>PATCH version when you make backwards-compatible bug fixes.</li>
+</ul>
+</blockquote>
+<p>If the owner of the package respects that, it means breaking changes will occur only on major versions and it's safe to list the package as <code>^2.0.0</code> for example instead of <code>latest</code>.</p>
+<p>The <code>^</code> is a sign <a href="https://docs.npmjs.com/getting-started/semantic-versioning#semver-for-consumers">respected by the package manager</a> and says that you want to get updates from <code>patch</code> and <code>minor</code> versions.</p>
+<p><strong>This also means that you'll need to update major version manually!</strong></p>
+<p>With every major version, we will provide a migration guide that will tell you which API broke, or what you should do in order to move to the next version.</p>
+<hr>
+<p><strong>Wait! how do I make sure I don't stay behind?</strong></p>
+<p>Don't worry, we use <a href="https://github.com/wix/depkeeper">depkeeper</a>, that will notify you in case you didn't update versions for too long.</p>
+</span></div></article></div><div class="docs-prevnext"></div></div></div></div></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/yoshi/" class="nav-home"><img src="/yoshi/img/yoshi.png" alt="Yoshi" width="66" height="58"/></a><div><h5>Docs</h5><a href="/yoshi/docs/en/getting-started/create-app.html">Getting Started</a><a href="/yoshi/docs/en/api/configuration.html">API Reference</a></div><div><h5>More</h5><a href="/yoshi/blog">Blog</a><a href="https://github.com/wix/yoshi">GitHub</a><a class="github-button" data-icon="octicon-star" data-count-href="/wix/yoshi/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">Star</a></div></section><section class="copyright">Copyright © 2018 Wix.com</section></footer></div></body></html>

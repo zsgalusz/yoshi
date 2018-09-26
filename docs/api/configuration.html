@@ -1,0 +1,200 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Configuration · Yoshi</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="Configurations are meant to be inside `package.json` under `yoshi` section or by passing flags to common tasks, for example:"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Configuration · Yoshi"/><meta property="og:type" content="website"/><meta property="og:url" content="https://wix.github.io/yoshi/index.html"/><meta property="og:description" content="Configurations are meant to be inside `package.json` under `yoshi` section or by passing flags to common tasks, for example:"/><meta property="og:image" content="https://wix.github.io/yoshi/img/yoshi.png"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://wix.github.io/yoshi/img/yoshi.png"/><link rel="shortcut icon" href="/yoshi/img/favicon/favicon.ico"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css"/><link rel="alternate" type="application/atom+xml" href="https://wix.github.io/yoshi/blog/atom.xml" title="Yoshi Blog ATOM Feed"/><link rel="alternate" type="application/rss+xml" href="https://wix.github.io/yoshi/blog/feed.xml" title="Yoshi Blog RSS Feed"/><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><link rel="stylesheet" href="/yoshi/css/main.css"/></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/yoshi/"><img class="logo" src="/yoshi/img/yoshi.png" alt="Yoshi"/><h2 class="headerTitleWithLogo">Yoshi</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/yoshi/docs/getting-started/create-app" target="_self">Getting Started</a></li><li class="siteNavGroupActive siteNavItemActive"><a href="/yoshi/docs/api/configuration" target="_self">API</a></li><li class=""><a href="/yoshi/blog/" target="_self">Blog</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="container docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><i></i></div><h2><i>›</i><span>API</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Getting Started</h3><ul><li class="navListItem"><a class="navItem" href="/yoshi/docs/getting-started/create-app">Create App</a></li><li class="navListItem"><a class="navItem" href="/yoshi/docs/getting-started/usage">Usage</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">API</h3><ul><li class="navListItem navListItemActive"><a class="navItem" href="/yoshi/docs/api/configuration">Configuration</a></li><li class="navListItem"><a class="navItem" href="/yoshi/docs/api/cli">CLI Options</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Guides</h3><ul><li class="navListItem"><a class="navItem" href="/yoshi/docs/guides/ab-translate">AB Translate</a></li><li class="navListItem"><a class="navItem" href="/yoshi/docs/guides/assets">Assets</a></li><li class="navListItem"><a class="navItem" href="/yoshi/docs/guides/bundle-analyze">Analyze Your Bundle</a></li><li class="navListItem"><a class="navItem" href="/yoshi/docs/guides/debugging">Debugging</a></li><li class="navListItem"><a class="navItem" href="/yoshi/docs/guides/disable-css-modules">Disable CSS Modules</a></li><li class="navListItem"><a class="navItem" href="/yoshi/docs/guides/enzyme-support">Testing With Enzyme</a></li><li class="navListItem"><a class="navItem" href="/yoshi/docs/guides/export-es-modules">Export ES Modules</a></li><li class="navListItem"><a class="navItem" href="/yoshi/docs/guides/hmr">HMR</a></li><li class="navListItem"><a class="navItem" href="/yoshi/docs/guides/momentjs-optimization">Moment.js optimization</a></li><li class="navListItem"><a class="navItem" href="/yoshi/docs/guides/split-chunks">Split Chunks</a></li><li class="navListItem"><a class="navItem" href="/yoshi/docs/guides/svg">How to use SVG?</a></li></ul></div></div></section></div><script>
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              const headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                if (event.target.tagName === 'A') {
+                  document.body.classList.remove('tocActive');
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer docMainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle">Configuration</h1></header><article><div><span><p>Configurations are meant to be inside <code>package.json</code> under <code>yoshi</code> section or by passing flags to common tasks, for example:</p>
+<pre><code class="hljs css language-json">{
+  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"my-project"</span>,
+  <span class="hljs-attr">"version"</span>: <span class="hljs-string">"0.0.1"</span>,
+  <span class="hljs-attr">"yoshi"</span>: {
+    <span class="hljs-attr">"entry"</span>: {
+      <span class="hljs-attr">"app"</span>: <span class="hljs-string">"./app2.js"</span>
+    }
+  }
+}
+</code></pre>
+<p>Alternatively, you can create a file named <code>yoshi.config.js</code> in your project's root directory, and export an object with the configuration you need. For example:</p>
+<pre><code class="hljs css language-js"><span class="hljs-built_in">module</span>.exports = {
+  <span class="hljs-attr">entry</span>: {
+    <span class="hljs-attr">app</span>: <span class="hljs-string">'./app2.js'</span>,
+  },
+};
+</code></pre>
+<blockquote>
+<p>Yoshi will prefer configuration from <code>package.json</code> over <code>yoshi.config.js</code> file.</p>
+</blockquote>
+<h2><a class="anchor" aria-hidden="true" id="extends"></a><a href="#extends" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>extends</h2>
+<p>A path to a package that sets up defaults for <code>yoshi</code>'s config. The project's config can override those defaults.</p>
+<p>The purpose of this option is to allow reusing configurations that are the same across multiple (similar) projects.</p>
+<p>Here's an example of how a simple <code>extends</code> file looks like:</p>
+<pre><code class="hljs css language-js"><span class="hljs-built_in">module</span>.exports = {
+  <span class="hljs-attr">defaultConfig</span>: {
+    <span class="hljs-attr">exports</span>: <span class="hljs-string">'[name]'</span>,
+    <span class="hljs-attr">externals</span>: {
+      <span class="hljs-attr">lodash</span>: <span class="hljs-string">'lodash'</span>,
+    },
+  },
+};
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="separatecss"></a><a href="#separatecss" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>separateCss</h2>
+<p>By default, your <code>require</code>d css will bundled to a separate <code>app.css</code> bundle. You can leave your css in main js bundle by adding the following to your <code>package.json</code>:</p>
+<pre><code class="hljs css language-json">"yoshi": {
+  "separateCss": false
+}
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="splitchunks"></a><a href="#splitchunks" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>splitChunks</h2>
+<p>Configure webpack's <code>optimization.splitChunks</code> option. It's an opt-in feature that creates a separate file (known as a chunk), consisting of common modules shared between multiple entry points.</p>
+<p>Supports both <code>false</code> value <em>(default)</em>, <code>true</code> and a <a href="https://gist.github.com/sokra/1522d586b8e5c0f5072d7565c2bee693#configuration">configuration object</a>:</p>
+<pre><code class="hljs css language-json">"yoshi": {
+  "splitChunks": true
+  }
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="cssmodules"></a><a href="#cssmodules" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>cssModules</h2>
+<p>We use <a href="https://github.com/css-modules/css-modules">css modules</a> as default. You can disable this option any time by adding the following to wix section inside your <code>package.json</code>:</p>
+<pre><code class="hljs css language-json">"yoshi": {
+  "cssModules": false
+}
+</code></pre>
+<p>You also use the <code>prod</code> keyword to only separate css on CI and production, this is useful for speeding up HMR on local dev environments.</p>
+<pre><code class="hljs css language-json">"yoshi": {
+  "separateCss": "prod"
+}
+</code></pre>
+<p>Disabling cssModules on a specific css file is possible by adding <code>.global</code> before file extention.
+For example:</p>
+<p><code>./Counter.global.scss</code> //no css modules for this file</p>
+<p>Using css modules inside your component is easy:</p>
+<pre><code class="hljs css language-js">import s from './Counter.scss'; // import css/scss
+
+&lt;p className={s.mainColor}&gt;{counterValue}&lt;/p&gt;
+</code></pre>
+<p>Using css when css modules are turned off:</p>
+<pre><code class="hljs css language-js">import './Counter.scss'; // import css/scss
+
+&lt;p className="mainColor"&gt;{counterValue}&lt;/p&gt;
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="tpastyle"></a><a href="#tpastyle" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>tpaStyle</h2>
+<p>Set to true to build with TPA style.</p>
+<h2><a class="anchor" aria-hidden="true" id="enhancedtpastyle"></a><a href="#enhancedtpastyle" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>enhancedTpaStyle</h2>
+<p>Set to true to build with enhanced TPA style.</p>
+<ul>
+<li><img src="https://img.shields.io/badge/status-experimental-ff69b4.svg" alt="status experimental"></li>
+</ul>
+<h2><a class="anchor" aria-hidden="true" id="clientprojectname"></a><a href="#clientprojectname" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>clientProjectName</h2>
+<p>The name of the client project.</p>
+<h2><a class="anchor" aria-hidden="true" id="keepfunctionnames"></a><a href="#keepfunctionnames" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>keepFunctionNames</h2>
+<p>Set to true to keep function names when uglifying</p>
+<h2><a class="anchor" aria-hidden="true" id="entry"></a><a href="#entry" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>entry</h2>
+<p>Explanation is in <a href="#build">cli/build</a> section.</p>
+<h2><a class="anchor" aria-hidden="true" id="serverscdn"></a><a href="#serverscdn" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>servers.cdn</h2>
+<p>Explanation is in <a href="#start">cli/start</a> section.</p>
+<h2><a class="anchor" aria-hidden="true" id="externals"></a><a href="#externals" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>externals</h2>
+<p>Prevent bundling of certain imported packages and instead retrieve these external dependencies at runtime (as a script tags)</p>
+<pre><code class="hljs css language-json">{
+  <span class="hljs-attr">"yoshi"</span>: {
+    <span class="hljs-attr">"externals"</span>: {
+      <span class="hljs-attr">"react"</span>: <span class="hljs-string">"React"</span>
+    }
+  }
+}
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="specs"></a><a href="#specs" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>specs</h2>
+<p>Specs globs are configurable. <code>browser</code> is for karma, <code>node</code> is for mocha and jasmine.</p>
+<pre><code class="hljs css language-json">{
+  <span class="hljs-attr">"yoshi"</span>: {
+    <span class="hljs-attr">"specs"</span>: {
+      <span class="hljs-attr">"browser"</span>: <span class="hljs-string">"dist/custom/globs/**/*.spec.js"</span>,
+      <span class="hljs-attr">"node"</span>: <span class="hljs-string">"dist/custom/globs/**/*.spec.js"</span>
+    }
+  }
+}
+</code></pre>
+<p>For example:</p>
+<pre><code class="hljs css language-json">{
+  <span class="hljs-attr">"yoshi"</span>: {
+    <span class="hljs-attr">"specs"</span>: {
+      <span class="hljs-attr">"browser"</span>: <span class="hljs-string">"dist/src/client/**/*.spec.js"</span>,
+      <span class="hljs-attr">"node"</span>: <span class="hljs-string">"dist/src/server/**/*.spec.js"</span>
+    }
+  }
+}
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="runindividualtranspiler"></a><a href="#runindividualtranspiler" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>runIndividualTranspiler</h2>
+<p>In case you don't want to transpile your server (node) code, and you still need <code>.babelrc</code>/<code>tsconfig</code>, you can add <code>runIndividualTranspiler</code> flag to skip server transpiling.</p>
+<h2><a class="anchor" aria-hidden="true" id="transpiletests"></a><a href="#transpiletests" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>transpileTests</h2>
+<p>An option to not transpile tests with Babel (via <code>babel-register</code>). Defaults to <code>true</code>.</p>
+<h2><a class="anchor" aria-hidden="true" id="externalunprocessedmodules"></a><a href="#externalunprocessedmodules" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>externalUnprocessedModules</h2>
+<p>You can explicitly ask build process to transpile some node modules in case those modules do not contain transpiled code.
+Note that this is not a recommended workflow. It can be very error prone:</p>
+<ol>
+<li>It might be for example that your app babel config and the node module babel config will be conflicting.</li>
+<li>Any babel plugin that is used by your dependencies will need to be installed by your app as well.</li>
+<li>You'll need to also add nested dependencies that need transpiling into array, which can be confusing.</li>
+</ol>
+<p>Anyway, if you don't have a better alternative you can pass array with module names in this property.</p>
+<h2><a class="anchor" aria-hidden="true" id="exports"></a><a href="#exports" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>exports</h2>
+<p>If set, export the bundle as library. <code>yoshi.exports</code> is the name.</p>
+<p>Use this if you are writing a library and want to publish it as single file. Library will be exported with <code>UMD</code> format.</p>
+<h3><a class="anchor" aria-hidden="true" id="hmr"></a><a href="#hmr" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>hmr</h3>
+<p><code>Boolean</code> | <code>&quot;auto&quot;</code></p>
+<p>Set to <code>false</code> in order to disable hot module replacement. (defaults to true)</p>
+<p><code>&quot;auto&quot;</code> is an experimental feature which provides zero configuration HMR for react. It will include <code>react-hot-loader</code> to the top of the entry file and will wrap React's root component in special Higher Order Component which enables hot module reload for react. Also it will call <code>module.hot.accept</code> on the project's entry file.</p>
+<h3><a class="anchor" aria-hidden="true" id="livereload"></a><a href="#livereload" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>liveReload</h3>
+<p><code>Boolean</code></p>
+<p>If true, instructs the browser to physically refresh the entire page if / when webpack indicates that a hot patch cannot be applied and a full refresh is needed.</p>
+<h2><a class="anchor" aria-hidden="true" id="performance"></a><a href="#performance" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>performance</h2>
+<p>Allows to use the Webpack Performance Budget feature.
+The configuration object is the same as in webpack.
+For more info, you can read the <a href="https://webpack.js.org/configuration/performance/">webpack docs</a>.</p>
+<h2><a class="anchor" aria-hidden="true" id="resolvealias"></a><a href="#resolvealias" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>resolveAlias</h2>
+<p>Allows you to use the Webpack Resolve Alias feature.
+The configuration object is the same as in Webpack, note that the paths are relative to Webpacks context.
+For more info, you can read the <a href="https://webpack.js.org/configuration/resolve/#resolve-alias">webpack docs</a>.</p>
+<h2><a class="anchor" aria-hidden="true" id="hooks"></a><a href="#hooks" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>hooks</h2>
+<p>Run a shell script at a specific time in yoshi's execution.</p>
+<p>For exmaple:</p>
+<pre><code class="hljs css language-json">{
+  <span class="hljs-attr">"yoshi"</span>: {
+    <span class="hljs-attr">"hooks"</span>: {
+      <span class="hljs-attr">"prelint"</span>: <span class="hljs-string">"echo running-before-lint"</span>
+    }
+  }
+}
+</code></pre>
+<p>Next time you'll run <code>yoshi lint</code>, this command will execute and only then the linter will run.</p>
+<p><strong>supported hooks:</strong></p>
+<ul>
+<li><code>prelint</code> - Runs before the linter</li>
+</ul>
+<p><strong>Missing a hook?</strong> Feel free to open issues/PRs for more hooks if needed.</p>
+<h2><a class="anchor" aria-hidden="true" id="umdnameddefine"></a><a href="#umdnameddefine" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>umdNamedDefine</h2>
+<p><code>Boolean</code></p>
+<p>If option is <code>true</code> AMD modules of the UMD build will have names. Otherwise an anonymous define is used(the same as in <a href="https://webpack.js.org/configuration/output/#output-umdnameddefine">webpack</a>).
+By default it is <code>true</code>.</p>
+<h2><a class="anchor" aria-hidden="true" id="universalproject"></a><a href="#universalproject" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>universalProject</h2>
+<p><code>Boolean</code></p>
+<p>Indicates whether the current project is a universal project.</p>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/yoshi/docs/getting-started/usage"><span class="arrow-prev">← </span><span>Previous</span></a><a class="docs-next button" href="/yoshi/docs/api/cli"><span>Next</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav docOnPageNav"><ul class="toc-headings"><li><a href="#extends">extends</a></li><li><a href="#separatecss">separateCss</a></li><li><a href="#splitchunks">splitChunks</a></li><li><a href="#cssmodules">cssModules</a></li><li><a href="#tpastyle">tpaStyle</a></li><li><a href="#enhancedtpastyle">enhancedTpaStyle</a></li><li><a href="#clientprojectname">clientProjectName</a></li><li><a href="#keepfunctionnames">keepFunctionNames</a></li><li><a href="#entry">entry</a></li><li><a href="#serverscdn">servers.cdn</a></li><li><a href="#externals">externals</a></li><li><a href="#specs">specs</a></li><li><a href="#runindividualtranspiler">runIndividualTranspiler</a></li><li><a href="#transpiletests">transpileTests</a></li><li><a href="#externalunprocessedmodules">externalUnprocessedModules</a></li><li><a href="#exports">exports</a><ul class="toc-headings"><li><a href="#hmr">hmr</a></li><li><a href="#livereload">liveReload</a></li></ul></li><li><a href="#performance">performance</a></li><li><a href="#resolvealias">resolveAlias</a></li><li><a href="#hooks">hooks</a></li><li><a href="#umdnameddefine">umdNamedDefine</a></li><li><a href="#universalproject">universalProject</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/yoshi/" class="nav-home"><img src="/yoshi/img/yoshi.png" alt="Yoshi" width="66" height="58"/></a><div><h5>Docs</h5><a href="/yoshi/docs/en/getting-started/create-app.html">Getting Started</a><a href="/yoshi/docs/en/api/configuration.html">API Reference</a></div><div><h5>More</h5><a href="/yoshi/blog">Blog</a><a href="https://github.com/wix/yoshi">GitHub</a><a class="github-button" data-icon="octicon-star" data-count-href="/wix/yoshi/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">Star</a></div></section><section class="copyright">Copyright © 2018 Wix.com</section></footer></div></body></html>
