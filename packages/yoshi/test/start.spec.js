@@ -517,7 +517,7 @@ describe('Aggregator: Start', () => {
       });
 
       describe('when using es6', () => {
-        it(`should rebuild and restart server after a file has been changed`, () => {
+        it.skip(`should rebuild and restart server after a file has been changed`, () => {
           child = test
             .setup({
               'src/server.js': fx.httpServer('hello'),
@@ -538,7 +538,7 @@ describe('Aggregator: Start', () => {
       });
 
       describe('when using no transpile', () => {
-        it(`should restart server after a file has been changed`, () => {
+        it.skip(`should restart server after a file has been changed`, () => {
           child = test
             .setup({
               'src/server.js': fx.httpServer('hello'),
@@ -558,7 +558,7 @@ describe('Aggregator: Start', () => {
       });
 
       describe('client side code', () => {
-        it('should recreate and serve a bundle after file changes', () => {
+        it.skip('should recreate and serve a bundle after file changes', () => {
           const file = { port: 3200, file: 'app.bundle.js' };
           const newSource = `module.exports = 'wat';\n`;
 
