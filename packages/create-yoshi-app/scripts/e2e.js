@@ -70,8 +70,6 @@ const publishMonorepo = () => {
   // Start in root directory even if run from another directory
   process.chdir(path.join(__dirname, '../../..'));
 
-  const { stdout: originalRegistry } = execa.shellSync('npm get registry');
-
   const verdaccio = execa.shell('npx verdaccio --config verdaccio.yaml', {
     stdio: 'inherit',
   });
@@ -80,9 +78,9 @@ const publishMonorepo = () => {
     stdio: 'inherit',
   });
 
-  execa.shellSync(`npm set registry "${testRegistry}"`, {
-    stdio: 'inherit',
-  });
+  execa.shellSync(
+    `npx lerna exec 'npx npm-auth-to-token -u user -p password -e user@example.com -r "${testRegistry}"'`,
+  );
 
   execa.shellSync(
     `lerna publish --yes --force-publish=* --skip-git --cd-version=minor --exact --npm-tag=latest --registry="${testRegistry}"`,
@@ -91,11 +89,8 @@ const publishMonorepo = () => {
     },
   );
 
-  return function cleanup() {
-    execa.shellSync(`npm set registry "${originalRegistry}"`, {
-      stdio: 'inherit',
-    });
-
+  // Return a cleanup function
+  return () => {
     execa.shellSync(`kill -9 ${verdaccio.pid}`);
   };
 };
