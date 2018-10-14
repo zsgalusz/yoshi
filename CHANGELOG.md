@@ -1,6 +1,12 @@
 # Changelog
 
+## 2.14.1 (Aug 21, 2018)
+#### :house: Internal
+* `yoshi`
+  * [#493](https://github.com/wix/yoshi/pull/493) Upgrade stylable to new scoped package
+
 ## 2.14.0 (Aug 21, 2018)
+
 #### :house: Internal
 * `yoshi`
   * [#476](https://github.com/wix/yoshi/pull/476) Move depkeeper configuration to `depkeeper-preset-yoshi`
