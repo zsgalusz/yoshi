@@ -487,7 +487,7 @@ describe('Aggregator: Start', () => {
       this.timeout(30000);
 
       describe('when using typescript', () => {
-        it(`should rebuild and restart server after a file has been changed with typescript files`, () => {
+        it.skip(`should rebuild and restart server after a file has been changed with typescript files`, () => {
           child = test
             .setup({
               'tsconfig.json': fx.tsconfig(),
@@ -558,7 +558,7 @@ describe('Aggregator: Start', () => {
       });
 
       describe('client side code', () => {
-        it.skip('should recreate and serve a bundle after file changes', () => {
+        it('should recreate and serve a bundle after file changes', () => {
           const file = { port: 3200, file: 'app.bundle.js' };
           const newSource = `module.exports = 'wat';\n`;
 
