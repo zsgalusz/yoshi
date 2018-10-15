@@ -41,6 +41,13 @@ const testTemplate = mockedAnswers => {
     before(async () => {
       prompts.inject(mockedAnswers);
       verbose && console.log(chalk.cyan(tempDir));
+
+      // This adds a `.npmrc` so dependencies are installed from local registry
+      await execa.shell(
+        `npx npm-auth-to-token -u user -p password -e user@example.com -r "${testRegistry}"`,
+        { cwd: tempDir },
+      );
+
       await createApp(tempDir);
     });
 

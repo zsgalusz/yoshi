@@ -13,6 +13,7 @@ module.exports.install = dir => {
   execa.shellSync('npm install', {
     cwd: dir,
     stdio: 'inherit',
+    extendEnv: false,
   });
 };
 
