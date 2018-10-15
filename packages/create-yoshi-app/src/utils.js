@@ -14,6 +14,9 @@ module.exports.install = dir => {
     cwd: dir,
     stdio: 'inherit',
     extendEnv: false,
+    env: {
+      PATH: process.env.PATH,
+    },
   });
 };
 
