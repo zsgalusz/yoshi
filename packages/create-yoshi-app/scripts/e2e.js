@@ -78,15 +78,18 @@ const publishMonorepo = () => {
   process.chdir(path.join(__dirname, '../../..'));
 
   const verdaccio = execa.shell('npx verdaccio --config verdaccio.yaml', {
-    stdio: 'inherit',
+    stdio,
   });
 
   execa.shellSync('npx wait-port 4873 -o silent', {
-    stdio: 'inherit',
+    stdio,
   });
 
   execa.shellSync(
     `npx lerna exec 'npx npm-auth-to-token -u user -p password -e user@example.com -r "${testRegistry}"'`,
+    {
+      stdio,
+    },
   );
 
   execa.shellSync(
