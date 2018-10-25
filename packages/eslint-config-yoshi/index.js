@@ -1,7 +1,12 @@
 module.exports = {
   extends: require.resolve('eslint-config-yoshi-base'),
 
-  plugins: ['jsx-a11y', 'react', 'eslint-plugin-wix-style-react'],
+  plugins: [
+    'jsx-a11y',
+    'react',
+    'react-hooks',
+    'eslint-plugin-wix-style-react',
+  ],
 
   env: {
     browser: true,
@@ -40,6 +45,7 @@ module.exports = {
     'react/react-in-jsx-scope': 'error',
     'react/require-render-return': 'error',
     'react/style-prop-object': 'warn',
+    'react-hooks/rules-of-hooks': 'error',
 
     // https://github.com/evcohen/eslint-plugin-jsx-a11y/tree/master/docs/rules
     'jsx-a11y/accessible-emoji': 'warn',
