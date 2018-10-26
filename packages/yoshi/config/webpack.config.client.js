@@ -1,3 +1,6 @@
-const { createClientWebpackConfig } = require('./webpack.config');
+const {
+  createClientWebpackConfig,
+  wrapConfigForMultiBundles,
+} = require('./webpack.config');
 
-module.exports = createClientWebpackConfig;
+module.exports = wrapConfigForMultiBundles(createClientWebpackConfig);

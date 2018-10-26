@@ -66,6 +66,7 @@ const loadConfig = () => {
     },
     entry: getConfig('entry'),
     splitChunks: getConfig('splitChunks', false),
+    bundleTargets: getConfig('bundleTargets'),
     defaultEntry: './client',
     separateCss: getConfig('separateCss', true),
     cssModules: getConfig('cssModules', true),

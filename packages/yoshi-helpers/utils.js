@@ -3,6 +3,7 @@ const path = require('path');
 const mkdirp = require('mkdirp');
 const chokidar = require('chokidar');
 const chalk = require('chalk');
+const bundleUtils = require('bundle-utils');
 const childProcess = require('child_process');
 const detect = require('detect-port');
 const project = require('yoshi-config');
@@ -166,3 +167,9 @@ function concatCustomizer(objValue, srcValue) {
 }
 
 module.exports.mergeByConcat = require('lodash/fp').mergeWith(concatCustomizer);
+
+// We don't want to change bundle name for first item for backward compatibility.
+module.exports.parseBundleTarget = (query, { ignoreId }) => ({
+  id: ignoreId ? null : bundleUtils.getId(query),
+  targets: query,
+});

@@ -253,14 +253,30 @@ const getStyleLoaders = ({
   ];
 };
 
+// Wrapper that returns array of configs for each bundle configuration.
+function wrapConfigForMultiBundles(config) {
+  return function({ bundleConfigs, ...configParams } = {}) {
+    if (bundleConfigs) {
+      return bundleConfigs.map(bundleConfig =>
+        config({ ...configParams, bundleConfig }),
+      );
+    }
+    return config(configParams);
+  };
+}
+
 //
 // Common configuration chunk to be used for both
 // client-side (client.js) and server-side (server.js) bundles
 // -----------------------------------------------------------------------------
 function createCommonWebpackConfig({
   isDebug = true,
+  bundleConfig = {},
   withLocalSourceMaps,
 } = {}) {
+  const { id: bundleId, targets: bundleTargets } = bundleConfig;
+  const formattedBundleName = bundleId ? `${bundleId}.` : '';
+
   const config = {
     context: SRC_DIR,
 
@@ -270,8 +286,12 @@ function createCommonWebpackConfig({
       path: STATICS_DIR,
       publicPath,
       pathinfo: isDebug,
-      filename: isDebug ? '[name].bundle.js' : '[name].bundle.min.js',
-      chunkFilename: isDebug ? '[name].chunk.js' : '[name].chunk.min.js',
+      filename: isDebug
+        ? '[name].bundle.js'
+        : `[name].${formattedBundleName}bundle.min.js`,
+      chunkFilename: isDebug
+        ? '[name].chunk.js'
+        : `[name].${formattedBundleName}chunk.min.js`,
     },
 
     resolve: {
@@ -388,6 +408,21 @@ function createCommonWebpackConfig({
             },
             {
               loader: 'babel-loader',
+              options: bundleTargets
+                ? {
+                    presets: [
+                      [
+                        'yoshi',
+                        {
+                          // Update to { targets: bundleTargets } after babel 7 PR merge (https://github.com/babel/babel/pull/8509)
+                          targets: {
+                            browsers: bundleTargets,
+                          },
+                        },
+                      ],
+                    ],
+                  }
+                : undefined,
             },
           ],
         },
@@ -473,9 +508,14 @@ function createCommonWebpackConfig({
 function createClientWebpackConfig({
   isAnalyze = false,
   isDebug = true,
+  bundleConfig,
   withLocalSourceMaps,
 } = {}) {
-  const config = createCommonWebpackConfig({ isDebug, withLocalSourceMaps });
+  const config = createCommonWebpackConfig({
+    isDebug,
+    withLocalSourceMaps,
+    bundleConfig,
+  });
 
   const styleLoaders = getStyleLoaders({ embedCss: true, isDebug });
 
@@ -762,5 +802,6 @@ module.exports = {
   createCommonWebpackConfig,
   createClientWebpackConfig,
   createServerWebpackConfig,
+  wrapConfigForMultiBundles,
   getStyleLoaders,
 };

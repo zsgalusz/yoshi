@@ -330,6 +330,23 @@
         }
       ]
     },
+    "bundleTargets": {
+      "description": "Build for multiple browsers targets or node versions.",
+      "anyOf": [
+        {
+          "description": "Browsers / node versions supported by browserslist separated with commas. See more: https://github.com/browserslist/browserslist#queries",
+          "type": "string"
+        },
+        {
+          "description": "Array of browsers / node versions supported with browserslist. See more: https://github.com/browserslist/browserslist#queries",
+          "type": "array",
+          "items": {
+            "description": "Supported by browsersist target",
+            "type": "string"
+          }
+        }
+      ]
+    },
     "cssModules": {
       "description": "Whether to use css modules. On by default.",
       "type": "boolean"
