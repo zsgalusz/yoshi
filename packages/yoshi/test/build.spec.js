@@ -1,6 +1,7 @@
 const path = require('path');
 const execa = require('execa');
 const expect = require('chai').expect;
+const bundleUtils = require('bundle-utils');
 const tp = require('../../../test-helpers/test-phases');
 const fx = require('../../../test-helpers/fixtures');
 const hooks = require('../../../test-helpers/hooks');
@@ -502,8 +503,9 @@ describe('Aggregator: Build', () => {
     });
   });
 
-  describe('simple development project with 1 entry point, ES modules, non-separate styles, babel, commons chunks and w/o cssModules', () => {
+  describe('simple development project with 1 entry point and additional optimized bundle, ES modules, non-separate styles, babel, commons chunks and w/o cssModules', () => {
     let resp;
+    const bundleTargets = ['> 0.5%', 'last 1 chrome version'];
     before(() => {
       test = tp.create();
 
@@ -512,7 +514,7 @@ describe('Aggregator: Build', () => {
           '.babelrc': `{"presets": [["${require.resolve(
             '@babel/preset-env',
           )}", {"modules": false}]]}`,
-          'src/a.js': `export default "I'm a module!"; import './a.scss'; import './a.st.css'; require('lodash/map')`,
+          'src/a.js': `export default "I'm a module!"; import './a.scss'; import './a.st.css'; require('lodash/map'); const a = 1;`,
           'src/a.scss': `.x {.y {display: flex;}}`,
           'src/a.st.css': `.root {.stylableClass {color: pink;}}`,
           'src/assets/file': '1',
@@ -524,6 +526,7 @@ describe('Aggregator: Build', () => {
               entry: './a.js',
               separateCss: false,
               cssModules: false,
+              bundleTargets,
               features: {
                 externalizeRelativeLodash: true,
               },
@@ -571,6 +574,18 @@ describe('Aggregator: Build', () => {
       it('should use yoshi-update-node-version', () => {
         expect(test.contains('.nvmrc')).to.be.true;
       });
+    });
+
+    it('generate multiple bundles with bundleTargets for minified versions', () => {
+      expect(test.list('dist/statics')).to.contain('app.bundle.min.js');
+      expect(test.list('dist/statics')).to.contain('app.bundle.min.js');
+      const optimizedBundleId = bundleUtils.getId(bundleTargets[1]);
+      expect(test.list('dist/statics')).to.contain(
+        `app.${optimizedBundleId}.bundle.min.js`,
+      );
+      expect(test.list('dist/statics')).to.not.contain(
+        `app.${optimizedBundleId}.bundle.js`,
+      );
     });
 
     it('should generate css attributes prefixes', () => {

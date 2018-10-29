@@ -32,6 +32,7 @@
     "babel-plugin-transform-hmr-runtime": "^4.0.0",
     "babel-preset-yoshi": "^4.0.0",
     "bfj": "^6.1.1",
+    "bundle-utils": "^0.0.2",
     "case-sensitive-paths-webpack-plugin": "~2.1.1",
     "chalk": "~2.3.1",
     "chokidar": "^2.0.4",
