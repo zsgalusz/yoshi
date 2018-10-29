@@ -418,6 +418,8 @@ function createCommonWebpackConfig({
               loader: 'babel-loader',
               options: bundleTargets
                 ? {
+                    // Use `overrides` option for babel 7 config to merge it better.
+                    babelrc: false,
                     presets: [
                       [
                         'yoshi',

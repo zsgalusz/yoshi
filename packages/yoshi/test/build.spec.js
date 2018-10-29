@@ -503,18 +503,17 @@ describe('Aggregator: Build', () => {
     });
   });
 
-  describe('simple development project with 1 entry point and additional optimized bundle, ES modules, non-separate styles, babel, commons chunks and w/o cssModules', () => {
+  describe('simple development project with 1 entry point and `bundleTargets` option, ES modules, non-separate styles, babel, commons chunks and w/o cssModules', () => {
     let resp;
     const bundleTargets = ['> 0.5%', 'last 1 chrome version'];
+    const optimizedBundleId = bundleUtils.getId(bundleTargets[1]);
+
     before(() => {
       test = tp.create();
-
       resp = test
         .setup({
-          '.babelrc': `{"presets": [["${require.resolve(
-            '@babel/preset-env',
-          )}", {"modules": false}]]}`,
-          'src/a.js': `export default "I'm a module!"; import './a.scss'; import './a.st.css'; require('lodash/map'); const a = 1;`,
+          '.babelrc': `{"presets": ["yoshi"]}`,
+          'src/a.js': `export default "I'm a module!"; import './a.scss'; import './a.st.css'; require('lodash/map'); new class {}`,
           'src/a.scss': `.x {.y {display: flex;}}`,
           'src/a.st.css': `.root {.stylableClass {color: pink;}}`,
           'src/assets/file': '1',
@@ -576,16 +575,25 @@ describe('Aggregator: Build', () => {
       });
     });
 
-    it('generate multiple bundles with bundleTargets for minified versions', () => {
-      expect(test.list('dist/statics')).to.contain('app.bundle.min.js');
-      expect(test.list('dist/statics')).to.contain('app.bundle.min.js');
-      const optimizedBundleId = bundleUtils.getId(bundleTargets[1]);
-      expect(test.list('dist/statics')).to.contain(
-        `app.${optimizedBundleId}.bundle.min.js`,
-      );
-      expect(test.list('dist/statics')).to.not.contain(
-        `app.${optimizedBundleId}.bundle.js`,
-      );
+    describe('`bundleTargets` option', () => {
+      it('generate multiple bundles with bundleTargets for minified versions', () => {
+        expect(test.list('dist/statics')).to.contain('app.bundle.min.js');
+        expect(test.list('dist/statics')).to.contain(
+          `app.${optimizedBundleId}.bundle.min.js`,
+        );
+        expect(test.list('dist/statics')).to.not.contain(
+          `app.${optimizedBundleId}.bundle.js`,
+        );
+      });
+
+      it('generate multiple bundles where second contains untranspiled ES6', () => {
+        expect(test.content('dist/statics/app.bundle.js')).to.contain(
+          '_classCallCheck',
+        );
+        expect(
+          test.content(`dist/statics/app.${optimizedBundleId}.bundle.min.js`),
+        ).to.contain('new class{}');
+      });
     });
 
     it('should generate css attributes prefixes', () => {
