@@ -30,6 +30,7 @@ const project = require('yoshi-config');
 const {
   toIdentifier,
   isSingleEntry,
+  generateBundleName,
   isProduction: checkIsProduction,
   inTeamCity: checkInTeamCity,
   isTypescriptProject: checkIsTypescriptProject,
@@ -275,7 +276,18 @@ function createCommonWebpackConfig({
   withLocalSourceMaps,
 } = {}) {
   const { id: bundleId, targets: bundleTargets } = bundleConfig;
-  const formattedBundleName = bundleId ? `${bundleId}.` : '';
+
+  const bundleName = generateBundleName({
+    minified: !isDebug,
+    bundleId: !isDebug && bundleId,
+    prefix: 'bundle',
+  });
+
+  const chunkName = generateBundleName({
+    minified: !isDebug,
+    bundleId: !isDebug && bundleId,
+    prefix: 'chunk',
+  });
 
   const config = {
     context: SRC_DIR,
@@ -286,12 +298,8 @@ function createCommonWebpackConfig({
       path: STATICS_DIR,
       publicPath,
       pathinfo: isDebug,
-      filename: isDebug
-        ? '[name].bundle.js'
-        : `[name].${formattedBundleName}bundle.min.js`,
-      chunkFilename: isDebug
-        ? '[name].chunk.js'
-        : `[name].${formattedBundleName}chunk.min.js`,
+      filename: bundleName,
+      chunkFilename: chunkName,
     },
 
     resolve: {

@@ -173,3 +173,9 @@ module.exports.parseBundleTarget = (query, { ignoreId }) => ({
   id: ignoreId ? null : bundleUtils.getId(query),
   targets: query,
 });
+
+module.exports.generateBundleName = ({ prefix, minified, bundleId }) => {
+  return ['[name]', bundleId, prefix, minified && 'min', 'js']
+    .filter(Boolean)
+    .join('.');
+};
