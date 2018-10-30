@@ -512,6 +512,7 @@ describe('Aggregator: Build', () => {
       test = tp.create();
       resp = test
         .setup({
+          // It should be handled by process.env.IN_WEBPACK and we can ignore this configuration, but it's missing for test environment
           '.babelrc': `{"presets": [["yoshi", { modules: false }]]}`,
           'src/a.js': `export default "I'm a module!"; import './a.scss'; import './a.st.css'; require('lodash/map'); new class {}`,
           'src/a.scss': `.x {.y {display: flex;}}`,
