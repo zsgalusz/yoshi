@@ -99,6 +99,7 @@ module.exports = runner.command(
       const debugCallbackPath = require.resolve('../webpack-debug-callback');
       const webpackConfig = require(configPath)();
       const bundleConfigs =
+        isBabelProject() &&
         bundleTargets &&
         bundleTargets.map((query, i) =>
           parseBundleTarget(query, { ignoreId: i === 0 }),
