@@ -512,7 +512,7 @@ describe('Aggregator: Build', () => {
       test = tp.create();
       resp = test
         .setup({
-          '.babelrc': `{"presets": ["yoshi"]}`,
+          '.babelrc': `{"presets": [["yoshi", { modules: false }]]}`,
           'src/a.js': `export default "I'm a module!"; import './a.scss'; import './a.st.css'; require('lodash/map'); new class {}`,
           'src/a.scss': `.x {.y {display: flex;}}`,
           'src/a.st.css': `.root {.stylableClass {color: pink;}}`,
