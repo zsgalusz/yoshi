@@ -8,6 +8,7 @@
   "basename": "/",
   "clientTopology": {
     "staticsDomain": "static.parastorage.com",
-    "staticsBaseUrl": "//localhost:3200/"
+    "staticsBaseUrl": "//localhost:3200/",
+    "optimizedBundleHash": "b98613880eafeccdc9a85fbb65d96b85"
   }
 }
