@@ -16,6 +16,7 @@
     "release": "yoshi release"
   },
   "devDependencies": {
+    "bundle-utils": "^0.0.1",
     "enzyme": "~2.9.0",
     "express": "~4.15.0",
     "express-session": "~1.15.0",
@@ -26,6 +27,7 @@
     "react-test-renderer": "~15.6.0",
     "velocity": "~0.7.0",
     "yoshi": "^3.0.0",
+    "yoshi-config": "^3.0.0",
     "yoshi-style-dependencies": "^3.0.0"
   },
   "dependencies": {
