@@ -57,7 +57,7 @@
       "react-dom": "ReactDOM"
     },
     "bundleTargets": [
-      "not dead",
+      "> 0.5%, safari 10",
       "last 1 chome version, last 1 safari version, last 1 firefox version"
     ],
     "hmr": "auto"
