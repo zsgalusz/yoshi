@@ -42,6 +42,7 @@
     "wix-bootstrap-testkit": "latest",
     "wix-config-emitter": "latest",
     "yoshi": "^3.0.0",
+    "yoshi-config": "^3.0.0",
     "yoshi-style-dependencies": "^3.0.0"
   },
   "lint-staged": {
@@ -55,6 +56,10 @@
       "react": "React",
       "react-dom": "ReactDOM"
     },
+    "bundleTargets": [
+      "not dead",
+      "last 1 chome version, last 1 safari version, last 1 firefox version"
+    ],
     "hmr": "auto"
   },
   "babel": {

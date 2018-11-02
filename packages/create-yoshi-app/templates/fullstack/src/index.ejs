@@ -15,6 +15,9 @@
       window.__LOCALE__ = '<%= language %>';
       window.__STATICS_BASE_URL__ = '<%= baseStaticsUrl %>';
     </script>
-    <script src="<%= baseStaticsUrl %>app.bundle<% if (!debug) { %>.min<% } %>.js"></script>
+    <script <%= modernBundleHash ? 'nomodule' : '' %> src="<%= baseStaticsUrl %>app.bundle<% if (!debug) { %>.min<% } %>.js"></script>
+    <% if (!debug && modernBundleHash) { %>
+      <script type="module" src="<%= baseStaticsUrl %>app.<%= modernBundleHash %>.bundle.min.js"></script>
+    <% } %>
   </body>
 </html>

@@ -1,5 +1,7 @@
 import wixExpressCsrf from 'wix-express-csrf';
 import wixExpressRequireHttps from 'wix-express-require-https';
+import yoshiConfig from 'yoshi-config';
+import bundleUtils from 'bundle-utils';
 
 // This function is the main entry for our server. It accepts an express Router
 // (see http://expressjs.com) and attaches routes and middlewares to it.
@@ -33,8 +35,13 @@ module.exports = (app, context) => {
 
   function getRenderModel(req) {
     const { language, basename, debug } = req.aspects['web-context'];
+    const { bundleTargets = [] } = yoshiConfig;
+    const { getId } = bundleUtils;
+    const latestTarget = bundleTargets.length > 1 && bundleTargets[bundleTargets.length - 1];
+    const modernBundleHash = latestTarget ? getId(latestTarget) : null;
 
     return {
+      modernBundleHash,
       language,
       basename,
       debug: debug || process.env.NODE_ENV === 'development',
