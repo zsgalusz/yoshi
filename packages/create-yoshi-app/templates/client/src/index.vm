@@ -17,7 +17,7 @@
       window.__LOCALE__ = '${locale}';
       window.__STATICS_BASE_URL__ = '${clientTopology.staticsBaseUrl}';
     </script>
-    <script #if(!${debug})nomodule#{end} src="${clientTopology.staticsBaseUrl}app.bundle#if(!${debug}).min#{end}.js"></script>
+    <script #if(!${debug} && ${modernBundleHash})nomodule#{end} src="${clientTopology.staticsBaseUrl}app.bundle#if(!${debug}).min#{end}.js"></script>
     #if(!${debug} && ${modernBundleHash})
       <script type="module" src="${clientTopology.staticsBaseUrl}app.${modernBundleHash}.bundle.min.js"></script>
     #{end}
