@@ -5,6 +5,7 @@ const {
 const tp = require('../../../test-helpers/test-phases');
 const fx = require('../../../test-helpers/fixtures');
 const fetch = require('node-fetch');
+const waitPort = require('wait-port');
 const retryPromise = require('retry-promise').default;
 const { outsideTeamCity } = require('../../../test-helpers/env-variables');
 const https = require('https');
@@ -828,33 +829,52 @@ describe('Aggregator: Start', () => {
       path = `/${path}`;
     }
     port = port || 3200;
-    return retryPromise({ backoff, max }, () =>
-      fetch(`http://localhost:${port}${path}`),
+
+    return waitPort({
+      port,
+      output: 'silent',
+      timeout: 20000,
+    }).then(() =>
+      retryPromise({ backoff, max }, () =>
+        fetch(`http://localhost:${port}${path}`),
+      ),
     );
   }
 
   function cdnIsServing(name, port = 5005, protocol = 'http', options = {}) {
-    return retryPromise({ backoff: 500 }, async () => {
-      const res = await fetch(
-        `${protocol}://localhost:${port}/${name}`,
-        options,
-      );
+    return waitPort({
+      port,
+      output: 'silent',
+      timeout: 20000,
+    }).then(() =>
+      retryPromise({ backoff: 500 }, async () => {
+        const res = await fetch(
+          `${protocol}://localhost:${port}/${name}`,
+          options,
+        );
 
-      const text = await res.text();
+        const text = await res.text();
 
-      expect(res.status).to.equal(200, text);
+        expect(res.status).to.equal(200, text);
 
-      return text;
-    });
+        return text;
+      }),
+    );
   }
 
   function checkServerIsRespondingWith(expected) {
-    return retryPromise({ backoff: 1000 }, () =>
-      fetch(`http://localhost:${fx.defaultServerPort()}/`)
-        .then(res => res.text())
-        .then(
-          body => (body === expected ? Promise.resolve() : Promise.reject()),
-        ),
+    return waitPort({
+      port: fx.defaultServerPort(),
+      output: 'silent',
+      timeout: 20000,
+    }).then(() =>
+      retryPromise({ backoff: 1000 }, () =>
+        fetch(`http://localhost:${fx.defaultServerPort()}/`)
+          .then(res => res.text())
+          .then(
+            body => (body === expected ? Promise.resolve() : Promise.reject()),
+          ),
+      ),
     );
   }
 
@@ -862,7 +882,7 @@ describe('Aggregator: Start', () => {
     return () => new Promise(resolve => setTimeout(resolve, time));
   }
 
-  function checkServerIsServing({
+  async function checkServerIsServing({
     backoff = 100,
     max = 10,
     port = fx.defaultServerPort(),
@@ -870,6 +890,12 @@ describe('Aggregator: Start', () => {
     protocol = 'http',
     options = {},
   } = {}) {
+    await waitPort({
+      port,
+      output: 'silent',
+      timeout: 20000,
+    });
+
     return retryPromise({ backoff, max }, () =>
       fetch(`${protocol}://localhost:${port}/${file}`, options).then(res =>
         res.text(),
