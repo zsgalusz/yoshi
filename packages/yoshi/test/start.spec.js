@@ -11,7 +11,7 @@ const { outsideTeamCity } = require('../../../test-helpers/env-variables');
 const https = require('https');
 const { takePort } = require('../../../test-helpers/http-helpers');
 
-describe('Aggregator: Start', () => {
+describe.only('Aggregator: Start', () => {
   let test, child;
 
   describe('Yoshi', () => {
@@ -200,7 +200,7 @@ describe('Aggregator: Start', () => {
       });
     });
 
-    describe('hot reload', () => {
+    describe.only('hot reload', () => {
       it('should not run liveReload if liveReload if configured as false', () => {
         child = test
           .setup(
@@ -384,7 +384,7 @@ describe('Aggregator: Start', () => {
       });
     });
 
-    describe.only('CDN server', () => {
+    describe('CDN server', () => {
       it('should serve files without "min" suffix when requested with a "min" suffix', () => {
         child = test
           .setup({
@@ -493,10 +493,18 @@ describe('Aggregator: Start', () => {
           })
           .spawn('start');
 
-        return fetchCDN().then(res => {
-          expect(res.headers.get('Access-Control-Allow-Methods')).to.equal(
-            'GET, OPTIONS',
-          );
+        return fetchCDN(3200, {
+          method: 'OPTIONS',
+          headers: {
+            origin: 'https://bla.com',
+          },
+        }).then(res => {
+          expect(
+            res.headers
+              .get('Access-Control-Allow-Methods')
+              .split(',')
+              .map(v => v.trim()),
+          ).to.include.members(['GET', 'POST']);
           expect(res.headers.get('Access-Control-Allow-Origin')).to.equal('*');
         });
       });
@@ -824,7 +832,10 @@ describe('Aggregator: Start', () => {
     );
   }
 
-  function fetchCDN(port, { path = '/', backoff = 100, max = 10 } = {}) {
+  function fetchCDN(
+    port,
+    { path = '/', method = 'GET', headers = {}, backoff = 100, max = 10 } = {},
+  ) {
     if (path[0] !== '/') {
       path = `/${path}`;
     }
@@ -836,7 +847,7 @@ describe('Aggregator: Start', () => {
       timeout: 20000,
     }).then(() =>
       retryPromise({ backoff, max }, () =>
-        fetch(`http://localhost:${port}${path}`),
+        fetch(`http://localhost:${port}${path}`, { method, headers }),
       ),
     );
   }

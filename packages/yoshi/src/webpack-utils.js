@@ -122,6 +122,13 @@ function createCompiler(config) {
   return compiler;
 }
 
+function resourceTimingMiddleware() {
+  return (req, res, next) => {
+    res.setHeader('Timing-Allow-Origin', '*');
+    next();
+  };
+}
+
 function createDevServerConfig({
   publicPath = PUBLIC_DIR,
   https,
@@ -145,6 +152,9 @@ function createDevServerConfig({
     before(app) {
       // Send cross origin headers
       app.use(cors());
+
+      app.use(resourceTimingMiddleware());
+
       // Redirect `.min.(js|css)` to `.(js|css)`
       app.use(redirectMiddleware(host, project.servers.cdn.port));
     },
