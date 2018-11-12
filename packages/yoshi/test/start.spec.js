@@ -469,12 +469,13 @@ describe('Aggregator: Start', () => {
         return cdnIsServing('test.json');
       });
 
-      it('should run cdn server from node_modules, on n-build project, using configured dir', () => {
+      it('should run cdn server from node_modules, on n-build project, using configured dir', async () => {
         child = test
           .setup({
             'node_modules/my-client-project/dist/statics/test.json': '{a: 1}',
             'src/index.js': 'var a = 1;',
             'package.json': fx.packageJson({
+              entry: 'index.js',
               clientProjectName: 'my-client-project',
               servers: { cdn: { port: 5005, dir: 'dist/statics' } },
             }),
@@ -523,8 +524,8 @@ describe('Aggregator: Start', () => {
           path: 'app.bundle.min.js',
           backoff: 500,
         }).then(res => {
-          expect(res.headers.get('Content-Type')).to.equal(
-            'application/javascript; charset=UTF-8',
+          expect(res.headers.get('Content-Type').toLowerCase()).to.equal(
+            'application/javascript; charset=UTF-8'.toLowerCase(),
           );
         });
       });

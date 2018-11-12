@@ -8,6 +8,7 @@ const { prepareUrls } = require('react-dev-utils/WebpackDevServerUtils');
 const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 const serverHandler = require('serve-handler');
 const project = require('yoshi-config');
+const path = require('path');
 const { PUBLIC_DIR, STATICS_DIR } = require('yoshi-config/paths');
 const { PORT } = require('./constants');
 const { redirectMiddleware } = require('../src/tasks/cdn/server-api');
@@ -121,30 +122,37 @@ function createCompiler(config) {
   return compiler;
 }
 
-function createDevServerConfig({ publicPath, https }) {
+function createDevServerConfig({
+  publicPath = PUBLIC_DIR,
+  https,
+  contentBase = STATICS_DIR,
+  host = '0.0.0.0',
+} = {}) {
   return {
     // Enable gzip compression for everything served
     compress: true,
     clientLogLevel: 'error',
-    contentBase: PUBLIC_DIR,
-    watchContentBase: true,
+    contentBase: false,
+    watchContentBase: false,
     hot: true,
     publicPath,
     // We write our own errors/warnings to the console
     quiet: true,
     https,
     // The server should be accessible externally
-    host: '0.0.0.0',
+    host,
     overlay: true,
     before(app) {
       // Send cross origin headers
       app.use(cors());
       // Redirect `.min.(js|css)` to `.(js|css)`
-      app.use(redirectMiddleware('0.0.0.0', project.servers.cdn.port));
+      app.use(redirectMiddleware(host, project.servers.cdn.port));
+    },
+    after(app) {
       // https://github.com/zeit/serve-handler
       app.use(async (req, res) => {
         await serverHandler(req, res, {
-          public: STATICS_DIR,
+          public: contentBase,
         });
       });
     },
@@ -213,7 +221,6 @@ function createWebpackDevServer({
   const clientConfig = createClientWebpackConfig({
     isDebug: true,
     isAnalyze: false,
-    stats: 'none',
   });
 
   if (hmr) {
@@ -230,7 +237,8 @@ function createWebpackDevServer({
   const devServerConfig = createDevServerConfig({
     publicPath: publicPath || clientConfig.output.publicPath,
     https: https,
-    ...(staticsPath ? { contentBase: staticsPath } : {}),
+    host,
+    ...(staticsPath ? { contentBase: path.resolve(staticsPath) } : {}),
   });
 
   const clientCompiler = webpack(clientConfig);
