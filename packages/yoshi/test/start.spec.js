@@ -383,7 +383,7 @@ describe('Aggregator: Start', () => {
       });
     });
 
-    describe('CDN server', () => {
+    describe.only('CDN server', () => {
       it('should serve files without "min" suffix when requested with a "min" suffix', () => {
         child = test
           .setup({

@@ -2,6 +2,7 @@ const cors = require('cors');
 const chalk = require('chalk');
 const webpack = require('webpack');
 const waitPort = require('wait-port');
+const WebpackDevServer = require('webpack-dev-server');
 const clearConsole = require('react-dev-utils/clearConsole');
 const { prepareUrls } = require('react-dev-utils/WebpackDevServerUtils');
 const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
@@ -200,8 +201,62 @@ function waitForCompilation(compiler) {
   });
 }
 
+function createWebpackDevServer({
+  createClientWebpackConfig,
+  hmr,
+  host,
+  port,
+  https,
+  publicPath,
+  staticsPath,
+}) {
+  const clientConfig = createClientWebpackConfig({
+    isDebug: true,
+    isAnalyze: false,
+    stats: 'none',
+  });
+
+  if (hmr) {
+    // Configure client hot module replacement
+    addEntry(clientConfig, [
+      require.resolve('webpack/hot/dev-server'),
+      require.resolve('webpack-dev-server/client'),
+    ]);
+
+    clientConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
+  }
+
+  // Setup dev server (CDN)
+  const devServerConfig = createDevServerConfig({
+    publicPath: publicPath || clientConfig.output.publicPath,
+    https: https,
+    ...(staticsPath ? { contentBase: staticsPath } : {}),
+  });
+
+  const clientCompiler = webpack(clientConfig);
+  const compilationPromise = waitForCompilation(clientCompiler);
+
+  const devServer = new WebpackDevServer(clientCompiler, devServerConfig);
+
+  // Start up webpack dev server
+  return new Promise((resolve, reject) => {
+    devServer.listen(
+      port,
+      host,
+      err =>
+        err
+          ? reject(err)
+          : resolve({
+              devServer,
+              compilationPromise,
+            }),
+    );
+  });
+}
+
 module.exports = {
   createCompiler,
+  createWebpackDevServer,
   createDevServerConfig,
   waitForServerToStart,
   waitForCompilation,

@@ -20,7 +20,6 @@ const stream = require('stream');
 const child_process = require('child_process');
 const chalk = require('chalk');
 const webpack = require('webpack');
-const WebpackDevServer = require('webpack-dev-server');
 const openBrowser = require('react-dev-utils/openBrowser');
 const project = require('yoshi-config');
 const { BUILD_DIR, TARGET_DIR } = require('yoshi-config/paths');
@@ -31,7 +30,7 @@ const {
 } = require('../../config/webpack.config');
 const {
   createCompiler,
-  createDevServerConfig,
+  createWebpackDevServer,
   waitForServerToStart,
   waitForCompilation,
   addEntry,
@@ -54,22 +53,9 @@ module.exports = async () => {
 
   await updateNodeVersion();
 
-  const clientConfig = createClientWebpackConfig({
-    isDebug: true,
-    isAnalyze: false,
-  });
-
   const serverConfig = createServerWebpackConfig({
     isDebug: true,
   });
-
-  // Configure client hot module replacement
-  addEntry(clientConfig, [
-    require.resolve('webpack/hot/dev-server'),
-    require.resolve('webpack-dev-server/client'),
-  ]);
-
-  clientConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
 
   // Configure server hot module replacement
   addEntry(serverConfig, [require.resolve('../../config/hot')]);
@@ -77,18 +63,8 @@ module.exports = async () => {
   serverConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
 
   // Configure compilation
-  const multiCompiler = createCompiler([clientConfig, serverConfig]);
-  const compilationPromise = waitForCompilation(multiCompiler);
-
-  const [clientCompiler, serverCompiler] = multiCompiler.compilers;
-
-  // Setup dev server (CDN)
-  const devServerConfig = createDevServerConfig({
-    publicPath: clientConfig.output.publicPath,
-    https: cliArgs.https,
-  });
-
-  const devServer = new WebpackDevServer(clientCompiler, devServerConfig);
+  const serverCompiler = createCompiler(serverConfig);
+  const compilationPromise = waitForCompilation(serverCompiler);
 
   // Start up server compilation
   let serverProcess;
@@ -102,18 +78,19 @@ module.exports = async () => {
 
   console.log(chalk.cyan('Starting development environment...\n'));
 
-  // Start up webpack dev server
-  await new Promise((resolve, reject) => {
-    devServer.listen(
-      project.servers.cdn.port,
-      '0.0.0.0',
-      err => (err ? reject(err) : resolve()),
-    );
+  const {
+    compilationPromise: clientCompilationPromise,
+  } = await createWebpackDevServer({
+    createClientWebpackConfig,
+    hmr: true,
+    host: '0.0.0.0',
+    port: project.servers.cdn.port,
+    https: cliArgs.https,
   });
 
   // Wait for both compilations to finish
   try {
-    await compilationPromise;
+    await Promise.all([compilationPromise, clientCompilationPromise]);
   } catch (error) {
     // We already log compilation errors in a compiler hook
     // If there's an error, just exit(1)
