@@ -11,7 +11,7 @@ const { outsideTeamCity } = require('../../../test-helpers/env-variables');
 const https = require('https');
 const { takePort } = require('../../../test-helpers/http-helpers');
 
-describe.only('Aggregator: Start', () => {
+describe('Aggregator: Start', () => {
   let test, child;
 
   describe('Yoshi', () => {
@@ -200,7 +200,7 @@ describe.only('Aggregator: Start', () => {
       });
     });
 
-    describe.only('hot reload', () => {
+    describe('hot reload', () => {
       it('should not run liveReload if liveReload if configured as false', () => {
         child = test
           .setup(
@@ -218,7 +218,7 @@ describe.only('Aggregator: Start', () => {
       });
     });
 
-    describe('HMR', () => {
+    describe.only('HMR', () => {
       it('should create bundle with enabled hot module replacement', () => {
         child = test
           .setup({
@@ -228,7 +228,10 @@ describe.only('Aggregator: Start', () => {
           .spawn('start');
 
         return checkServerIsServing({ port: 3200, file: 'app.bundle.js' }).then(
-          content => expect(content).to.contain('"hmr":true'),
+          content =>
+            // For large sizes of `content`, expect(content).to.contain(hmrString); would blow up
+            // and hang in 100% cpu.
+            expect(content.indexOf('"hmr":true') > -1).to.be.true,
         );
       });
 
@@ -250,12 +253,13 @@ describe.only('Aggregator: Start', () => {
           port: 3200,
           file: 'app.bundle.js',
         });
-        expect(appBundleContent).to.contain('"hmr":true');
+        const hmrString = '"hmr":true';
+        expect(appBundleContent.indexOf(hmrString) > -1).to.be.true;
         const app2BundleContent = await checkServerIsServing({
           port: 3200,
           file: 'app2.bundle.js',
         });
-        expect(app2BundleContent).to.contain('"hmr":true');
+        expect(app2BundleContent.indexOf(hmrString) > -1).to.be.true;
       });
 
       it('should create bundle with disabled hot module replacement if there is {hmr: false} in config', () => {
@@ -270,7 +274,7 @@ describe.only('Aggregator: Start', () => {
           .spawn('start');
 
         return checkServerIsServing({ port: 3200, file: 'app.bundle.js' }).then(
-          content => expect(content).to.contain(`"hmr":false`),
+          content => expect(content.indexOf(`"hmr":false`) > -1).to.be.true,
         );
       });
 
@@ -296,8 +300,8 @@ describe.only('Aggregator: Start', () => {
 
         return checkServerIsServing({ port: 3200, file: 'app.bundle.js' }).then(
           content => {
-            expect(content).to.contain('module.hot.accept()');
-            expect(content).to.contain('react-hot-loader');
+            expect(content.indexOf('module.hot.accept()') > -1).to.be.true;
+            expect(content.indexOf('react-hot-loader') > -1).to.be.true;
           },
         );
       });
@@ -323,8 +327,8 @@ describe.only('Aggregator: Start', () => {
 
         return checkServerIsServing({ port: 3200, file: 'app.bundle.js' }).then(
           content => {
-            expect(content).to.contain('module.hot.accept()');
-            expect(content).to.contain('react-hot-loader');
+            expect(content.indexOf('module.hot.accept()') > -1).to.be.true;
+            expect(content.indexOf('react-hot-loader') > -1).to.be.true;
           },
         );
       });
@@ -906,7 +910,6 @@ describe.only('Aggregator: Start', () => {
       output: 'silent',
       timeout: 20000,
     });
-
     return retryPromise({ backoff, max }, () =>
       fetch(`${protocol}://localhost:${port}/${file}`, options).then(res =>
         res.text(),

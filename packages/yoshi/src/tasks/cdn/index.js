@@ -47,7 +47,14 @@ module.exports = async ({
       : false,
     publicPath,
     staticsPath: statics,
-  });
+  }).then(
+    () => {
+      console.log(`\tCDN Server started on port ${port}!`);
+    },
+    err => {
+      console.error(`\tFailed to start CDN server on port ${port} ${err}!`);
+    },
+  );
 };
 
 function sslCredentials(keyPath, certificatePath, passphrase) {
