@@ -47,6 +47,9 @@ module.exports = async ({
       : false,
     publicPath,
     staticsPath: statics,
+    transformHMRRuntime,
+    configuredEntry,
+    defaultEntry,
   }).then(
     () => {
       console.log(`\tCDN Server started on port ${port}!`);

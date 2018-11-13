@@ -12,6 +12,8 @@ const path = require('path');
 const { PUBLIC_DIR, STATICS_DIR } = require('yoshi-config/paths');
 const { PORT } = require('./constants');
 const { redirectMiddleware } = require('../src/tasks/cdn/server-api');
+const { isPlainObject, isString } = require('lodash');
+const { getListOfEntries } = require('yoshi-helpers');
 
 const isInteractive = process.stdout.isTTY;
 
@@ -219,14 +221,29 @@ function waitForCompilation(compiler) {
   });
 }
 
+const normalizeEntries = entries => {
+  if (isString(entries)) {
+    return [entries];
+  } else if (isPlainObject(entries)) {
+    return Object.keys(entries).reduce((total, key) => {
+      total[key] = normalizeEntries(entries[key]);
+      return total;
+    }, {});
+  }
+  return entries;
+};
+
 function createWebpackDevServer({
   createClientWebpackConfig,
   hmr,
+  transformHMRRuntime,
   host,
   port,
   https,
   publicPath,
   staticsPath,
+  configuredEntry,
+  defaultEntry,
 }) {
   const clientConfig = createClientWebpackConfig({
     isDebug: true,
@@ -242,6 +259,40 @@ function createWebpackDevServer({
 
     clientConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
   }
+
+  if (transformHMRRuntime) {
+    const entryFiles = getListOfEntries(configuredEntry || defaultEntry);
+    clientConfig.module.rules.forEach(rule => {
+      if (Array.isArray(rule.use)) {
+        rule.use = rule.use.map(useItem => {
+          if (useItem === 'babel-loader') {
+            useItem = { loader: 'babel-loader' };
+          }
+          if (useItem.loader === 'babel-loader') {
+            if (!useItem.options) {
+              useItem.options = {};
+            }
+            if (!useItem.options.plugins) {
+              useItem.options.plugins = [];
+            }
+            useItem.options.plugins.push(
+              require.resolve('react-hot-loader/babel'),
+              [
+                path.resolve(
+                  __dirname,
+                  'plugins/babel-plugin-transform-hmr-runtime',
+                ),
+                { entryFiles },
+              ],
+            );
+          }
+          return useItem;
+        });
+      }
+    });
+  }
+
+  clientConfig.entry = normalizeEntries(clientConfig.entry);
 
   // Setup dev server (CDN)
   const devServerConfig = createDevServerConfig({
