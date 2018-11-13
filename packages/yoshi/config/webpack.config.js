@@ -369,6 +369,11 @@ function createCommonWebpackConfig({
               ? [{ loader: 'ng-annotate-loader' }]
               : []),
 
+            // https://github.com/webpack-contrib/source-map-loader
+            ...(project.sourceMapLoader
+              ? [{ loader: 'source-map-loader' }]
+              : []),
+
             {
               loader: 'ts-loader',
               options: {
