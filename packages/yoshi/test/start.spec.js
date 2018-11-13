@@ -11,7 +11,7 @@ const { outsideTeamCity } = require('../../../test-helpers/env-variables');
 const https = require('https');
 const { takePort } = require('../../../test-helpers/http-helpers');
 
-describe('Aggregator: Start', () => {
+describe.only('Aggregator: Start', () => {
   let test, child;
 
   describe('Yoshi', () => {
@@ -26,8 +26,9 @@ describe('Aggregator: Start', () => {
     });
 
     describe('transpilation', () => {
-      describe('typescript', () => {
-        it('should target latest chrome in development mode', () => {
+      describe('typescript', function () {
+        this.timeout(500000);
+        it('should target latest chrome in development mode', async () => {
           child = test
             .setup(
               {
@@ -38,11 +39,15 @@ describe('Aggregator: Start', () => {
             )
             .spawn('start');
 
+          //await new Promise(resolve => setTimeout(resolve, 500000));
+
           return checkServerIsServing({
             port: 3200,
             file: 'app.bundle.js',
-          }).then(content =>
-            expect(content).to.contain(`async function hello`),
+          }).then(
+            content =>
+              //expect(content).to.contain(`async function hello`),
+              expect(content.indexOf(`async function hello`) > -1).to.be.true,
           );
         });
       });
@@ -70,9 +75,11 @@ describe('Aggregator: Start', () => {
             port: 3200,
             file: 'app.bundle.js',
           }).then(content => {
-            expect(content).to.contain(`Baz`);
+            //expect(content).to.contain(`Baz`);
+            expect(content.indexOf(`Baz`) > -1).to.be.true;
             // babel-preset-yoshi removes propTypes on production builds
-            expect(content).to.not.contain(`PropTypes`);
+            //expect(content).to.not.contain(`PropTypes`);
+            expect(content.indexOf(`PropTypes`) === -1).to.be.true;
           });
         });
       });
@@ -213,12 +220,13 @@ describe('Aggregator: Start', () => {
           .spawn('start');
 
         return checkServerIsServing({ port: 3200, file: 'app.bundle.js' }).then(
-          content => expect(content).to.contain(`"reload":false`),
+          content => expect(content.indexOf(`"reload":false`) > -1).to.be.true, //expect(content).to.contain(`"reload":false`),
         );
       });
     });
 
-    describe.only('HMR', () => {
+    describe('HMR', function() {
+      this.timeout(30000);
       it('should create bundle with enabled hot module replacement', () => {
         child = test
           .setup({
@@ -348,8 +356,10 @@ describe('Aggregator: Start', () => {
 
         return checkServerIsServing({ port: 3200, file: 'app.bundle.js' }).then(
           content => {
-            expect(content).to.not.contain(`"reload":false`);
-            expect(content).to.not.contain(`"hot":false`);
+            //expect(content).to.not.contain(`"reload":false`);
+            expect(content.indexOf(`"reload":false`) === -1).to.be.true;
+            //expect(content).to.not.contain(`"hot":false`);
+            expect(content.indexOf(`"hot":false`) === -1).to.be.true;
           },
         );
       });
@@ -365,9 +375,14 @@ describe('Aggregator: Start', () => {
 
         return checkServerIsServing({ port: 3200, file: 'app.bundle.js' }).then(
           content =>
-            expect(content).to.contain(
-              `__webpack_require__.p = "http://localhost:3200/";`,
-            ),
+            // expect(content).to.contain(
+            //   `__webpack_require__.p = "http://localhost:3200/";`,
+            // ),
+            expect(
+              content.indexOf(
+                `__webpack_require__.p = "http://localhost:3200/";`,
+              ) > -1,
+            ).to.be.true,
         );
       });
 
@@ -383,7 +398,9 @@ describe('Aggregator: Start', () => {
 
         return checkServerIsServing({ port: 3200, file: 'app.bundle.js' }).then(
           content =>
-            expect(content).to.contain(`__webpack_require__.p = "some.url";`),
+            //expect(content).to.contain(`__webpack_require__.p = "some.url";`),
+            expect(content.indexOf(`__webpack_require__.p = "some.url";`) > -1)
+              .to.be.true,
         );
       });
     });
@@ -401,9 +418,14 @@ describe('Aggregator: Start', () => {
           port: 3200,
           file: 'app.bundle.min.js',
         }).then(content => {
-          expect(content).to.contain(
-            `__webpack_require__.p = "http://localhost:3200/";`,
-          );
+          // expect(content).to.contain(
+          //   `__webpack_require__.p = "http://localhost:3200/";`,
+          // );
+          expect(
+            content.indexOf(
+              `__webpack_require__.p = "http://localhost:3200/";`,
+            ) > -1,
+          ).to.be.true;
         });
       });
 
@@ -424,10 +446,16 @@ describe('Aggregator: Start', () => {
           file: 'app.bundle.min.js',
           protocol: 'https',
           options: { agent },
-        }).then(content =>
-          expect(content).to.contain(
-            `__webpack_require__.p = "https://localhost:3200/";`,
-          ),
+        }).then(
+          content =>
+            // expect(content).to.contain(
+            //   `__webpack_require__.p = "https://localhost:3200/";`,
+            // ),
+            expect(
+              content.indexOf(
+                `__webpack_require__.p = "https://localhost:3200/";`,
+              ) > -1,
+            ).to.be.true,
         );
       });
 
@@ -691,7 +719,9 @@ describe('Aggregator: Start', () => {
           return checkServerIsServing(file)
             .then(() => test.modify('src/client.js', newSource))
             .then(() => checkServerReturnsDifferentContent(file))
-            .then(content => expect(content).to.contain(newSource));
+            .then(
+              content => expect(content.indexOf(newSource) > -1).to.be.true,
+            ); //expect(content).to.contain(newSource)
         });
       });
 
@@ -783,8 +813,16 @@ describe('Aggregator: Start', () => {
     });
   });
 
-  function checkServerLogCreated({ backoff = 100 } = {}) {
-    return retryPromise({ backoff }, () => {
+  async function checkServerLogCreated({ backoff = 100, max = 10 } = {}) {
+    try {
+      await test.waitForOutput("Finished 'app-server' after");
+    } catch (ex) {
+      // If worker were printed without starting an app-server, that's fine,
+      // we can continue checking the server.log
+      console.log('checkServerLogCreated', ex);
+    }
+
+    return retryPromise({ backoff, max }, () => {
       const created = test.contains('target/server.log');
 
       return created
@@ -792,6 +830,7 @@ describe('Aggregator: Start', () => {
         : Promise.reject(new Error('No server.log found'));
     });
   }
+
 
   function serverLogContent() {
     return test.content('target/server.log');
@@ -829,11 +868,7 @@ describe('Aggregator: Start', () => {
   }
 
   function checkStdout(str) {
-    return retryPromise(
-      { backoff: 100 },
-      () =>
-        test.stdout.indexOf(str) > -1 ? Promise.resolve() : Promise.reject(),
-    );
+    return test.waitForOutput(str);
   }
 
   function fetchCDN(

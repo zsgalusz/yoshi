@@ -21,6 +21,7 @@ class Test {
       new Date().getTime().toString(),
     );
     this.silent = !this.env.VERBOSE_TESTS;
+    this.outputWaiters = [];
 
     // create a symlink from node_modules one level above testing directory to yoshi's node_modules
     const tmpNodeModules = path.join(this.tmp, '../node_modules');
@@ -45,6 +46,37 @@ class Test {
     return this;
   }
 
+  _checkOutputForWaiters() {
+    this.outputWaiters = this.outputWaiters.filter(
+      waiter =>
+        !['stdout', 'stderr'].some(stream => {
+          if (this[stream].indexOf(waiter.outputString) > -1) {
+            waiter.resolve(stream);
+            return true;
+          }
+          return false;
+        }),
+    );
+  }
+
+  waitForOutput(outputString) {
+    let resolve, reject;
+    const promise = new Promise((pResolve, pReject) => {
+      resolve = pResolve;
+      reject = pReject;
+    });
+
+    this.outputWaiters.push({
+      outputString,
+      resolve,
+      reject,
+    });
+
+    setImmediate(() => this._checkOutputForWaiters());
+
+    return promise;
+  }
+
   spawn(command, options, environment = {}) {
     if (this.hasTmp()) {
       try {
@@ -65,12 +97,14 @@ class Test {
             console.log(buffer.toString());
           }
           this.stdout += stripAnsi(buffer.toString());
+          setImmediate(() => this._checkOutputForWaiters());
         });
         this.child.stderr.on('data', buffer => {
           if (!this.silent) {
             console.log(buffer.toString());
           }
           this.stderr += stripAnsi(buffer.toString());
+          setImmediate(() => this._checkOutputForWaiters());
         });
         return this.child;
       } catch (e) {
@@ -78,6 +112,7 @@ class Test {
         return null;
       }
     }
+
     return null;
   }
 
@@ -118,6 +153,11 @@ class Test {
         sh.rm('-rf', this.tmp);
       }
     }
+
+    this.outputWaiters.forEach(waiter =>
+      waiter.reject(new Error('Worker is terminating')),
+    );
+
     return this;
   }
 
