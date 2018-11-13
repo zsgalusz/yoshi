@@ -39,6 +39,7 @@ const loadConfig = () => {
     },
     hooks: getConfig('hooks', {}),
     hmr: getConfig('hmr', true),
+    sourceMapLoader: getConfig('sourceMapLoader', false),
     liveReload: getConfig('liveReload', true),
     exports: getConfig('exports'),
     clientProjectName: getConfig('clientProjectName'),
