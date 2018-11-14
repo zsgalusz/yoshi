@@ -161,6 +161,7 @@ function createDevServerConfig({
       app.use(redirectMiddleware(host, project.servers.cdn.port));
     },
     after(app) {
+      // This should be last middleware, since serve-handler serves 404
       // https://github.com/zeit/serve-handler
       app.use(async (req, res) => {
         await serverHandler(req, res, {
@@ -306,6 +307,26 @@ function createWebpackDevServer({
   const compilationPromise = waitForCompilation(clientCompiler);
 
   const devServer = new WebpackDevServer(clientCompiler, devServerConfig);
+
+  compilationPromise.then(stats => {
+    const statsString = stats.toString({
+      colors: true,
+      hash: false,
+      chunks: false,
+      assets: false,
+      children: false,
+      version: false,
+      timings: false,
+      modules: false,
+      // Suppresses warnings that arise from typescript transpile-only and rexporting types
+      // see https://github.com/TypeStrong/ts-loader#transpileonly-boolean-defaultfalse
+      warningsFilter: /export .* was not found in/,
+    });
+
+    if (stats) {
+      console.log(statsString);
+    }
+  });
 
   // Start up webpack dev server
   return new Promise((resolve, reject) => {

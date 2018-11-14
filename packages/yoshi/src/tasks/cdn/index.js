@@ -39,7 +39,9 @@ module.exports = async ({
   const getConfig = require(webpackConfigPath);
   return createWebpackDevServer({
     createClientWebpackConfig: getConfig,
-    hmr: hmr || liveReload,
+    hmr,
+    liveReload,
+    transformHMRRuntime,
     host,
     port,
     https: ssl
@@ -47,7 +49,6 @@ module.exports = async ({
       : false,
     publicPath,
     staticsPath: statics,
-    transformHMRRuntime,
     configuredEntry,
     defaultEntry,
   }).then(

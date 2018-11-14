@@ -181,6 +181,7 @@ class Test {
 
   write(file, content) {
     const fullPath = path.join(this.tmp, file);
+
     content = content.replace(/'/g, `'\\''`);
     sh.mkdir('-p', path.dirname(fullPath));
     sh.exec(`echo '${content}'`, { silent: true }).to(fullPath);
