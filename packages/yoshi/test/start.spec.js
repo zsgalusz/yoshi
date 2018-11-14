@@ -11,7 +11,7 @@ const { outsideTeamCity } = require('../../../test-helpers/env-variables');
 const https = require('https');
 const { takePort } = require('../../../test-helpers/http-helpers');
 
-describe.only('Aggregator: Start', () => {
+describe('Aggregator: Start', () => {
   let test, child;
 
   describe('Yoshi', () => {
@@ -202,21 +202,79 @@ describe.only('Aggregator: Start', () => {
       });
     });
 
-    describe('hot reload', () => {
-      it('should not run liveReload if liveReload if configured as false', () => {
+    describe('hot reload', function() {
+      it('should run liveReload if liveReload is configured as true', async () => {
         child = test
           .setup(
             {
               'src/client.js': `module.exports.wat = 'liveReload';\n`,
-              'package.json': fx.packageJson({ liveReload: false }),
+              'package.json': fx.packageJson({ liveReload: true }),
             },
             [],
           )
           .spawn('start');
 
-        return checkServerIsServing({ port: 3200, file: 'app.bundle.js' }).then(
-          content => expect(content.indexOf(`"reload":false`) > -1).to.be.true,
-        );
+        const getWebpackDevServerSocket = () => {
+          const SockJS = require('sockjs-client');
+          const socket = SockJS('http://localhost:3200/sockjs-node');
+          const handlers = [];
+
+          let resolve;
+          const promise = new Promise(pResolve => (resolve = pResolve));
+
+          socket.onopen = () => resolve(revealedInterface);
+
+          socket.onmessage = m => {
+            console.log('msg', m.data);
+            try {
+              const data = JSON.parse(m.data);
+              handlers.forEach(h => h.resolve(data));
+              handlers.splice(0, handlers.length);
+            } catch (e) {}
+          };
+
+          socket.onclose = () =>
+            handlers.forEach(h => h.reject(new Error('Socket is closed')));
+
+          socket.onerror = err => handlers.forEach(h => h.reject(err));
+
+          const revealedInterface = {
+            close() {
+              socket.close();
+            },
+            getNextMessage() {
+              let nextMessageResolve, nextMessageReject;
+              const p = new Promise((pResolve, pReject) => {
+                nextMessageResolve = pResolve;
+                nextMessageReject = pReject;
+              });
+
+              handlers.push({
+                resolve: nextMessageResolve,
+                reject: nextMessageReject,
+              });
+
+              return p;
+            },
+          };
+
+          return promise;
+        };
+
+        await test.waitForOutput('Built at:');
+        await test.modify('dist/statics/test.json', '{"c": 3}');
+        const socket = await getWebpackDevServerSocket();
+
+        return checkServerIsServing({ port: 3200, file: 'app.bundle.js' })
+          .then(async () => {
+            await test.modify('dist/statics/test.json', '{"b": 2}');
+            const message = await socket.getNextMessage();
+            expect(message).to.have.deep.eql({ type: 'content-changed' });
+          })
+          .then(socket.close, err => {
+            socket.close();
+            throw err;
+          });
       });
     });
 

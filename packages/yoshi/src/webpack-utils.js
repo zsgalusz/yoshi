@@ -6,7 +6,6 @@ const WebpackDevServer = require('webpack-dev-server');
 const clearConsole = require('react-dev-utils/clearConsole');
 const { prepareUrls } = require('react-dev-utils/WebpackDevServerUtils');
 const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
-const serverHandler = require('serve-handler');
 const project = require('yoshi-config');
 const path = require('path');
 const { PUBLIC_DIR, STATICS_DIR } = require('yoshi-config/paths');
@@ -135,14 +134,15 @@ function createDevServerConfig({
   publicPath = PUBLIC_DIR,
   https,
   contentBase = STATICS_DIR,
+  liveReload,
   host = '0.0.0.0',
 } = {}) {
   return {
     // Enable gzip compression for everything served
     compress: true,
     clientLogLevel: 'error',
-    contentBase: false,
-    watchContentBase: false,
+    contentBase,
+    watchContentBase: liveReload,
     hot: true,
     publicPath,
     // We write our own errors/warnings to the console
@@ -159,15 +159,6 @@ function createDevServerConfig({
 
       // Redirect `.min.(js|css)` to `.(js|css)`
       app.use(redirectMiddleware(host, project.servers.cdn.port));
-    },
-    after(app) {
-      // This should be last middleware, since serve-handler serves 404
-      // https://github.com/zeit/serve-handler
-      app.use(async (req, res) => {
-        await serverHandler(req, res, {
-          public: contentBase,
-        });
-      });
     },
   };
 }
@@ -245,6 +236,7 @@ function createWebpackDevServer({
   staticsPath,
   configuredEntry,
   defaultEntry,
+  liveReload,
 }) {
   const clientConfig = createClientWebpackConfig({
     isDebug: true,
@@ -300,6 +292,7 @@ function createWebpackDevServer({
     publicPath: publicPath || clientConfig.output.publicPath,
     https: https,
     host,
+    liveReload,
     ...(staticsPath ? { contentBase: path.resolve(staticsPath) } : {}),
   });
 
