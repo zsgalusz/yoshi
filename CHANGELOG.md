@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.15.0 (Nov 14, 2018)
+
+#### :nail_care: Enhancement
+* `yoshi`
+  * [#784](https://github.com/wix/yoshi/pull/784) Add source-map loader through `{ sourceMapLoader: true }` in yoshi config.
+
 ## 2.14.1 (Aug 21, 2018)
 #### :house: Internal
 * `yoshi`
