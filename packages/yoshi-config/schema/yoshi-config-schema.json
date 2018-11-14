@@ -453,6 +453,10 @@
       "description": "If true, instructs the browser to physically refresh the entire page if / when webpack indicates that a hot patch cannot be applied and a full refresh is needed.",
       "type": "boolean"
     },
+    "sourceMapLoader": {
+      "description": "If true, loads source-map-loader, which loads third-party libraries source maps.",
+      "type": "boolean"
+    },
     "performance": {
       "description": "Allows to use the Webpack Performance Budget feature. The configuration object is the same as in webpack. For more info, you can read the webpack docs.",
       "type": "object"
