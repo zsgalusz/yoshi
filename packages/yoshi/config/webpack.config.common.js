@@ -33,6 +33,9 @@ const config = {
       ...(projectConfig.isAngularProject()
         ? [require('../src/loaders/ng-annotate')()]
         : []),
+      ...(projectConfig.sourceMapLoader()
+        ? [require('../src/loaders/source-map')()]
+        : []),
       require('../src/loaders/babel')(),
       require('../src/loaders/typescript')(projectConfig.isAngularProject()),
       require('../src/loaders/graphql')(),

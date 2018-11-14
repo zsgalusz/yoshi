@@ -86,6 +86,7 @@ module.exports = {
   petriSpecsConfig: () => getConfig('petriSpecs', {}),
   performanceBudget: () => getConfig('performance', {}),
   resolveAlias: () => getConfig('resolveAlias', {}),
+  sourceMapLoader: () => getConfig('sourceMapLoader', false),
 };
 
 function serverProtocol(ssl) {
