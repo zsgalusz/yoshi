@@ -154,8 +154,10 @@ class Test {
       }
     }
 
-    this.outputWaiters.forEach(waiter =>
-      waiter.reject(new Error('Worker is terminating')),
+    setImmediate(() =>
+      this.outputWaiters.forEach(waiter =>
+        waiter.reject(new Error('Worker is terminating')),
+      ),
     );
 
     return this;

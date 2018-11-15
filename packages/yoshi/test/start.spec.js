@@ -9,6 +9,7 @@ const waitPort = require('wait-port');
 const retryPromise = require('retry-promise').default;
 const { outsideTeamCity } = require('../../../test-helpers/env-variables');
 const https = require('https');
+const SockJS = require('sockjs-client');
 const { takePort } = require('../../../test-helpers/http-helpers');
 
 describe('Aggregator: Start', () => {
@@ -213,53 +214,6 @@ describe('Aggregator: Start', () => {
             [],
           )
           .spawn('start');
-
-        const getWebpackDevServerSocket = () => {
-          const SockJS = require('sockjs-client');
-          const socket = SockJS('http://localhost:3200/sockjs-node');
-          const handlers = [];
-
-          let resolve;
-          const promise = new Promise(pResolve => (resolve = pResolve));
-
-          socket.onopen = () => resolve(revealedInterface);
-
-          socket.onmessage = m => {
-            console.log('msg', m.data);
-            try {
-              const data = JSON.parse(m.data);
-              handlers.forEach(h => h.resolve(data));
-              handlers.splice(0, handlers.length);
-            } catch (e) {}
-          };
-
-          socket.onclose = () =>
-            handlers.forEach(h => h.reject(new Error('Socket is closed')));
-
-          socket.onerror = err => handlers.forEach(h => h.reject(err));
-
-          const revealedInterface = {
-            close() {
-              socket.close();
-            },
-            getNextMessage() {
-              let nextMessageResolve, nextMessageReject;
-              const p = new Promise((pResolve, pReject) => {
-                nextMessageResolve = pResolve;
-                nextMessageReject = pReject;
-              });
-
-              handlers.push({
-                resolve: nextMessageResolve,
-                reject: nextMessageReject,
-              });
-
-              return p;
-            },
-          };
-
-          return promise;
-        };
 
         await test.waitForOutput('Built at:');
         await test.modify('dist/statics/test.json', '{"c": 3}');
@@ -763,7 +717,6 @@ describe('Aggregator: Start', () => {
             .spawn('start');
 
           await test.waitForOutput('Built at:');
-          console.log('before');
 
           return checkServerIsServing(file)
             .then(() => test.modify('src/client.js', newSource))
@@ -866,9 +819,8 @@ describe('Aggregator: Start', () => {
     try {
       await test.waitForOutput("Finished 'app-server' after");
     } catch (ex) {
-      // If worker were printed without starting an app-server, that's fine,
-      // we can continue checking the server.log
-      console.log('checkServerLogCreated', ex);
+      // If worker were terminated without starting an app-server, that's fine.
+      // We'll continue to check server.log below
     }
 
     return retryPromise({ backoff, max }, () => {
@@ -1030,5 +982,50 @@ describe('Aggregator: Start', () => {
             .catch(reject),
         ),
     );
+  }
+
+  function getWebpackDevServerSocket() {
+    const socket = SockJS('http://localhost:3200/sockjs-node');
+    const handlers = [];
+
+    let resolve;
+    const promise = new Promise(pResolve => (resolve = pResolve));
+
+    socket.onopen = () => resolve(revealedInterface);
+
+    socket.onmessage = m => {
+      try {
+        const data = JSON.parse(m.data);
+        handlers.forEach(h => h.resolve(data));
+        handlers.splice(0, handlers.length);
+      } catch (e) {}
+    };
+
+    socket.onclose = () =>
+      handlers.forEach(h => h.reject(new Error('Socket is closed')));
+
+    socket.onerror = err => handlers.forEach(h => h.reject(err));
+
+    const revealedInterface = {
+      close() {
+        socket.close();
+      },
+      getNextMessage() {
+        let nextMessageResolve, nextMessageReject;
+        const p = new Promise((pResolve, pReject) => {
+          nextMessageResolve = pResolve;
+          nextMessageReject = pReject;
+        });
+
+        handlers.push({
+          resolve: nextMessageResolve,
+          reject: nextMessageReject,
+        });
+
+        return p;
+      },
+    };
+
+    return promise;
   }
 });
