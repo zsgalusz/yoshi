@@ -100,49 +100,9 @@ yoshi: {
 
 - Note that when specifying multiple flags, only the first one will be considered, so you can't compose test runners (for now).
 
-- Mocha tests setup:
+**Note:** `--debug & --debug-brk` won't be transfer to jest, but instead will be [used in yoshi for test debugging](https://jestjs.io/docs/en/troubleshooting#tests-are-failing-and-you-don-t-know-why)
 
-  You can add a `test/mocha-setup.js` file, with mocha tests specific setup. Mocha will `require` this file, if exists.
-  Example for such `test/mocha-setup.js`:
-
-  ```js
-  import "babel-polyfill";
-  import "isomorphic-fetch";
-  import sinonChai from "sinon-chai";
-  import chaiAsPromised from "chai-as-promised";
-  import chai from "chai";
-
-  chai.use(sinonChai);
-  chai.use(chaiAsPromised);
-  ```
-
-- Karma tests setup:
-
-  When running tests using Karma, make sure you have the right configurations in your `package.json` as described in [`yoshi.specs`](#wixspecs) section. In addition, if you have a `karma.conf.js` file, the configurations will be merged with our [built-in configurations](yoshi/config/karma.conf.js).
-
-- Jasmine tests setup:
-
-  Specifying a custom glob for test files is possible by configuring `package.json` as described in [`yoshi.specs`](#wixspecs). The default glob matches `.spec.` files in all folders.
-  <br />
-  If you wish to load helpers, import them all in a file placed at `'test/setup.js'`.
-
-- Jest test setup:
-
-  You may specify a jest config object in your `package.json`, for example:
-
-  ```json
-    "jest": {
-      "testRegex": "/src/.*\\.spec\\.(ts|tsx)$"
-    }
-  ```
-
-  Every other argument you'll pass to `yoshi test --jest` will be forwarded to jest, For example:
-
-  `yoshi test --jest --forceExit foo.spec.js`
-
-  Will run jest on `foo.spec.js` file and will apply [`forceExit`](https://jestjs.io/docs/en/cli#forceexit).
-
-  **Note:** `--debug & --debug-brk` won't be transfer to jest, but instead will be [used in yoshi for test debugging](https://jestjs.io/docs/en/troubleshooting#tests-are-failing-and-you-don-t-know-why)
+Read more at [running tests](../guides/running-tests.md)
 
 ## lint
 
