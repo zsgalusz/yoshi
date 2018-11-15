@@ -12,7 +12,7 @@ const https = require('https');
 const SockJS = require('sockjs-client');
 const { takePort } = require('../../../test-helpers/http-helpers');
 
-describe('Aggregator: Start', () => {
+describe.only('Aggregator: Start', () => {
   let test, child;
 
   describe('Yoshi', () => {
@@ -28,7 +28,6 @@ describe('Aggregator: Start', () => {
 
     describe('transpilation', () => {
       describe('typescript', function() {
-        this.timeout(500000);
         it('should target latest chrome in development mode', async () => {
           child = test
             .setup(
