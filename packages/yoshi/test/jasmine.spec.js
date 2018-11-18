@@ -147,10 +147,8 @@ function jasmineSetup() {
 }
 
 function checkStdoutContains(test, str) {
-  return retryPromise(
-    { backoff: 100 },
-    () =>
-      test.stdout.indexOf(str) > -1 ? Promise.resolve() : Promise.reject(),
+  return retryPromise({ backoff: 100 }, () =>
+    test.stdout.indexOf(str) > -1 ? Promise.resolve() : Promise.reject(),
   );
 }
 
