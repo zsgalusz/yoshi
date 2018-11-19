@@ -23,6 +23,7 @@ jobs:
         - npm install
       env: 
         - VERBOSE_TESTS=true
+        - process.env.TEAMCITY_VERSION='bla'
       name: "test:integration"
     - script: npm run test:unit
       before_script: npm install
