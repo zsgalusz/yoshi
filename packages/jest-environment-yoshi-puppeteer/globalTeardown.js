@@ -19,5 +19,6 @@ module.exports = async () => {
 
     console.log('stopping proxy');
     await cdnProxy.stop();
+    console.log('jest teardown - ended');
   }
 };
