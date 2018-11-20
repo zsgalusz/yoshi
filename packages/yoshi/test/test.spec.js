@@ -483,13 +483,12 @@ describe('Aggregator: Test', () => {
               },
             ),
             'index.js': `
-              'console.log('***');
-              // const http = require('http');
-              //   const server = http.createServer((req, res) => {
-              //   const response = "<html><body>${e2eTestSampleText}</body></html>";
-              //   res.end(response);
-              // });
-              // server.listen(process.env.PORT);
+              const http = require('http');
+                const server = http.createServer((req, res) => {
+                const response = "<html><body>${e2eTestSampleText}</body></html>";
+                res.end(response);
+              });
+              server.listen(process.env.PORT);
             `,
             'jest-yoshi.config.js': `
               module.exports = {
