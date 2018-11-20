@@ -459,7 +459,7 @@ describe('Aggregator: Test', () => {
     });
 
     describe('puppeteer environment', () => {
-      it.only('should pass with passing e2e tests', () => {
+      it('should pass with passing e2e tests', () => {
         const cdnPort = 3200;
         const serverPort = 3100;
         const e2eTestSampleText = 'Hello World!';
@@ -510,41 +510,43 @@ describe('Aggregator: Test', () => {
         expect(res.code).to.equal(0);
       });
 
-      it('should support dynamic imports when running e2e tests in a CI build', () => {
-        const cdnPort = 3200;
-        const serverPort = 3100;
+      it.only(
+        'should support dynamic imports when running e2e tests in a CI build',
+        () => {
+          const cdnPort = 3200;
+          const serverPort = 3100;
 
-        const test = tp.create();
-        const project = test.setup({
-          'package.json': fx.packageJson(
-            {
-              servers: {
-                cdn: {
-                  port: cdnPort,
+          const test = tp.create();
+          const project = test.setup({
+            'package.json': fx.packageJson(
+              {
+                servers: {
+                  cdn: {
+                    port: cdnPort,
+                  },
                 },
               },
-            },
-            {},
-            {
-              babel: {
-                presets: [require.resolve('babel-preset-yoshi')],
+              {},
+              {
+                babel: {
+                  presets: [require.resolve('babel-preset-yoshi')],
+                },
+                jest: {
+                  preset: 'jest-yoshi-preset',
+                },
               },
-              jest: {
-                preset: 'jest-yoshi-preset',
-              },
-            },
-          ),
-          'pom.xml': fx.pom(),
-          'src/client.js': `
+            ),
+            'pom.xml': fx.pom(),
+            'src/client.js': `
             document.body.innerHTML = "Before";
             (async function () {
               await import("./dynamic");
             })();
           `,
-          'src/dynamic.js': `
+            'src/dynamic.js': `
             document.body.innerHTML = "<h1>Dynamic</h1>";
           `,
-          'index.js': `
+            'index.js': `
             const http = require('http');
 
             const server = http.createServer((req, res) => {
@@ -553,7 +555,7 @@ describe('Aggregator: Test', () => {
             });
             server.listen(process.env.PORT);
           `,
-          'jest-yoshi.config.js': `
+            'jest-yoshi.config.js': `
             module.exports = {
               server: {
                 command: 'node index.js',
@@ -561,32 +563,33 @@ describe('Aggregator: Test', () => {
               }
             };
           `,
-          'test/e2e/some.e2e.spec.js': `
+            'test/e2e/some.e2e.spec.js': `
               it('should succeed', async () => {
                 await page.goto('http://localhost:${serverPort}');
                 await page.waitForSelector('h1');
                 expect(await page.$eval('h1', e => e.innerText)).toEqual('Dynamic');
               });
             `,
-        });
+          });
 
-        const buildResponse = project.execute('build', [], {
-          ...insideTeamCity,
-          ...teamCityArtifactVersion,
-        });
+          const buildResponse = project.execute('build', [], {
+            ...insideTeamCity,
+            ...teamCityArtifactVersion,
+          });
 
-        expect(buildResponse.code).to.equal(0);
-        expect(test.content('./dist/statics/app.bundle.min.js')).to.contain(
-          staticsDomain,
-        );
+          expect(buildResponse.code).to.equal(0);
+          expect(test.content('./dist/statics/app.bundle.min.js')).to.contain(
+            staticsDomain,
+          );
 
-        const testResponse = project.execute('test', ['--jest'], {
-          ...insideTeamCity,
-          ...teamCityArtifactVersion,
-        });
+          const testResponse = project.execute('test', ['--jest'], {
+            ...insideTeamCity,
+            ...teamCityArtifactVersion,
+          });
 
-        expect(testResponse.code).to.equal(0);
-      }).timeout(40000);
+          expect(testResponse.code).to.equal(0);
+        },
+      ).timeout(40000);
     });
   });
 
