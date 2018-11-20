@@ -12,6 +12,9 @@ module.exports.start = async function start(port) {
   });
 };
 
-module.exports.stop = async function stop() {
-  closeProxy && (await closeProxy());
+module.exports.stop = function stop() {
+  if (closeProxy) {
+    return closeProxy();
+  }
+  return undefined;
 };
