@@ -489,13 +489,13 @@ describe('Aggregator: Test', () => {
                 res.end(response);
               });
               server.listen(process.env.PORT);
-              server.close();
+              //server.close();
             `,
             'jest-yoshi.config.js': `
               module.exports = {
                 server: {
                   command: 'node index.js',
-                  //port: ${serverPort},
+                  port: ${serverPort},
                 }
               };
             `,

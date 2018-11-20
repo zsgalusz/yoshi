@@ -13,7 +13,8 @@ module.exports = async () => {
 
     if (global.SERVER) {
       console.log('kiling server');
-      global.SERVER.kill();
+      //global.SERVER.kill();
+      process.kill(-global.SERVER.pid);
     }
     console.log('server killed');
 
