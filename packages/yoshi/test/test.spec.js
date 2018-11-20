@@ -482,6 +482,22 @@ describe('Aggregator: Test', () => {
                 },
               },
             ),
+            'index.js': `
+              const http = require('http');
+                const server = http.createServer((req, res) => {
+                const response = "<html><body>${e2eTestSampleText}</body></html>";
+                res.end(response);
+              });
+              server.listen(process.env.PORT);
+            `,
+            'jest-yoshi.config.js': `
+              module.exports = {
+                server: {
+                  command: 'node index.js',
+                  port: ${serverPort},
+                }
+              };
+            `,
             'test/e2e/some.e2e.spec.js': `
               it('should succeed', async () => {
                 await page.setContent('<div>123</div>');
