@@ -495,9 +495,6 @@ describe('Aggregator: Test', () => {
                 server: {
                   command: 'node index.js',
                   port: ${serverPort},
-                },
-                puppeteer: {
-                  args: ['--no-sandbox', '--disable-setuid-sandbox']
                 }
               };
             `,
@@ -561,9 +558,6 @@ describe('Aggregator: Test', () => {
               server: {
                 command: 'node index.js',
                 port: ${serverPort},
-              },
-              puppeteer: {
-                args: ['--no-sandbox', '--disable-setuid-sandbox']
               }
             };
           `,
