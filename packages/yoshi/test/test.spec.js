@@ -577,6 +577,7 @@ describe('Aggregator: Test', () => {
             ...teamCityArtifactVersion,
           });
 
+          console.log('~~build finished~~', buildResponse);
           expect(buildResponse.code).to.equal(0);
           expect(test.content('./dist/statics/app.bundle.min.js')).to.contain(
             staticsDomain,
@@ -586,7 +587,7 @@ describe('Aggregator: Test', () => {
             ...insideTeamCity,
             ...teamCityArtifactVersion,
           });
-
+          console.log('~~test finished~~', testResponse);
           expect(testResponse.code).to.equal(0);
         },
       ).timeout(40000);
