@@ -505,7 +505,7 @@ describe('Aggregator: Test', () => {
               });
             `,
           })
-          .execute('test', ['--jest']);
+          .execute('test', ['--jest', `--detectOpenHandles`]);
 
         expect(res.code).to.equal(0);
       });
