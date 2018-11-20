@@ -40,6 +40,7 @@ module.exports = async () => {
     const forwardProxyPort = process.env.FORWARD_PROXY_PORT || 3333;
 
     if (shouldDeployToCDN()) {
+      console.log('starting cdn proxy');
       await cdnProxy.start(forwardProxyPort);
     }
 
