@@ -96,8 +96,10 @@ class Test {
     );
 
     if (this.hasTmp()) {
+      console.log('~~node this.script args~~');
+      console.log(`node '${this.script}' ${args}`);
       const result = sh.exec(`node '${this.script}' ${args}`, options);
-
+      console.log(`execute finished`);
       return Object.assign(result, {
         stdout: stripAnsi(result.stdout),
         stderr: stripAnsi(result.stderr),
