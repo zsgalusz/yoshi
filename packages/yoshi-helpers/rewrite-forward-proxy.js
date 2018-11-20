@@ -70,8 +70,10 @@ module.exports = async function startRewriteForwardProxy({
   server.listen(port);
 
   return async () => {
+    console.log('Closing proxy...');
     await closePromise(server);
     await closePromise(httpsReverseProxyServer);
+    console.log('Proxy closed');
   };
 };
 
