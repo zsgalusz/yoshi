@@ -87,7 +87,9 @@ module.exports.hasBundleInStaticsDir = () => {
 };
 
 module.exports.shouldDeployToCDN = () => {
-  return module.exports.inTeamCity(); // &&
-  //process.env.ARTIFACT_VERSION &&
-  //fs.existsSync(POM_FILE)
+  return (
+    module.exports.inTeamCity() &&
+    process.env.ARTIFACT_VERSION &&
+    fs.existsSync(POM_FILE)
+  );
 };
