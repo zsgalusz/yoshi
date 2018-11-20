@@ -459,7 +459,7 @@ describe('Aggregator: Test', () => {
     });
 
     describe('puppeteer environment', () => {
-      it('should pass with passing e2e tests', () => {
+      it.only('should pass with passing e2e tests', () => {
         const cdnPort = 3200;
         const serverPort = 3100;
         const e2eTestSampleText = 'Hello World!';
@@ -482,71 +482,53 @@ describe('Aggregator: Test', () => {
                 },
               },
             ),
-            'index.js': `
-              const http = require('http');
-                const server = http.createServer((req, res) => {
-                const response = "<html><body>${e2eTestSampleText}</body></html>";
-                res.end(response);
-              });
-              server.listen(process.env.PORT);
-            `,
-            'jest-yoshi.config.js': `
-              module.exports = {
-                server: {
-                  command: 'node index.js',
-                  port: ${serverPort},
-                }
-              };
-            `,
             'test/e2e/some.e2e.spec.js': `
               it('should succeed', async () => {
-                await page.goto('http://localhost:${serverPort}');
-                expect(await page.$eval('body', e => e.innerText)).toEqual('${e2eTestSampleText}');
+                await page.setContent('<div>123</div>');
+                expect(await page.$eval('div', e => e.innerText)).toEqual('123');
               });
             `,
           })
-          .execute('test', ['--jest', `--detectOpenHandles`]);
+          .execute('test', ['--jest']);
 
         expect(res.code).to.equal(0);
       });
 
-      it.only(
-        'should support dynamic imports when running e2e tests in a CI build',
-        () => {
-          const cdnPort = 3200;
-          const serverPort = 3100;
+      it('should support dynamic imports when running e2e tests in a CI build', () => {
+        const cdnPort = 3200;
+        const serverPort = 3100;
 
-          const test = tp.create();
-          const project = test.setup({
-            'package.json': fx.packageJson(
-              {
-                servers: {
-                  cdn: {
-                    port: cdnPort,
-                  },
+        const test = tp.create();
+        const project = test.setup({
+          'package.json': fx.packageJson(
+            {
+              servers: {
+                cdn: {
+                  port: cdnPort,
                 },
               },
-              {},
-              {
-                babel: {
-                  presets: [require.resolve('babel-preset-yoshi')],
-                },
-                jest: {
-                  preset: 'jest-yoshi-preset',
-                },
+            },
+            {},
+            {
+              babel: {
+                presets: [require.resolve('babel-preset-yoshi')],
               },
-            ),
-            'pom.xml': fx.pom(),
-            'src/client.js': `
+              jest: {
+                preset: 'jest-yoshi-preset',
+              },
+            },
+          ),
+          'pom.xml': fx.pom(),
+          'src/client.js': `
             document.body.innerHTML = "Before";
             (async function () {
               await import("./dynamic");
             })();
           `,
-            'src/dynamic.js': `
+          'src/dynamic.js': `
             document.body.innerHTML = "<h1>Dynamic</h1>";
           `,
-            'index.js': `
+          'index.js': `
             const http = require('http');
 
             const server = http.createServer((req, res) => {
@@ -555,7 +537,7 @@ describe('Aggregator: Test', () => {
             });
             server.listen(process.env.PORT);
           `,
-            'jest-yoshi.config.js': `
+          'jest-yoshi.config.js': `
             module.exports = {
               server: {
                 command: 'node index.js',
@@ -563,34 +545,33 @@ describe('Aggregator: Test', () => {
               }
             };
           `,
-            'test/e2e/some.e2e.spec.js': `
+          'test/e2e/some.e2e.spec.js': `
               it('should succeed', async () => {
                 await page.goto('http://localhost:${serverPort}');
                 await page.waitForSelector('h1');
                 expect(await page.$eval('h1', e => e.innerText)).toEqual('Dynamic');
               });
             `,
-          });
+        });
 
-          const buildResponse = project.execute('build', [], {
-            ...insideTeamCity,
-            ...teamCityArtifactVersion,
-          });
+        const buildResponse = project.execute('build', [], {
+          ...insideTeamCity,
+          ...teamCityArtifactVersion,
+        });
 
-          console.log('~~build finished~~', buildResponse);
-          expect(buildResponse.code).to.equal(0);
-          expect(test.content('./dist/statics/app.bundle.min.js')).to.contain(
-            staticsDomain,
-          );
+        console.log('~~build finished~~', buildResponse);
+        expect(buildResponse.code).to.equal(0);
+        expect(test.content('./dist/statics/app.bundle.min.js')).to.contain(
+          staticsDomain,
+        );
 
-          const testResponse = project.execute('test', ['--jest'], {
-            ...insideTeamCity,
-            ...teamCityArtifactVersion,
-          });
-          console.log('~~test finished~~', testResponse);
-          expect(testResponse.code).to.equal(0);
-        },
-      ).timeout(40000);
+        const testResponse = project.execute('test', ['--jest'], {
+          ...insideTeamCity,
+          ...teamCityArtifactVersion,
+        });
+        console.log('~~test finished~~', testResponse);
+        expect(testResponse.code).to.equal(0);
+      }).timeout(40000);
     });
   });
 
