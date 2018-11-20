@@ -489,9 +489,7 @@ describe('Aggregator: Test', () => {
                 res.end(response);
               });
               server.listen(process.env.PORT);
-              const socket = http.createConnection(process.env.PORT);
-              // call end to make sure the socket closes
-              socket.end('hi');
+              server.close();
             `,
             'jest-yoshi.config.js': `
               module.exports = {
