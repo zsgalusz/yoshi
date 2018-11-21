@@ -7,7 +7,7 @@
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "build": ":",
-    "clean-deps": "lerna clean && rm -rf ./node_modules ./package-lock.json ./packages/*/package-lock.json",
+    "clean-deps": "lerna clean && rm -rf ./node_modules",
     "createVersion": "node scripts/createVersion",
     "create-yoshi-app:dev": "npm run dev --prefix ./packages/create-yoshi-app",
     "customPublish": "lerna exec 'node ../../scripts/customPublish.js'",
