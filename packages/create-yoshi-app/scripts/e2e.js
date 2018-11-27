@@ -11,9 +11,7 @@ const {
   publishMonorepo,
   authenticateToRegistry,
 } = require('../../../scripts/utils/publishMonorepo');
-const {
-  killSpawnProcessAndHisChildren,
-} = require('../../../test-helpers/process');
+const { killSpawnProcessAndHisChildren } = require('yoshi-helpers');
 
 // verbose logs and output
 const verbose = process.env.VERBOSE_TESTS;

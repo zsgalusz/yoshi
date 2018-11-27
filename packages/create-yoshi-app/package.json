@@ -53,6 +53,7 @@
     "mocha-env-reporter": "^3.0.0",
     "puppeteer": "^1.0.0",
     "tempy": "^0.2.1",
+    "wait-port": "^0.2.2",
     "yoshi-helpers": "3.19.0"
   }
 }
