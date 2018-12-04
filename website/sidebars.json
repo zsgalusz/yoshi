@@ -10,6 +10,7 @@
       "api/cli"
     ],
     "Guides": [
+      "guides/production-app",
       "guides/ab-translate",
       "guides/assets",
       "guides/bundle-analyze",
