@@ -10,7 +10,6 @@
       "api/cli"
     ],
     "Guides": [
-      "guides/production-app",
       "guides/ab-translate",
       "guides/assets",
       "guides/bundle-analyze",
@@ -21,6 +20,8 @@
       "guides/babel-setup",
       "guides/export-es-modules",
       "guides/hmr",
+      "guides/error-tracking",
+      "guides/monitoring",
       "guides/momentjs-optimization",
       "guides/split-chunks",
       "guides/svg"
