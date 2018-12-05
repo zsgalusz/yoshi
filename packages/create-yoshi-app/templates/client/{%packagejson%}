@@ -44,7 +44,7 @@
   },
   "yoshi": {
     "externals": {
-      "fedops-logger": "^3.0.28",
+      "fedops-logger": "fedops-logger",
       "react": "React",
       "react-dom": "ReactDOM"
     },
