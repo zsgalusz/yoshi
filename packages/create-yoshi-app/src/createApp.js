@@ -69,6 +69,8 @@ module.exports = async (workingDir, projectDirName) => {
 
   console.log(chalk.cyan('npm start\n'));
 
-  console.log('For more information visit https://wix.github.io/yoshi');
+  console.log(
+    'For error tracking, monitoring and more information visit https://wix.github.io/yoshi',
+  );
   console.log('Good luck! 🍀');
 };
