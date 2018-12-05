@@ -4,6 +4,8 @@ title: Error Tracking
 sidebar_label: Error Tracking
 ---
 
+## Installing Sentry
+
 [Sentry](https://sentry.io) is an error tracking platform.
 
 In order to catch errors early on, [there's a command line tool](https://github.com/wix-private/fed-infra/tree/master/add-sentry) that installs it to your project.
