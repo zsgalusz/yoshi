@@ -1,0 +1,6 @@
+{
+  "appName": "{%projectName%}",
+  "notifications": {
+    "slack_channels": []
+  }
+}
