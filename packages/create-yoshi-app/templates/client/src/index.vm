@@ -17,7 +17,7 @@
         try { window.fedops.sessionId = window.localStorage.getItem('fedops.logger.sessionId'); } catch(e) {};
         window.fedops.sessionId = window.fedops.sessionId || 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) { var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8); return v.toString(16); });
         /*Notifying Grafana that the app is loaded.*/
-        (new Image()).src = '//frog.wix.com/fed?appName=this-is-my-awesome-project&src=72&evid=14&session_id=' + window.fedops.sessionId + '&_=' + Math.random();
+        (new Image()).src = '//frog.wix.com/fed?appName={%projectName%}&src=72&evid=14&session_id=' + window.fedops.sessionId + '&_=' + Math.random();
       })();
     </script>
   </head>
