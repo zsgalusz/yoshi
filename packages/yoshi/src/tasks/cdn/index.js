@@ -1,13 +1,12 @@
 const fs = require('fs');
 const path = require('path');
-const https = require('https');
-const express = require('express');
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const hotClient = require('webpack-hot-client');
-const { decorate } = require('./server-api');
 const { shouldRunWebpack, logStats, normalizeEntries } = require('./utils');
 const { getListOfEntries, getProcessOnPort } = require('yoshi-helpers');
+const { createDevServer } = require('../../webpack-utils');
+const { createClientWebpackConfig } = require('../../../config/webpack.config');
 
 module.exports = async ({
   port = '3000',
@@ -41,6 +40,35 @@ module.exports = async ({
   }
 
   console.log(`\tRunning cdn on port ${port}...`);
+  const clientConfig = createClientWebpackConfig({
+    isDebug: true,
+    isAnalyze: false,
+    isHmr: hmr,
+    isTransformHMRRuntime: transformHMRRuntime,
+  });
+
+  clientConfig.output.publicPath = publicPath
+
+  const clientCompiler = webpack(clientConfig);
+
+  // Start up webpack dev server
+  const devServer = await createDevServer(clientCompiler, {
+    publicPath: clientConfig.output.publicPath,
+    port,
+    host,
+    https: ssl
+      ? sslCredentials('./assets/key.pem', './assets/cert.pem', '1234')
+      : false,
+  });
+
+  // Start up webpack dev server
+  return new Promise((resolve, reject) => {
+    devServer.listen(
+      port,
+      host,
+      err => (err ? reject(err) : resolve(devServer)),
+    );
+  });
 
   let middlewares = [];
 
@@ -107,15 +135,15 @@ module.exports = async ({
     }
   }
 
-  const app = express();
+  // const app = express();
 
-  decorate({ app, middlewares, host, port, statics });
+  // decorate({ app, middlewares, host, port, statics });
 
-  const serverFactory = ssl ? httpsServer(app) : app;
+  // const serverFactory = ssl ? httpsServer(app) : app;
 
-  return new Promise((resolve, reject) => {
-    serverFactory.listen(port, host, err => (err ? reject(err) : resolve()));
-  });
+  // return new Promise((resolve, reject) => {
+  //   serverFactory.listen(port, host, err => (err ? reject(err) : resolve()));
+  // });
 };
 
 function sslCredentials(keyPath, certificatePath, passphrase) {
@@ -130,13 +158,4 @@ function sslCredentials(keyPath, certificatePath, passphrase) {
     cert: certificate,
     passphrase,
   };
-}
-
-function httpsServer(app) {
-  const credentials = sslCredentials(
-    './assets/key.pem',
-    './assets/cert.pem',
-    '1234',
-  );
-  return https.createServer(credentials, app);
 }
