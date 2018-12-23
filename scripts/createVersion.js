@@ -31,7 +31,7 @@ prompts({
     console.log(chalk.red('Release aborted'));
   } else {
     try {
-      cp.execSync(`${lernaPath} publish --exact --skip-npm`, {
+      cp.execSync(`${lernaPath} version --exact`, {
         stdio: 'inherit',
       });
 

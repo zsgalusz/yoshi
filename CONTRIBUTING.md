@@ -151,7 +151,7 @@ npm run createVersion
 
 This command will open an interactive UI for choosing the version, it will bump it in the relevant packages and add a git tag.
 
-> It runs [lerna publish --skip-npm](https://github.com/lerna/lerna#--skip-npm) under the hood
+> It runs [lerna version](https://github.com/lerna/lerna/tree/master/commands/version#readme) under the hood
 
 Now Push the commits and tag to GitHub
 
