@@ -33,7 +33,7 @@ describe('Update node version', () => {
   });
 
   it('should not update .nvmrc if project has a higher version set in .nvmrc', async () => {
-    const veryHighVersion = '99.0.0\n';
+    const veryHighVersion = '10.14.2\n';
 
     fs.writeFileSync(userNvmrc, veryHighVersion);
 
