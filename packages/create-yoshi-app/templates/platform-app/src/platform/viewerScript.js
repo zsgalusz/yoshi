@@ -1,29 +1,33 @@
-const CONTROLLER_TYPE = '';
+import { EXPERIMENTS_SCOPE } from '../config';
+import { exampleWidgetControllerFactory } from './exampleWidgetController';
+import Experiments from '@wix/wix-experiments';
 
-const createAppController = ({
-  $w,
-  wixCodeApi,
-  platformApi,
-  setProps,
-  config,
-}) => {
-  return {
-    async pageReady() {},
-  };
-};
-
-const controllerByType = {
-  [CONTROLLER_TYPE]: createAppController,
-};
-
-/**
- * @param controllerConfigs: controllerConfig[]
- * @returns Controller[] | Promise<Controller>[]
- */
-function createControllers(controllerConfigs) {
-  return controllerConfigs.map(config => controllerByType[config.type]);
+function getLocale({ wixCodeApi }) {
+  return wixCodeApi.window.locale || 'en';
 }
 
-export default {
+async function getExperimentsByScope(scope) {
+  const experiments = new Experiments({
+    scope,
+  });
+  await experiments.ready();
+  return experiments.all();
+}
+
+function createControllers(controllersConfig) {
+  const controllerConfig = controllersConfig[0];
+  const locale = getLocale(controllerConfig);
+
+  return [
+    getExperimentsByScope(EXPERIMENTS_SCOPE).then(experiments =>
+      exampleWidgetControllerFactory(controllerConfig, {
+        experiments,
+        locale,
+      }),
+    ),
+  ];
+}
+
+export const viewerScript = {
   createControllers,
 };

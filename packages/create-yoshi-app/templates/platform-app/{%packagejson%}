@@ -8,7 +8,7 @@
     "email": "{%authorEmail%}"
   },
   "scripts": {
-    "start": "yoshi start",
+    "start": "yoshi start --entry-point=./test/fake-server.js",
     "precommit": "lint-staged",
     "pretest": "yoshi build",
     "test": "yoshi test --jest",
@@ -16,43 +16,67 @@
     "release": "yoshi release"
   },
   "devDependencies": {
-    "enzyme": "~2.9.0",
+    "enzyme": "^3.8.0",
+    "enzyme-adapter-react-16": "^1.7.1",
     "express": "~4.15.0",
-    "express-session": "~1.15.0",
     "husky": "~0.14.0",
-    "lint-staged": "^7.2.2",
+    "isomorphic-fetch": "^2.2.1",
     "jest-yoshi-preset": "^3.5.0",
+    "lint-staged": "^7.2.2",
+    "nock": "^10.0.5",
     "puppeteer": "^1.1.0",
     "react-test-renderer": "~15.6.0",
     "velocity": "~0.7.0",
+    "wix-ui-core": "^2.0.29",
     "yoshi": "^3.0.0",
     "yoshi-style-dependencies": "^3.0.0"
   },
   "dependencies": {
+    "@wix/native-components-infra": "^1.0.0",
+    "@wix/wix-axios-config": "latest",
+    "@wix/wix-base-ui": "^3.70.0",
+    "@wix/wix-experiments": "^2.0.5",
+    "@wix/wix-experiments-react": "^2.0.6",
     "axios": "~0.16.0",
     "i18next": "^11.6.0",
+    "lodash": "^4.17.11",
     "prop-types": "~15.6.0",
-    "react": "15.6.1",
-    "react-dom": "15.6.1",
-    "react-i18next": "^7.11.0",
-    "@wix/wix-axios-config": "latest",
-    "@wix/native-components-infra": "^1.0.0"
+    "react": "~16.6.2",
+    "react-dom": "~16.6.2",
+    "react-i18next": "^7.11.0"
   },
   "lint-staged": {
     "*.{js,scss,less}": "yoshi lint"
   },
   "yoshi": {
+    "liveReload": false,
+    "hmr": false,
     "externals": {
-      "react": "React",
-      "react-dom": "ReactDOM"
+      "react": {
+        "amd": "react",
+        "umd": "react",
+        "commonjs": "react",
+        "commonjs2": "react",
+        "root": "React"
+      },
+      "react-dom": {
+        "amd": "reactDOM",
+        "umd": "react-dom",
+        "commonjs": "react-dom",
+        "commonjs2": "react-dom",
+        "root": "ReactDOM"
+      }
     },
-    "hmr": "auto",
     "entry": {
-      "client": "./src/client",
-      "app": "./src/components/App",
-      "viewer": "./src/platform/viewerScript",
-      "editor": "./src/platform/editorScript"
-    }
+      "settingsExampleWidget": "./settingsExampleWidget.entry.js",
+      "editorExampleWidget": "./editorExampleWidget.entry.js",
+      "viewerExampleWidget": "./viewerExampleWidget.entry.js",
+      "viewerScript": "./viewerScript.entry.js",
+      "wix-private-mock": "../test/wix-private.mock.js"
+    },
+    "exports": "[name]",
+    "umdNamedDefine": false,
+    "enhancedTpaStyle": true
   },
   "jest": {
     "preset": "jest-yoshi-preset"
@@ -60,9 +84,7 @@
   "babel": {
     "presets": [
       "yoshi"
-    ],
-    "exports": "{%projectName%}",
-    "umdNamedDefine": false
+    ]
   },
   "eslintConfig": {
     "extends": "yoshi"
