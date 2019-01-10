@@ -1,15 +1,7 @@
 import { viewerScript } from './viewerScript';
 import { EXPERIMENTS_SCOPE } from '../config';
 import 'isomorphic-fetch';
-import LaboratoryTestkit from '@wix/wix-experiments/dist/src/laboratory-testkit';
-
-function mockExperiments(scope, experiments) {
-  new LaboratoryTestkit()
-    .withScope(scope)
-    .withBaseUrl(window.location.href)
-    .withExperiments(experiments)
-    .start();
-}
+import { mockExperiments } from './exampleWidgetController.spec';
 
 describe('createControllers', () => {
   let widgetConfig;
