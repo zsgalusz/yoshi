@@ -10,7 +10,8 @@
     "importHelpers": true,
     "target": "es5",
     "jsx": "react",
-    "lib": ["dom", "es2016"]
+    "lib": ["dom", "es2016"],
+    "resolveJsonModule": true
   },
   "include": [
     "./test/**/*.tsx",

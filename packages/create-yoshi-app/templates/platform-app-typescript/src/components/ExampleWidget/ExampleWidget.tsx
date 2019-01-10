@@ -26,4 +26,5 @@ class ExampleWidgetComponent extends React.PureComponent<IExampleWidgetProps> {
   }
 }
 
-export const ExampleWidget = withExperiments(translate()(ExampleWidgetComponent));
+export const ExampleWidget = translate()<IExampleWidgetProps>(
+  withExperiments<IExampleWidgetProps & { experiments: Experiments }>(ExampleWidgetComponent));
