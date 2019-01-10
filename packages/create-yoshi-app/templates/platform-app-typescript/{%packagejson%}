@@ -16,6 +16,7 @@
     "release": "yoshi release"
   },
   "devDependencies": {
+    "@types/react": "^16.7.18",
     "@types/jest": "^23.3.12",
     "enzyme": "^3.8.0",
     "enzyme-adapter-react-16": "^1.7.1",

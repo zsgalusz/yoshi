@@ -19,7 +19,8 @@ describe('Example Widget Settings', () => {
     },
   };
 
-  window.Wix = {
+  //TODO: (window as any)
+  (window as any).Wix = {
     Styles: {
       getStyleParams: callback => callback(styleParams),
     },

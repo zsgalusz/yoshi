@@ -11,18 +11,14 @@ describe('exampleWidgetControllerFactory', () => {
     const locale = 'locale';
     const experiments = { someExperiment: 'true' };
 
-    const controller = exampleWidgetControllerFactory(
+    const controller = await exampleWidgetControllerFactory(
       {
         appParams,
         setProps: setPropsSpy,
       },
-      {
-        experiments,
-        locale,
-      },
     );
 
-    await controller.pageReady();
+    controller.pageReady();
 
     expect(setPropsSpy).toBeCalledWith({
       name: 'World',

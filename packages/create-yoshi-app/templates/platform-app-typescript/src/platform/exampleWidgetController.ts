@@ -1,13 +1,24 @@
-import { IWidgetControllerConfig } from '@wix/native-components-infra/dist/src/types/types';
+import { IWidgetControllerConfig, IWidgetController } from '@wix/native-components-infra/dist/src/types/types';
+import { EXPERIMENTS_SCOPE } from '../config/index';
+import Experiments from '@wix/wix-experiments';
 
-export interface IWidgetProps {
-  experiments: any,
-  locale: string
+function getLocale({ wixCodeApi }): string {
+  return wixCodeApi.window.locale || 'en';
 }
 
-export function exampleWidgetControllerFactory(controllerConfig: IWidgetControllerConfig, widgetProps: IWidgetProps) {
+async function getExperimentsByScope(scope: string) {
+  const experiments = new Experiments({
+    scope,
+  });
+  await experiments.ready();
+  return experiments.all();
+}
+
+export async function exampleWidgetControllerFactory(controllerConfig: IWidgetControllerConfig): Promise<IWidgetController>{
   const { appParams, setProps } = controllerConfig;
-  const { experiments, locale } = widgetProps;
+  const locale = getLocale(controllerConfig);
+  const experiments = await getExperimentsByScope(EXPERIMENTS_SCOPE);
+
   return {
     pageReady() {
       setProps({

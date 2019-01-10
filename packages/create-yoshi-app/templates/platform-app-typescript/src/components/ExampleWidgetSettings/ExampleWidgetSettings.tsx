@@ -7,7 +7,7 @@ import {
   Divider,
   TextLabel,
 } from '@wix/wix-base-ui';
-
+//TODO: check (window as any)
 interface IExampleWidgetSettingsState {
   backgroundColor: string,
   fontSize: number
@@ -18,11 +18,11 @@ const defaultSettingsValues: IExampleWidgetSettingsState= {
   fontSize: 14,
 };
 
-export class ExampleWidgetSettings extends React.PureComponent<null, IExampleWidgetSettingsState> {
+export class ExampleWidgetSettings extends React.PureComponent<{}, IExampleWidgetSettingsState> {
   state = defaultSettingsValues;
 
   componentWillMount() {
-    window.Wix.Styles.getStyleParams(styleParams => {
+    (window as any).Wix.Styles.getStyleParams(styleParams => {
       this.setState({
         backgroundColor: styleParams.colors['backgroundColor'].value,
         fontSize: styleParams.fonts['fontSize'].size,
@@ -31,14 +31,14 @@ export class ExampleWidgetSettings extends React.PureComponent<null, IExampleWid
   }
 
   updateHeaderBackgroundColor = (backgroundColor: string) => {
-    window.Wix.Styles.setColorParam('backgroundColor', {
+    (window as any).Wix.Styles.setColorParam('backgroundColor', {
       value: { color: false, opacity: 1, rgba: backgroundColor },
     });
     this.setState({ backgroundColor });
   };
 
   updateHeaderFontSize = (fontSize: number) => {
-    window.Wix.Styles.setFontParam('fontSize', {
+    (window as any).Wix.Styles.setFontParam('fontSize', {
       value: {
         family: 'roboto-bold',
         fontStyleParam: true,

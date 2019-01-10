@@ -1,7 +1,7 @@
 import * as fakeTpaResponse from './fake-tpa-response.json';
-
-if (window.Wix && window.Wix.Utils.getViewMode() === 'standalone') {
-  window.Wix = new class WixMock {
+//todo: check (window as any)
+if ((window as any).Wix && (window as any).Wix.Utils.getViewMode() === 'standalone') {
+  (window as any).Wix = new class WixMock {
     modelCache = {};
     siteColors;
     siteTextPresets;
