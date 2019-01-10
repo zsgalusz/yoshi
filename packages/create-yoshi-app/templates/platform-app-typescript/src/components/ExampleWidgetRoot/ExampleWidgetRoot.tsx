@@ -4,7 +4,7 @@ import { I18nextProvider } from 'react-i18next';
 import i18n from '../../config/i18n';
 import { ExperimentsProvider } from '@wix/wix-experiments-react';
 import { ExperimentsBag } from '@wix/wix-experiments';
-import { IHostProps } from  '@wix/native-components-infra';
+import { IHostProps } from  '@wix/native-components-infra/dist/src/types/types';
 
 interface IExampleWidgetRootProps {
   name: string,

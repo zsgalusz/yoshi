@@ -18,5 +18,9 @@
     "./src/**/*.tsx",
     "./test/**/*.ts",
     "./src/**/*.ts"
+  ],
+  "files": [
+    "./src/types/external-types.d.ts",
+    "./src/types/stylable.d.ts"
   ]
 }

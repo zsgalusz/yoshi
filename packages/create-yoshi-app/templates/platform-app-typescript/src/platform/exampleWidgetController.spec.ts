@@ -15,7 +15,7 @@ describe('exampleWidgetControllerFactory', () => {
   it('should call setProps with data', async () => {
     mockExperiments(EXPERIMENTS_SCOPE, { someExperiment: 'true' });
     const setPropsSpy = jest.fn();
-    const appParams = {
+    const appParams: any = {
       baseUrls: {
         staticsBaseUrl: 'http://some-static-url.com',
       },
@@ -23,7 +23,7 @@ describe('exampleWidgetControllerFactory', () => {
     const locale = 'locale';
     const experiments = { someExperiment: 'true' };
 
-    const controller = await exampleWidgetControllerFactory({
+    const controller = await exampleWidgetControllerFactory(<any> {
       appParams,
       setProps: setPropsSpy,
       wixCodeApi: {
