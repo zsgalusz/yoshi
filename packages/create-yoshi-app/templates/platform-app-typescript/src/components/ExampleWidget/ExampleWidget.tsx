@@ -4,6 +4,7 @@ import { withExperiments } from '@wix/wix-experiments-react';
 import {ButtonNext as Button} from 'wix-ui-core/button-next';
 import styles from './ExampleWidget.st.css';
 import { TranslationFunction } from 'i18next';
+import Experiments from '@wix/wix-experiments';
 
 interface IExampleWidgetProps {
   name: string,
