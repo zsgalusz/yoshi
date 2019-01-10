@@ -16,6 +16,7 @@
     "release": "yoshi release"
   },
   "devDependencies": {
+    "@types/jest": "^23.3.12",
     "enzyme": "^3.8.0",
     "enzyme-adapter-react-16": "^1.7.1",
     "express": "~4.15.0",
@@ -29,6 +30,7 @@
     "velocity": "~0.7.0",
     "wix-ui-core": "^2.0.29",
     "yoshi": "^3.0.0",
+    "typescript": "^3.2.2",
     "yoshi-style-dependencies": "^3.0.0"
   },
   "dependencies": {
@@ -68,11 +70,11 @@
       }
     },
     "entry": {
-      "settingsExampleWidget": "./settingsExampleWidget.entry.js",
-      "editorExampleWidget": "./editorExampleWidget.entry.js",
-      "viewerExampleWidget": "./viewerExampleWidget.entry.js",
-      "viewerScript": "./viewerScript.entry.js",
-      "wix-private-mock": "../test/wix-private.mock.js"
+      "settingsExampleWidget": "./settingsExampleWidget.entry.tsx",
+      "editorExampleWidget": "./editorExampleWidget.entry.tsx",
+      "viewerExampleWidget": "./viewerExampleWidget.entry.ts",
+      "viewerScript": "./viewerScript.entry.ts",
+      "wix-private-mock": "../test/wix-private.mock.ts"
     },
     "exports": "[name]",
     "umdNamedDefine": false,

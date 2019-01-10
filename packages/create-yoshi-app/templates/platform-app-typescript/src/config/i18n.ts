@@ -3,7 +3,7 @@ import i18next from 'i18next';
 
 export const i18nInstance = i18next.createInstance();
 
-export default memoize(function i18n(locale) {
+export default memoize(function i18n(locale: string) {
   return i18nInstance
     .use({
       type: 'backend',

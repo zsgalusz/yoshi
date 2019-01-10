@@ -14,7 +14,7 @@ export function exampleWidgetControllerFactory(
     type,
     warmupData,
   },
-  { experiments, translations, locale },
+  { experiments, locale },
 ) {
   return {
     pageReady() {
@@ -22,7 +22,6 @@ export function exampleWidgetControllerFactory(
         name: 'World',
         cssBaseUrl: appParams.baseUrls.staticsBaseUrl,
         locale,
-        translations,
         experiments,
       });
     },

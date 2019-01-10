@@ -1,5 +1,4 @@
 const { Engine } = require('velocity');
-
 const velocityData = require('../velocity.data.json');
 const velocityDataPrivate = require('../velocity.private.data.json');
 

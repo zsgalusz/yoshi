@@ -10,9 +10,6 @@ describe('exampleWidgetControllerFactory', () => {
     };
     const locale = 'locale';
     const experiments = { someExperiment: 'true' };
-    const translations = {
-      'some.key.to.translate': 'Antidisestablishmentarianism',
-    };
 
     const controller = exampleWidgetControllerFactory(
       {
@@ -21,7 +18,6 @@ describe('exampleWidgetControllerFactory', () => {
       },
       {
         experiments,
-        translations,
         locale,
       },
     );
@@ -32,7 +28,6 @@ describe('exampleWidgetControllerFactory', () => {
       name: 'World',
       cssBaseUrl: appParams.baseUrls.staticsBaseUrl,
       locale,
-      translations,
       experiments,
     });
   });

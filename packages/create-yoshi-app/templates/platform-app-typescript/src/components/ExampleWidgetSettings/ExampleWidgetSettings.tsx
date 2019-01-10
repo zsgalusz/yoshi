@@ -8,12 +8,17 @@ import {
   TextLabel,
 } from '@wix/wix-base-ui';
 
-const defaultSettingsValues = {
+interface IExampleWidgetSettingsState {
+  backgroundColor: string,
+  fontSize: number
+}
+
+const defaultSettingsValues: IExampleWidgetSettingsState= {
   backgroundColor: '#ffffff',
   fontSize: 14,
 };
 
-export class ExampleWidgetSettings extends React.Component {
+export class ExampleWidgetSettings extends React.PureComponent<null, IExampleWidgetSettingsState> {
   state = defaultSettingsValues;
 
   componentWillMount() {
@@ -25,14 +30,14 @@ export class ExampleWidgetSettings extends React.Component {
     });
   }
 
-  updateHeaderBackgroundColor = backgroundColor => {
+  updateHeaderBackgroundColor = (backgroundColor: string) => {
     window.Wix.Styles.setColorParam('backgroundColor', {
       value: { color: false, opacity: 1, rgba: backgroundColor },
     });
     this.setState({ backgroundColor });
   };
 
-  updateHeaderFontSize = fontSize => {
+  updateHeaderFontSize = (fontSize: number) => {
     window.Wix.Styles.setFontParam('fontSize', {
       value: {
         family: 'roboto-bold',
