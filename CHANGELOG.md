@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.16.0 (Jan 13, 2019)
+
+#### :bug: Bug
+
+* `yoshi`
+  * [#907](https://github.com/wix/yoshi/pull/907) Remove update-node-version task
+
 ## 2.15.0 (Nov 14, 2018)
 
 #### :nail_care: Enhancement
