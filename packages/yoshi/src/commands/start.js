@@ -46,8 +46,6 @@ module.exports = runner.command(
       tasks[require.resolve('../tasks/migrate-to-scoped-packages')];
     const migrateBowerArtifactory =
       tasks[require.resolve('../tasks/migrate-bower-artifactory')];
-    const wixUpdateNodeVersion =
-      tasks[require.resolve('../tasks/update-node-version')];
     const wixPetriSpecs = tasks[require.resolve('../tasks/petri-specs')];
     const wixMavenStatics = tasks[require.resolve('../tasks/maven-statics')];
     const wixDepCheck = tasks[require.resolve('../tasks/dep-check')];
@@ -70,7 +68,6 @@ module.exports = runner.command(
 
     await Promise.all([
       clean({ pattern: `{dist,target}/*` }),
-      wixUpdateNodeVersion({}, { title: 'update-node-version', log: false }),
       migrateScopePackages(
         {},
         { title: 'scope-packages-migration', log: false },
