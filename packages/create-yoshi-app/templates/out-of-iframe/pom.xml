@@ -20,8 +20,8 @@
 
     <developers>
         <developer>
-            <name>Amit Dahan</name>
-            <email>amitda@wix.com</email>
+            <name>{%authorName%}</name>
+            <email>{%authorEmail%}</email>
             <roles>
                 <role>owner</role>
             </roles>
