@@ -20,6 +20,7 @@
     "./src/**/*.ts"
   ],
   "files": [
+    "./node_modules/jest-yoshi-preset/types.d.ts",    
     "./src/types/external-types.d.ts",
     "./src/types/stylable.d.ts"
   ]
