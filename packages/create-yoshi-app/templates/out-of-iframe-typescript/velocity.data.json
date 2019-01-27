@@ -8,6 +8,6 @@
   "basename": "/",
   "clientTopology": {
     "staticsDomain": "static.parastorage.com",
-    "staticsBaseUrl": "http://localhost:3200/"
+    "staticsBaseUrl": "https://localhost:3200/"
   }
 }
