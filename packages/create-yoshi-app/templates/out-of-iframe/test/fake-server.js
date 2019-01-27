@@ -1,9 +1,25 @@
-const express = require('express');
+const httpTestkit = require('@wix/wix-http-testkit');
 const renderVM = require('./vm');
 const velocityData = require('../velocity.data.json');
 const velocityDataPrivate = require('../velocity.private.data.json');
+const fs = require('fs');
 
-const app = express();
+const server = httpTestkit.server({
+  port: process.env.PORT,
+  ssl: {
+    cert: fs.readFileSync(
+      'node_modules/yoshi/src/tasks/cdn/assets/cert.pem',
+      'utf-8',
+    ),
+    key: fs.readFileSync(
+      'node_modules/yoshi/src/tasks/cdn/assets/key.pem',
+      'utf-8',
+    ),
+    passphrase: '1234',
+  },
+});
+
+const app = server.getApp();
 
 app.get(
   '/_api/wix-laboratory-server/laboratory/conductAllInScope',
@@ -25,12 +41,13 @@ app.use('/settingsExampleWidget', (req, res) => {
 });
 
 // Launch the server
-const server = app.listen(process.env.PORT, err => {
-  if (!err) {
-    console.info(`Fake server is running on port ${server.address().port}`);
-  } else {
+server.start().then(
+  () => {
+    console.info(`Fake server is running on port ${server.getUrl()}`);
+  },
+  err => {
     console.error(
       `Fake server failed to start on port ${process.env.PORT}: ${err.message}`,
     );
-  }
-});
+  },
+);
