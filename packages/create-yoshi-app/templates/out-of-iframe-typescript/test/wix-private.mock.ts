@@ -17,6 +17,13 @@ if ((window as any).Wix && (window as any).Wix.Utils.getViewMode() === 'standalo
       return 'componentInfo';
     }
 
+    getSiteInfo(cb) {
+      cb({
+        url: 'https://wix.com/my-site',
+        baseUrl: 'https://wix.com/',
+      });
+    }
+
     Utils = {
       getViewMode() {
         return 'standalone';
