@@ -25,6 +25,10 @@ app.use('/settingsExampleWidget', (req, res) => {
 });
 
 // Launch the server
-app.listen(process.env.PORT, () => {
-  console.info(`Fake server is running on port ${process.env.PORT}`);
+const server = app.listen(process.env.PORT, err => {
+  if (!err) {
+    console.info(`Fake server is running on port ${server.address().port}`);
+  } else {
+    console.error(`Fake server failed to start on port ${process.env.PORT}`);
+  }
 });
