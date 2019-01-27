@@ -3,11 +3,11 @@
 Out of iframe docs:
 http://wixplorer.wixpress.com/out-of-iframe/reference
 
-Configure your widgets as described in the docs above. 
+Configure your widgets as described in the docs above.
 
-* Widget URL - link to the editor URL (served by your server). This is your widget but in an iframe.
-* App Settings URL - link to the settings panel URL (served by your server) 
-* Widget Endpoint json should link to your bundle with the component, like this:
+- Widget URL - link to the editor URL (served by your server). This is your widget but in an iframe.
+- App Settings URL - link to the settings panel URL (served by your server)
+- Widget Endpoint json should link to your bundle with the component, like this:
 
 ```
 {
@@ -16,7 +16,7 @@ Configure your widgets as described in the docs above.
 ```
 
 In addition to `platform.viewerScriptUrl`, configure `platform.baseUrls.staticsBaseUrl` - should be the statics base URL (to your production one)
- 
+
 ```
 {
      "platform": {
@@ -27,5 +27,5 @@ In addition to `platform.viewerScriptUrl`, configure `platform.baseUrls.staticsB
      }
  }
 ```
-Configure `src/config/index.js` with your widgets ids and experiments scope.
 
+Configure `src/config/index.js` with your widgets ids and experiments scope.

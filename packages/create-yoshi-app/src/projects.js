@@ -13,6 +13,6 @@ module.exports = [
   'universal-typescript',
   'server',
   'server-typescript',
-  'platform-app',
-  'platform-app-typescript'
+  'out-of-iframe',
+  'out-of-iframe-typescript'
 ];
