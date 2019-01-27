@@ -77,6 +77,11 @@
       "viewerScript": "./viewerScript.entry.ts",
       "wix-private-mock": "../test/wix-private.mock.ts"
     },
+    "servers": {
+      "cdn": {
+        "ssl": true
+      }
+    },    
     "exports": "[name]",
     "umdNamedDefine": false,
     "enhancedTpaStyle": true
