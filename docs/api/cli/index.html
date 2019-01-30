@@ -107,7 +107,7 @@
 <p>Explictly emit bundle source maps.</p>
 <p>This task will perform the following:</p>
 <ol>
-<li>Compile using <code>TypeScript</code> (<code>*.ts</code>) or <code>babel</code> (<code>*.js</code>) files into <code>dist/</code>. In case you do not want to transpile server (node), you can remove <code>.babelrc</code>/<code>babel.config.js</code>/<code>tsconfig</code>/package json's <code>babel</code> key. If you still need those (for transpiling client code), please use <code>yoshi.runIndividualTranspiler</code>.</li>
+<li>Compile using <code>TypeScript</code> (<code>*.ts</code>) or <code>babel</code> (<code>*.js</code>) files into <code>dist/</code>.</li>
 <li>Copy assets to <code>dist</code> folder (ejs/html/images...).</li>
 </ol>
 <p>You can specify multiple entry points in your <code>package.json</code> file. This gives the ability build multiple bundles at once. More info about Webpack entries can be found <a href="http://webpack.github.io/docs/configuration.html#entry">here</a>.</p>
