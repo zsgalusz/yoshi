@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.16.1 (Feb 4, 2019)
+
+#### :bug: Bug
+
+* `yoshi`
+  * [#962](https://github.com/wix/yoshi/pull/962) Fix terser version as a temporary fix
+
 ## 2.16.0 (Jan 13, 2019)
 
 #### :bug: Bug
