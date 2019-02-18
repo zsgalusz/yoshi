@@ -512,6 +512,11 @@ function createClientWebpackConfig({
     entry: isSingleEntry(entry) ? { app: entry } : entry,
 
     optimization: {
+      ...(isDevelopment &&
+      project.webpackSingleRuntimeChunk &&
+      !isSingleEntry(entry)
+        ? { runtimeChunk: 'single' }
+        : {}),
       minimize: !isDebug,
       splitChunks: useSplitChunks ? splitChunksConfig : false,
       concatenateModules: isProduction && !disableModuleConcat,
@@ -608,8 +613,8 @@ function createClientWebpackConfig({
         runtimeMode: 'shared',
         globalRuntimeId: '__stylable_yoshi__',
         generate: {
-          runtimeStylesheetId: 'namespace'
-        }
+          runtimeStylesheetId: 'namespace',
+        },
       }),
 
       // https://github.com/th0r/webpack-bundle-analyzer

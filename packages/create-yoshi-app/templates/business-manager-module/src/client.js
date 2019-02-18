@@ -13,6 +13,8 @@ wixAxiosConfig(axios, {
   baseURL: '/',
 });
 
+let forceUpdate = null;
+
 class AppContainer extends React.Component {
   static propTypes = {
     locale: PropTypes.string,
@@ -25,6 +27,8 @@ class AppContainer extends React.Component {
       'businessManager.viewStartLoading',
       BI_VIEW_ID,
     );
+
+    forceUpdate = this.forceUpdate.bind(this);
   }
 
   componentDidMount() {
@@ -47,6 +51,14 @@ class AppContainer extends React.Component {
       </I18nextProvider>
     );
   }
+}
+
+if (module.hot) {
+  module.hot.accept('./components/App', function hotModuleAccept() {
+    if (typeof forceUpdate === 'function') {
+      forceUpdate();
+    }
+  });
 }
 
 ModuleRegistry.registerComponent(COMPONENT_ID, () => AppContainer);

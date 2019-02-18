@@ -49,6 +49,11 @@ const schema = {
       type: 'boolean',
     },
     entry: webpackOptions.properties.entry,
+    webpackSingleRuntimeChunk: {
+      description:
+        'Set to true to create a single runtime chunk for all entry points',
+      type: 'boolean',
+    },
     servers: {
       type: 'object',
       additionalProperties: false,

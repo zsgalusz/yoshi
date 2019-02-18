@@ -1,0 +1,30 @@
+<%# read more: https://github.com/wix-private/fed-handbook/blob/master/CONFIGURATION_TEMPLATES.md#erb-template-engine %>
+
+{
+  "moduleId": "{%PROJECT_NAME%}",
+  "minifiedBundleFile": "<%= static_url('com.wixpress.{%projectName%}') %>{%projectName%}-module.bundle.min.js",
+  "bundleFile": "<%= static_url('com.wixpress.{%projectName%}') %>{%projectName%}-module.bundle.js",
+  "mainPageComponentId": "{%projectName%}-lazy-component-id",
+  "pageComponents": [
+    {
+      "pageComponentId": "{%projectName%}-lazy-component-id",
+      "pageComponentName": "{%projectName%}-lazy-component-id",
+      "route": "{%projectName%}"
+    }
+  ],
+  "config": {
+    "topology": {
+      "staticsUrl": "<%= static_url('com.wixpress.{%projectName%}') %>"
+    }
+  },
+  "bundles": [
+    {
+      "file": "<%= static_url('com.wixpress.{%projectName%}') %>runtime.bundle.min.js",
+      "debugFile": "<%= static_url('com.wixpress.{%projectName%}') %>runtime.bundle.js"
+    },
+    {
+      "file": "<%= static_url('com.wixpress.{%projectName%}') %>{%projectName%}-module.chunk.min.js",
+      "debugFile": "<%= static_url('com.wixpress.{%projectName%}') %>{%projectName%}-module.chunk.js"
+    }
+  ]
+}

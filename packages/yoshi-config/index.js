@@ -65,6 +65,7 @@ const loadConfig = () => {
       },
     },
     entry: getConfig('entry'),
+    webpackSingleRuntimeChunk: getConfig('webpackSingleRuntimeChunk', false),
     splitChunks: getConfig('splitChunks', false),
     defaultEntry: './client',
     separateCss: getConfig('separateCss', true),

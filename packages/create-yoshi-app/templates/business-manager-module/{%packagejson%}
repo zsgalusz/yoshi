@@ -53,6 +53,7 @@
       "{%projectName%}-module": "./module",
       "{%projectName%}-app": "./client"
     },
+    "webpackSingleRuntimeChunk": true,
     "externals": {
       "react": "React",
       "react-dom": "ReactDOM",

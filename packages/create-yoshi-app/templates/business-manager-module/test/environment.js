@@ -8,7 +8,7 @@ const getTestKitConfig = async (
   { withRandomPorts } = { withRandomPorts: false },
 ) => {
   const serverUrl = 'http://localhost:3200/';
-  const path = './templates/module_{%PROJECT_NAME%}.json.erb';
+  const path = './templates/module_{%PROJECT_NAME%}.json.dev.erb';
   const serviceId = 'com.wixpress.{%projectName%}';
 
   const moduleConfig = await new ModuleConfigFileEmitter(path)

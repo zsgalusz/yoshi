@@ -7,11 +7,10 @@ import { MODULE_ID, LAZY_COMPONENT_ID, COMPONENT_ID } from './config';
 
 const files = props => {
   const minified = debug => (debug ? '' : '.min');
+  const bundleType = process.env.NODE_ENV === 'development' ? 'chunk' : 'bundle';
   const APP_BUNDLE_FILE = '{%projectName%}-app'; // should be in sync with app's entry-point name in package.json
   return [
-    `${props.config.topology.staticsUrl}${APP_BUNDLE_FILE}.bundle${minified(
-      props.debug,
-    )}.js`,
+    `${props.config.topology.staticsUrl}${APP_BUNDLE_FILE}.${bundleType}${minified(props.debug)}.js`,
     `${props.config.topology.staticsUrl}${APP_BUNDLE_FILE}${minified(
       props.debug,
     )}.css`,
