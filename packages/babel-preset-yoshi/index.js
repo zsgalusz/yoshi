@@ -42,7 +42,7 @@ module.exports = function(api, opts = {}) {
       !options.ignoreReact && [
         require('@babel/preset-react'),
         {
-          development: isDevelopment || isTest,
+          development: isDevelopment,
         },
       ],
     ].filter(Boolean),
