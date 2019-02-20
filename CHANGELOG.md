@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.3 (Feb 20, 2019)
+* [#995](https://github.com/wix/yoshi/pull/995) Upgrade wnpm-ci
+
 ## 1.3.1 (Sep 25, 2018)
 * [a78c20](https://github.com/wix/yoshi/commit/a78c20b7b471da46463a44d1106b106fc6d20147) Upgrade `wix-babel-preset` to version 2
 ## 1.3.1 (Jul 1, 2018)
