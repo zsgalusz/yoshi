@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.16.3 (Feb 20, 2019)
+
+#### :bug: Bug Fix
+
+- `yoshi-helpers`, `yoshi`
+  - [#994](https://github.com/wix/yoshi/pull/994) Remove `mocha-teamcity-reporter` as a temporary fix ([@yairhaimo](https://github.com/yairhaimo))
+
 ## 2.16.2 (Feb 4, 2019)
 
 #### :bug: Bug
