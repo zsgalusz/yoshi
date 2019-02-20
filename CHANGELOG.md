@@ -1,11 +1,17 @@
 # Changelog
 
+## 2.16.4 (Feb 20, 2019)
+
+#### :house: Internal
+* `yoshi`
+  * [#996](https://github.com/wix/yoshi/pull/996) Upgrade wnpm-ci
+
 ## 2.16.3 (Feb 20, 2019)
 
-#### :bug: Bug Fix
+#### :bug: Bug
 
-- `yoshi-helpers`, `yoshi`
-  - [#994](https://github.com/wix/yoshi/pull/994) Remove `mocha-teamcity-reporter` as a temporary fix ([@yairhaimo](https://github.com/yairhaimo))
+* `yoshi-helpers`, `yoshi`
+  * [#994](https://github.com/wix/yoshi/pull/994) Remove `mocha-teamcity-reporter` as a temporary fix ([@yairhaimo](https://github.com/yairhaimo))
 
 ## 2.16.2 (Feb 4, 2019)
 
