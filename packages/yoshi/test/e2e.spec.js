@@ -3,7 +3,7 @@ const expect = require('chai').expect;
 const tp = require('./helpers/test-phases');
 const fx = require('./helpers/fixtures');
 const { exists } = require('../src/utils');
-const { outsideTeamCity, insideTeamCity } = require('./helpers/env-variables');
+const { outsideTeamCity } = require('./helpers/env-variables');
 const getMockedCI = require('./helpers/get-mocked-ci');
 
 describe('Aggregator: e2e', () => {
@@ -110,18 +110,6 @@ describe('Aggregator: e2e', () => {
       expect(res.code).to.equal(0);
       expect(res.stdout).to.contain('protractor');
       expect(res.stdout).to.contain('1 passing (');
-    });
-
-    it('should run protractor with mocha and use TeamCity reporter', () => {
-      const res = test
-        .setup(singleModuleWithMocha())
-        .execute('test', ['--protractor'], insideTeamCity);
-
-      expect(res.code).to.equal(0);
-      expect(res.stdout).to.contain('protractor');
-      expect(res.stdout).to.contain(
-        "##teamcity[testStarted name='should write some text to body' captureStandardOutput='true']",
-      );
     });
 
     it('should use babel-register', function() {
