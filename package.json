@@ -75,7 +75,7 @@
     "minimist": "^1.2.0",
     "mkdirp": "~0.5.1",
     "mocha": "~3.4.2",
-    "mocha-teamcity-reporter": "~1.1.1",
+    "mocha-teamcity-reporter": "^2",
     "ng-annotate-loader": "~0.6.1",
     "node-sass": "~4.5.3",
     "petri-specs": "~1.1.39",
