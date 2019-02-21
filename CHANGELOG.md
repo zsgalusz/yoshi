@@ -1,10 +1,17 @@
 # Changelog
 
+## 2.16.5 (Feb 21, 2019)
+
+#### :bug: Bug
+
+* `yoshi-helpers`, `yoshi`
+  * [#999](https://github.com/wix/yoshi/pull/999) Upgrade `mocha-teamcity-reporter` to v2 ([@yairhaimo](https://github.com/yairhaimo))
+
 ## 2.16.4 (Feb 20, 2019)
 
 #### :house: Internal
 * `yoshi`
-  * [#996](https://github.com/wix/yoshi/pull/996) Upgrade wnpm-ci
+  * [#996](https://github.com/wix/yoshi/pull/996) Upgrade `wnpm-ci`
 
 ## 2.16.3 (Feb 20, 2019)
 
