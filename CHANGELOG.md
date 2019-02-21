@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.4 (Feb 21, 2019)
+* [#998](https://github.com/wix/yoshi/pull/998) Upgrade mocha-teamcity-reporter to ^2
+
 ## 1.3.3 (Feb 20, 2019)
 * [#995](https://github.com/wix/yoshi/pull/995) Upgrade wnpm-ci
 
