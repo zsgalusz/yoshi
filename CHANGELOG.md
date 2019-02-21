@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.5 (Feb 21, 2019)
+* [#1001](https://github.com/wix/yoshi/pull/1001) Fix protractor with teamcity reporter test
+
 ## 1.3.4 (Feb 21, 2019)
 * [#998](https://github.com/wix/yoshi/pull/998) Upgrade mocha-teamcity-reporter to ^2
 
