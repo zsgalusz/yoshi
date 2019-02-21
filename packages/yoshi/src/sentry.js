@@ -4,8 +4,8 @@ const Sentry = require('@sentry/node');
 const chalk = require('chalk');
 const { getEnvInfo } = require('../src/env-info');
 const findPkg = require('find-pkg');
-const { inTeamCity } = require('yoshi-helpers/queries');
 const { SENTRY_DSN } = require('./constants');
+const isCI = require('is-ci');
 
 function configureSentry() {
   Sentry.init({
@@ -24,7 +24,7 @@ function configureSentry() {
     scope.setTag('node-version', process.version);
     scope.setTag('os', osName());
     scope.setTag('NODE_ENV', process.env.NODE_ENV);
-    scope.setTag('CI', !!inTeamCity());
+    scope.setTag('CI', !!isCI);
   });
 
   process.removeAllListeners('unhandledRejection');

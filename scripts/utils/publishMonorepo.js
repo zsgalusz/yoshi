@@ -1,12 +1,13 @@
 const path = require('path');
 const execa = require('execa');
 const { testRegistry } = require('./constants');
+const { spawn } = require('child_process');
 
 function publishMonorepo() {
   // Start in root directory even if run from another directory
   process.chdir(path.join(__dirname, '../..'));
 
-  const verdaccio = execa.shell('npx verdaccio --config verdaccio.yaml');
+  const verdaccio = spawn('npx', ['verdaccio', '--config', 'verdaccio.yaml']);
 
   execa.shellSync('npx wait-port 4873 -o silent');
 
@@ -27,7 +28,7 @@ function publishMonorepo() {
 
   // Return a cleanup function
   return () => {
-    execa.shellSync(`kill -9 ${verdaccio.pid}`);
+    verdaccio.kill('SIGKILL');
   };
 }
 

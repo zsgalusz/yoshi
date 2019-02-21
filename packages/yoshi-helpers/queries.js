@@ -6,6 +6,7 @@ const project = require('yoshi-config');
 const globs = require('yoshi-config/globs');
 const { tryRequire } = require('./utils');
 const { POM_FILE } = require('yoshi-config/paths');
+const isCI = require('is-ci');
 
 const readDir = patterns =>
   []
@@ -24,8 +25,7 @@ module.exports.watchMode = value => {
   return !!process.env.WIX_NODE_BUILD_WATCH_MODE;
 };
 
-module.exports.inTeamCity = () =>
-  process.env.BUILD_NUMBER || process.env.TEAMCITY_VERSION;
+module.exports.isYoshiCIRun = () => process.env.YOSHI_CI;
 
 module.exports.isProduction = () =>
   (process.env.NODE_ENV || '').toLowerCase() === 'production';
@@ -88,7 +88,7 @@ module.exports.hasBundleInStaticsDir = () => {
 
 module.exports.shouldDeployToCDN = () => {
   return (
-    module.exports.inTeamCity() &&
+    isCI &&
     (process.env.ARTIFACT_VERSION || process.env.BUILD_VCS_NUMBER) &&
     fs.existsSync(POM_FILE)
   );

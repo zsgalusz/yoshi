@@ -15,7 +15,6 @@ const {
   createClientWebpackConfig,
   createServerWebpackConfig,
 } = require('../../config/webpack.config');
-const { inTeamCity: checkInTeamCity } = require('yoshi-helpers');
 const {
   SRC_DIR,
   BUILD_DIR,
@@ -29,10 +28,9 @@ const {
   clientProjectName,
   clientFilesPath,
 } = require('yoshi-config');
+const isCI = require('is-ci');
 
 const wixDepCheck = require('../tasks/dep-check');
-
-const inTeamCity = checkInTeamCity();
 
 const copyTemplates = async () => {
   const files = await globby('**/*.{ejs,vm}', { cwd: SRC_DIR });
@@ -56,7 +54,7 @@ module.exports = async () => {
   await Promise.all([wixDepCheck(), copyTemplates()]);
 
   // Run CI related updates
-  if (inTeamCity) {
+  if (isCI) {
     const petriSpecs = require('../tasks/petri-specs');
     const wixMavenStatics = require('../tasks/maven-statics');
 

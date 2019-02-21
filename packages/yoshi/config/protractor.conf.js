@@ -4,7 +4,7 @@ const path = require('path');
 const ld = require('lodash');
 const { wixCssModulesRequireHook } = require('yoshi-runtime');
 const {
-  inTeamCity,
+  isYoshiCIRun,
   exists,
   getMochaReporter,
   setupRequireHooks,
@@ -14,6 +14,7 @@ const startRewriteForwardProxy = require('yoshi-helpers/rewrite-forward-proxy');
 const globs = require('yoshi-config/globs');
 const project = require('yoshi-config');
 const { shouldDeployToCDN } = require('yoshi-helpers');
+const isCI = require('is-ci');
 
 setupRequireHooks();
 
@@ -35,19 +36,22 @@ const merged = ld.mergeWith(
     exclude: [],
     directConnect: true,
 
-    ...(shouldDeployToCDN() && {
-      capabilities: {
-        browserName: 'chrome',
-        chromeOptions: {
-          args: [
-            'ignore-certificate-errors',
-            `proxy-server=127.0.0.1:${forwardProxyPort}`,
-            'disable-extensions',
-            'disable-plugins',
-          ],
-        },
+    capabilities: {
+      browserName: 'chrome',
+      chromeOptions: {
+        args: [
+          ...(isCI || isYoshiCIRun() ? ['no-sandbox', 'headless'] : []),
+          ...(shouldDeployToCDN()
+            ? [
+                'ignore-certificate-errors',
+                `proxy-server=127.0.0.1:${forwardProxyPort}`,
+                'disable-extensions',
+                'disable-plugins',
+              ]
+            : []),
+        ],
       },
-    }),
+    },
 
     beforeLaunch: () => {
       const rootDir = './src';
@@ -77,7 +81,7 @@ const merged = ld.mergeWith(
         setupProtractorLogs();
       }
 
-      if (merged.framework === 'jasmine' && inTeamCity()) {
+      if (merged.framework === 'jasmine' && isCI) {
         const TeamCityReporter = require('jasmine-reporters').TeamCityReporter;
         jasmine.getEnv().addReporter(new TeamCityReporter());
       }

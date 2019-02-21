@@ -5,7 +5,7 @@ const infoCommand = require('../src/commands/info');
 const config = require('yoshi-config');
 const { configureSentry, handleError } = require('../src/sentry');
 const chalk = require('chalk');
-const { inTeamCity } = require('yoshi-helpers');
+const isCI = require('is-ci');
 
 // IDEs start debugging with '--inspect' or '--inspect-brk' option. We are setting --debug instead
 require('./normalize-debugging-args')();
@@ -113,7 +113,7 @@ try {
 } catch (_) {} // ignore errors of configuring sentry
 
 function handleUncaughtError(error) {
-  if (prog.verbose || inTeamCity()) {
+  if (prog.verbose || isCI) {
     console.error(
       chalk.red(
         `  Yoshi has encountered the following fatal error. Here is the full stacktrace:`,

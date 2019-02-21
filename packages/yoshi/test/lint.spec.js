@@ -1,7 +1,7 @@
 const { expect } = require('chai');
 const tp = require('../../../test-helpers/test-phases');
 const fx = require('../../../test-helpers/fixtures');
-const { insideTeamCity } = require('../../../test-helpers/env-variables');
+const { insideCI } = require('../../../test-helpers/env-variables');
 
 describe('Aggregator: Lint', () => {
   const test = tp.create();
@@ -138,7 +138,7 @@ describe('Aggregator: Lint', () => {
             }),
             'tslint.json': fx.tslint({ radix: true }),
           })
-          .execute('lint', ['app/a.ts', 'other-dir/b.tsx'], insideTeamCity);
+          .execute('lint', ['app/a.ts', 'other-dir/b.tsx'], insideCI);
 
         expect(res.code).to.equal(1);
         expect(res.stdout).to.contain('app/a.ts:1:1');
@@ -157,7 +157,7 @@ describe('Aggregator: Lint', () => {
             'tsconfig.json': fx.tsconfig({ include: ['app/a.ts'] }),
             'tslint.json': fx.tslint({ radix: true }),
           })
-          .execute('lint', ['app/a.ts', 'other-dir/b.tsx'], insideTeamCity);
+          .execute('lint', ['app/a.ts', 'other-dir/b.tsx'], insideCI);
 
         expect(res.code).to.equal(0);
         expect(res.stderr).to.contain(
@@ -184,7 +184,7 @@ describe('Aggregator: Lint', () => {
       const res = setup({ 'app/a.js': `parseInt("1", 10);` }).execute(
         'lint',
         [],
-        insideTeamCity,
+        insideCI,
       );
       expect(res.code).to.equal(0);
     });
@@ -192,7 +192,7 @@ describe('Aggregator: Lint', () => {
     it('should log warnings to the console when there are only warnings', () => {
       const res = setup({
         'app/a.js': `/*eslint radix: 1*/\n parseInt("1");`,
-      }).execute('lint', [], insideTeamCity);
+      }).execute('lint', [], insideCI);
       expect(res.code).to.equal(0);
       expect(res.stderr).to.contain('warning  Missing radix parameter  radix');
     });
@@ -200,7 +200,7 @@ describe('Aggregator: Lint', () => {
     it('should fail with exit code 1 for an invalid file', () => {
       const res = setup({
         'app/a.js': `parseInt("1");`,
-      }).execute('lint', [], insideTeamCity);
+      }).execute('lint', [], insideCI);
       expect(res.code).to.equal(1);
       expect(res.stderr).to.contain(
         '1:1  error  Missing radix parameter  radix',
@@ -223,7 +223,7 @@ describe('Aggregator: Lint', () => {
       const res = setup({ 'app/a.js': `parseInt("1");` }).execute(
         'lint',
         ['--format json'],
-        insideTeamCity,
+        insideCI,
       );
       expect(res.code).to.equal(1);
       expect(JSON.parse(res.stderr)[0].messages[0].message).to.eq(
@@ -236,7 +236,7 @@ describe('Aggregator: Lint', () => {
         'app/a.js': `parseInt("1");`,
         'app/b.js': `parseInt("1");`,
         'app/dontrunonme.js': `parseInt("1");`,
-      }).execute('lint', ['app/a.js', 'app/b.js'], insideTeamCity);
+      }).execute('lint', ['app/a.js', 'app/b.js'], insideCI);
 
       expect(res.code).to.equal(1);
       expect(res.stderr).to.contain('app/a.js');
@@ -362,7 +362,7 @@ p {
               hooks: { prelint: 'echo "hello world" && exit 1' },
             }),
           })
-          .execute('lint', [], insideTeamCity);
+          .execute('lint', [], insideCI);
 
         expect(res.code).to.equal(1);
         expect(res.stdout).to.contain('hello world');

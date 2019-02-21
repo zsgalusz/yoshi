@@ -2,8 +2,8 @@ const expect = require('chai').expect;
 const tp = require('../../../test-helpers/test-phases');
 const fx = require('../../../test-helpers/fixtures');
 const {
-  outsideTeamCity,
-  insideTeamCity,
+  outsideCI,
+  insideCI,
   teamCityArtifactVersion,
 } = require('../../../test-helpers/env-variables');
 const {
@@ -73,7 +73,7 @@ describe('Aggregator: Test', () => {
       const res = test
         .verbose()
         .setup(executionOptions(TEST_PORT))
-        .execute('test', undefined, outsideTeamCity);
+        .execute('test', undefined, outsideCI);
 
       expect(res.code).to.equal(1);
       expect(res.stderr).to.include(
@@ -86,7 +86,7 @@ describe('Aggregator: Test', () => {
       test.setup(executionOptions(TEST_PORT));
       const testPath = test.tmp;
       child = await takePortFromAnotherProcess(testPath, TEST_PORT);
-      const res = test.execute('test', undefined, outsideTeamCity);
+      const res = test.execute('test', undefined, outsideCI);
 
       expect(res.code).to.equal(0);
       expect(res.stdout).to.include(
@@ -135,7 +135,7 @@ describe('Aggregator: Test', () => {
           `,
           'package.json': fx.packageJson(),
         })
-        .execute('test', undefined, outsideTeamCity);
+        .execute('test', undefined, outsideCI);
 
       expect(res.code).to.equal(0);
       expect(res.stdout).to.contain('1 passing');
@@ -275,7 +275,7 @@ describe('Aggregator: Test', () => {
       });
 
       const buildResponse = project.execute('build', [], {
-        ...insideTeamCity,
+        ...insideCI,
         ...teamCityArtifactVersion,
       });
 
@@ -285,7 +285,7 @@ describe('Aggregator: Test', () => {
       );
 
       const testResponse = project.execute('test', ['--protractor'], {
-        ...insideTeamCity,
+        ...insideCI,
         ...teamCityArtifactVersion,
       });
 
@@ -368,7 +368,7 @@ describe('Aggregator: Test', () => {
       let test, res;
       before(() => {
         test = tp.create();
-        res = test.setup(testSetup).execute('test', ['--jest'], insideTeamCity);
+        res = test.setup(testSetup).execute('test', ['--jest'], insideCI);
       });
 
       afterEach(function() {
@@ -601,7 +601,7 @@ describe('Aggregator: Test', () => {
         });
 
         const buildResponse = project.execute('build', [], {
-          ...insideTeamCity,
+          ...insideCI,
           ...teamCityArtifactVersion,
         });
 
@@ -611,7 +611,7 @@ describe('Aggregator: Test', () => {
         );
 
         const testResponse = project.execute('test', ['--jest'], {
-          ...insideTeamCity,
+          ...insideCI,
           ...teamCityArtifactVersion,
         });
 
@@ -777,7 +777,7 @@ describe('Aggregator: Test', () => {
             'test/some.spec.js': `it("fail", () => { throw new Error() });`,
             'package.json': fx.packageJson(),
           })
-          .execute('test', ['--mocha'], outsideTeamCity);
+          .execute('test', ['--mocha'], outsideCI);
 
         expect(res.code).to.be.above(0);
         expect(res.stdout).to.contain('1 failing');
@@ -791,7 +791,7 @@ describe('Aggregator: Test', () => {
             'src/bla/comp.spec.js': `it("pass", () => 1);`,
             'package.json': fx.packageJson(),
           })
-          .execute('test', ['--mocha'], outsideTeamCity);
+          .execute('test', ['--mocha'], outsideCI);
 
         expect(res.code).to.equal(0);
         expect(res.stdout).to.contain('3 passing');
@@ -803,7 +803,7 @@ describe('Aggregator: Test', () => {
             'test/some.spec.js': `it.only("pass", () => 1);`,
             'package.json': fx.packageJson(),
           })
-          .execute('test', ['--mocha'], insideTeamCity);
+          .execute('test', ['--mocha'], insideCI);
         expect(res.stdout).to.contain('##teamcity[');
       });
 
@@ -813,7 +813,7 @@ describe('Aggregator: Test', () => {
             'test/some.spec.js': `it.only("pass", () => 1);`,
             'package.json': fx.packageJson(),
           })
-          .execute('test', ['--mocha'], outsideTeamCity);
+          .execute('test', ['--mocha'], outsideCI);
 
         expect(res.code).to.equal(0);
         expect(res.stdout).to.contain('▬▬▬▬▬▬▬▬▬▬▬▬▬');
@@ -832,7 +832,7 @@ describe('Aggregator: Test', () => {
               {
                 mocha_reporter: 'landing', //eslint-disable-line camelcase
               },
-              outsideTeamCity,
+              outsideCI,
             ),
           );
 
@@ -875,7 +875,7 @@ describe('Aggregator: Test', () => {
             'test/bla/comp.spec.js': `it("pass", () => 1);`,
             'package.json': fx.packageJson(),
           })
-          .execute('test', ['--mocha'], outsideTeamCity);
+          .execute('test', ['--mocha'], outsideCI);
 
         expect(res.code).to.equal(0);
         expect(res.stdout).to.contain('1 passing');
@@ -899,7 +899,7 @@ describe('Aggregator: Test', () => {
                 }
               }`,
             })
-            .execute('test', ['--mocha'], outsideTeamCity);
+            .execute('test', ['--mocha'], outsideCI);
 
           expect(res.code).to.equal(0);
           expect(res.stdout).to.contain('1 passing');
@@ -917,7 +917,7 @@ describe('Aggregator: Test', () => {
             `,
               'package.json': fx.packageJson(),
             })
-            .execute('test', ['--mocha'], outsideTeamCity);
+            .execute('test', ['--mocha'], outsideCI);
 
           expect(res.code).to.equal(0);
           expect(res.stdout).to.contain('1 passing');
@@ -931,7 +931,7 @@ describe('Aggregator: Test', () => {
             'test/some.spec.ts': `import * as usageOfFS from 'fs'; it.only("pass", () => !!usageOfFS);`,
             'package.json': fx.packageJson(),
           })
-          .execute('test', ['--mocha'], outsideTeamCity);
+          .execute('test', ['--mocha'], outsideCI);
 
         expect(res.code).to.equal(0);
         expect(res.stdout).to.contain('1 passing');
@@ -945,7 +945,7 @@ describe('Aggregator: Test', () => {
             'test/some.spec.ts': `it.only("pass", async () => { await import('./foo'); });`,
             'package.json': fx.packageJson(),
           })
-          .execute('test', ['--mocha'], outsideTeamCity);
+          .execute('test', ['--mocha'], outsideCI);
 
         expect(res.code).to.equal(0);
         expect(res.stdout).to.contain('1 passing');
@@ -986,7 +986,7 @@ describe('Aggregator: Test', () => {
                 })`,
               'package.json': fx.packageJson(),
             })
-            .execute('test', ['--mocha'], outsideTeamCity);
+            .execute('test', ['--mocha'], outsideCI);
 
           expect(res.code).to.equal(0);
           expect(res.stdout).to.contain('1 passing');
@@ -1046,7 +1046,7 @@ describe('Aggregator: Test', () => {
           }),
           'pom.xml': fx.pom(),
         })
-        .execute('test', ['--karma'], outsideTeamCity);
+        .execute('test', ['--karma'], outsideCI);
     });
 
     afterEach(function() {
@@ -1193,7 +1193,7 @@ describe('Aggregator: Test', () => {
             'package.json': fx.packageJson(),
             'pom.xml': fx.pom(),
           })
-          .execute('test', ['--karma'], outsideTeamCity);
+          .execute('test', ['--karma'], outsideCI);
 
         expect(res.code).to.equal(1);
         expect(res.stdout).to.contain(`Failed 'karma'`);
@@ -1214,7 +1214,7 @@ describe('Aggregator: Test', () => {
                 'module.exports = {browsers: ["ChromeHeadless"], frameworks: ["mocha"], plugins: [require("karma-mocha"),	require("karma-chrome-launcher")]}',
               'package.json': fx.packageJson(),
             })
-            .execute('test', ['--karma'], outsideTeamCity);
+            .execute('test', ['--karma'], outsideCI);
 
           expect(res.code).to.equal(0);
           expect(res.stdout).to.contain(`browser Chrome`);
@@ -1230,7 +1230,7 @@ describe('Aggregator: Test', () => {
         it('should pass with exit code 0', () => {
           const res = customTest
             .setup(passingMochaTest())
-            .execute('test', ['--karma'], outsideTeamCity);
+            .execute('test', ['--karma'], outsideCI);
 
           expect(res.code).to.equal(0);
           expect(res.stdout)
@@ -1242,7 +1242,7 @@ describe('Aggregator: Test', () => {
         it.skip('should use appropriate reporter for TeamCity', () => {
           const res = customTest
             .setup(passingMochaTest())
-            .execute('test', ['--karma'], insideTeamCity);
+            .execute('test', ['--karma'], insideCI);
 
           expect(res.code).to.equal(0);
           expect(res.stdout)

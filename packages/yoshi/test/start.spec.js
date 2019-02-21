@@ -4,7 +4,6 @@ const tp = require('../../../test-helpers/test-phases');
 const fx = require('../../../test-helpers/fixtures');
 const fetch = require('node-fetch');
 const retryPromise = require('retry-promise').default;
-const { outsideTeamCity } = require('../../../test-helpers/env-variables');
 const https = require('https');
 const { takePort } = require('../../../test-helpers/http-helpers');
 
@@ -596,7 +595,7 @@ describe('Aggregator: Start', () => {
               'tsconfig.json': fx.tsconfig({
                 compilerOptions: {
                   types: [],
-                }
+                },
               }),
               'src/server.ts': `declare var require: any; ${fx.httpServer(
                 'hello',
@@ -804,10 +803,8 @@ describe('Aggregator: Start', () => {
   }
 
   function checkStdout(str) {
-    return retryPromise(
-      { backoff: 100, max: 50 },
-      () =>
-        test.stdout.indexOf(str) > -1 ? Promise.resolve() : Promise.reject(),
+    return retryPromise({ backoff: 100, max: 50 }, () =>
+      test.stdout.indexOf(str) > -1 ? Promise.resolve() : Promise.reject(),
     );
   }
 
@@ -840,8 +837,8 @@ describe('Aggregator: Start', () => {
     return retryPromise({ backoff: 1000, max: 30 }, () =>
       fetch(`http://localhost:${fx.defaultServerPort()}/`)
         .then(res => res.text())
-        .then(
-          body => (body === expected ? Promise.resolve() : Promise.reject()),
+        .then(body =>
+          body === expected ? Promise.resolve() : Promise.reject(),
         ),
     );
   }

@@ -6,7 +6,7 @@ const spawn = require('cross-spawn');
 const stripAnsi = require('strip-ansi');
 
 const yoshiCliBin = path.resolve(__dirname, '../packages/yoshi/bin/yoshi.js');
-const { insideTeamCity } = require('./env-variables');
+const { insideCI } = require('./env-variables');
 
 class Test {
   constructor(...args) {
@@ -46,7 +46,7 @@ class Test {
     return this;
   }
 
-  spawn(command, options, environment = insideTeamCity) {
+  spawn(command, options, environment = insideCI) {
     if (this.hasTmp()) {
       try {
         options = options || [];
@@ -98,12 +98,7 @@ class Test {
     }
   }
 
-  execute(
-    command,
-    cliArgs = [],
-    environment = insideTeamCity,
-    execOptions = {},
-  ) {
+  execute(command, cliArgs = [], environment = insideCI, execOptions = {}) {
     const args = [command].concat(cliArgs).join(' ');
     const env = Object.assign({}, this.env, environment);
     const options = Object.assign(

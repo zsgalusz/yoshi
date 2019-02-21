@@ -2,11 +2,8 @@ const fs = require('fs');
 const childProcess = require('child_process');
 const chalk = require('chalk');
 const { isEmpty } = require('lodash');
-const {
-  inTeamCity,
-  writeFile,
-  migrateToScopedPackages,
-} = require('yoshi-helpers');
+const { writeFile, migrateToScopedPackages } = require('yoshi-helpers');
+const isCI = require('is-ci');
 
 const NOTICE = `
 WARNING: package.json has been updated
@@ -35,7 +32,7 @@ module.exports = () => {
       console.warn(chalk.red(NOTICE));
     })
     .catch(error => {
-      if (inTeamCity()) {
+      if (isCI) {
         console.error('Migration task failed:', error);
       }
     });
@@ -43,7 +40,7 @@ module.exports = () => {
 
 function validate() {
   return [
-    () => (inTeamCity() ? Promise.reject('Running inside CI') : true),
+    () => (isCI ? Promise.reject('Running inside CI') : true),
     () => isFeatureTurnedOn(),
     () =>
       npm(

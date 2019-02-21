@@ -18,7 +18,7 @@ verbose && console.log(`using ${chalk.yellow('VERBOSE')} mode`);
 
 const stdio = verbose ? 'inherit' : 'pipe';
 
-verifyRegistry();
+// verifyRegistry();
 
 const filteredProjects = projects.filter(projectType =>
   !focusProjects ? true : focusProjects.split(',').includes(projectType),

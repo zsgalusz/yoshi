@@ -4,10 +4,7 @@ const expect = require('chai').expect;
 const tp = require('../../../test-helpers/test-phases');
 const fx = require('../../../test-helpers/fixtures');
 const hooks = require('../../../test-helpers/hooks');
-const {
-  insideTeamCity,
-  outsideTeamCity,
-} = require('../../../test-helpers/env-variables');
+const { insideCI, outsideCI } = require('../../../test-helpers/env-variables');
 const retryPromise = require('retry-promise').default;
 const fetch = require('node-fetch');
 const { localIdentName } = require('../src/constants');
@@ -651,7 +648,7 @@ describe('Aggregator: Build', () => {
             },
           ),
         })
-        .execute('build', [], insideTeamCity);
+        .execute('build', [], insideCI);
     });
 
     afterEach(function() {
@@ -911,7 +908,7 @@ describe('Aggregator: Build', () => {
           'src/client.js': 'const aVarialbe = 3',
           'package.json': fx.packageJson(),
         })
-        .execute('build', [], outsideTeamCity);
+        .execute('build', [], outsideCI);
 
       expect(test.list('dist/statics')).not.to.contain('app.bundle.min.js.map');
       expect(test.list('dist/statics')).not.to.contain('app.bundle.js.map');
@@ -926,7 +923,7 @@ describe('Aggregator: Build', () => {
           'src/client.js': 'const aVarialbe = 3',
           'package.json': fx.packageJson(),
         })
-        .execute('build', ['--source-map'], outsideTeamCity);
+        .execute('build', ['--source-map'], outsideCI);
 
       expect(test.list('dist/statics')).to.contain('app.bundle.min.js.map');
       expect(test.list('dist/statics')).to.contain('app.bundle.js.map');

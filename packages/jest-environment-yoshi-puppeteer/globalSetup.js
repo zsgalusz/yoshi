@@ -72,10 +72,7 @@ module.exports = async () => {
 
     await fs.outputFile(WS_ENDPOINT_PATH, global.BROWSER.wsEndpoint());
 
-    const webpackDevServerProcess = await getProcessOnPort(
-      servers.cdn.port,
-      false,
-    );
+    const webpackDevServerProcess = await getProcessOnPort(servers.cdn.port);
 
     if (!webpackDevServerProcess) {
       throw new Error(
@@ -96,10 +93,7 @@ module.exports = async () => {
     }
 
     if (jestYoshiConfig.server) {
-      const serverProcess = await getProcessOnPort(
-        jestYoshiConfig.server.port,
-        false,
-      );
+      const serverProcess = await getProcessOnPort(jestYoshiConfig.server.port);
 
       if (serverProcess) {
         throw new Error(

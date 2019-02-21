@@ -7,11 +7,11 @@ let COUNTER = 1;
 
 module.exports.appConfDir = `./target/configs-${process.env.JEST_WORKER_ID}`;
 
-module.exports.getPort = () => {
+module.exports.getPort = async () => {
   const generatedPort = 1000 + JEST_WORKER_ID * 300 + COUNTER++;
 
   try {
-    const pid = getProcessIdOnPort(generatedPort);
+    const pid = await getProcessIdOnPort(generatedPort);
 
     if (pid) {
       if (processIsJest(pid)) {

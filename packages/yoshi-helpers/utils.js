@@ -11,6 +11,8 @@ const queries = require('./queries');
 const { POM_FILE } = require('yoshi-config/paths');
 const xmldoc = require('xmldoc');
 const { staticsDomain } = require('./constants');
+const findProcess = require('find-process');
+const isCI = require('is-ci');
 
 module.exports.copyFile = (source, target) =>
   new Promise((resolve, reject) => {
@@ -77,7 +79,7 @@ module.exports.watch = (
 };
 
 module.exports.getMochaReporter = () => {
-  if (queries.inTeamCity()) {
+  if (isCI) {
     return 'mocha-teamcity-reporter';
   }
 
@@ -104,11 +106,11 @@ module.exports.shouldTransformHMRRuntime = () => {
   return project.hmr === 'auto' && project.isReactProject;
 };
 
-module.exports.getProcessIdOnPort = port => {
-  return childProcess
-    .execSync(`lsof -i:${port} -P -t -sTCP:LISTEN`, { encoding: 'utf-8' })
-    .split('\n')[0]
-    .trim();
+module.exports.getProcessIdOnPort = async port => {
+  const processes = await findProcess('port', port);
+  if (processes[0]) {
+    return processes[0].pid;
+  }
 };
 
 function getDirectoryOfProcessById(pid) {
@@ -132,24 +134,17 @@ module.exports.processIsJest = pid => {
   return commandArg.split('/').pop() === 'jest';
 };
 
-module.exports.getProcessOnPort = async (port, shouldCheckTestResult) => {
-  if (shouldCheckTestResult) {
-    const portTestResult = await detect(port);
-
-    if (port === portTestResult) {
-      return null;
-    }
-  }
-  try {
-    const pid = module.exports.getProcessIdOnPort(port);
+module.exports.getProcessOnPort = async port => {
+  const processes = await findProcess('port', port);
+  if (!processes.length) {
+    return null;
+  } else {
+    const pid = processes[0].pid;
     const cwd = getDirectoryOfProcessById(pid);
-
     return {
       pid,
       cwd,
     };
-  } catch (e) {
-    return null;
   }
 };
 
@@ -167,7 +162,8 @@ module.exports.tryRequire = name => {
   let absolutePath;
   try {
     absolutePath = require.resolve(name);
-  } catch (e) { // The module has not found
+  } catch (e) {
+    // The module has not found
     return null;
   }
 

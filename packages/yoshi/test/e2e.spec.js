@@ -3,10 +3,7 @@ const expect = require('chai').expect;
 const tp = require('../../../test-helpers/test-phases');
 const fx = require('../../../test-helpers/fixtures');
 const { exists } = require('yoshi-helpers');
-const {
-  outsideTeamCity,
-  insideTeamCity,
-} = require('../../../test-helpers/env-variables');
+const { outsideCI, insideCI } = require('../../../test-helpers/env-variables');
 const getMockedCI = require('../../../test-helpers/get-mocked-ci');
 
 describe('Aggregator: e2e', () => {
@@ -34,7 +31,7 @@ describe('Aggregator: e2e', () => {
         .execute(
           'test',
           ['--protractor'],
-          Object.assign({}, outsideTeamCity, {
+          Object.assign({}, outsideCI, {
             IS_BUILD_AGENT: true,
             CHROMEDRIVER_VERSION: undefined,
           }),
@@ -60,7 +57,7 @@ describe('Aggregator: e2e', () => {
         .execute(
           'test',
           ['--protractor'],
-          Object.assign({}, outsideTeamCity, {
+          Object.assign({}, outsideCI, {
             IS_BUILD_AGENT: true,
             CHROMEDRIVER_VERSION: 2.35,
           }),
@@ -81,7 +78,7 @@ describe('Aggregator: e2e', () => {
     it('should support single module structure by default', () => {
       const res = test
         .setup(singleModuleWithJasmine())
-        .execute('test', ['--protractor'], outsideTeamCity);
+        .execute('test', ['--protractor'], outsideCI);
 
       expect(res.code).to.equal(0);
       expect(res.stdout).to.contain('protractor');
@@ -93,7 +90,7 @@ describe('Aggregator: e2e', () => {
     it('should take a screenshot at the end of a failing test', () => {
       const res = test
         .setup(singleModuleWithFailingJasmine())
-        .execute('test', ['--protractor'], outsideTeamCity, { silent: true }); // run in silent so that TC won't fail with the screenshot log
+        .execute('test', ['--protractor'], outsideCI, { silent: true }); // run in silent so that TC won't fail with the screenshot log
 
       expect(res.code).to.equal(1);
       expect(res.stdout).to.contain('protractor');
@@ -104,7 +101,7 @@ describe('Aggregator: e2e', () => {
     it(`should support multiple modules structure and consider clientProjectName configuration`, () => {
       const res = test
         .setup(multipleModuleWithJasmine())
-        .execute('test', ['--protractor'], outsideTeamCity);
+        .execute('test', ['--protractor'], outsideCI);
       expect(res.code).to.equal(0);
       expect(res.stdout).to.contain('protractor');
       expect(res.stdout).to.contain('1 spec, 0 failures');
@@ -113,7 +110,7 @@ describe('Aggregator: e2e', () => {
     it('should run protractor with mocha', () => {
       const res = test
         .setup(singleModuleWithMocha())
-        .execute('test', ['--protractor'], outsideTeamCity);
+        .execute('test', ['--protractor'], outsideCI);
 
       expect(res.code).to.equal(0);
       expect(res.stdout).to.contain('protractor');
@@ -123,7 +120,7 @@ describe('Aggregator: e2e', () => {
     it('should run protractor with mocha and use TeamCity reporter', () => {
       const res = test
         .setup(singleModuleWithMocha())
-        .execute('test', ['--protractor'], insideTeamCity);
+        .execute('test', ['--protractor'], insideCI);
 
       expect(res.code).to.equal(0);
       expect(res.stdout).to.contain('protractor');
@@ -135,7 +132,7 @@ describe('Aggregator: e2e', () => {
 
       const res = test
         .setup(singleModuleWithJasmineAndES6Imports(true))
-        .execute('test', ['--protractor'], outsideTeamCity);
+        .execute('test', ['--protractor'], outsideCI);
 
       expect(res.code).to.equal(0);
       expect(res.stdout).to.contain('protractor');
@@ -151,7 +148,7 @@ describe('Aggregator: e2e', () => {
 
       const res = test
         .setup(singleModuleWithJasmineAndES6Imports(false))
-        .execute('test', ['--protractor'], outsideTeamCity);
+        .execute('test', ['--protractor'], outsideCI);
 
       expect(res.code).to.equal(1);
       expect(res.stdout).to.contain('Unexpected identifier');
@@ -205,7 +202,7 @@ describe('Aggregator: e2e', () => {
     this.timeout(60000);
     const res = test
       .setup(singleModuleWithBeforeLaunch())
-      .execute('test', ['--protractor'], outsideTeamCity);
+      .execute('test', ['--protractor'], outsideCI);
 
     expect(res.code).to.equal(0);
     expect(res.stdout).to.contain('protractor');
@@ -220,7 +217,7 @@ describe('Aggregator: e2e', () => {
         'package.json': fx.packageJson(),
         'protractor.conf.js': fx.protractorConfWithAfterLaunch(),
       })
-      .execute('test', ['--protractor'], outsideTeamCity);
+      .execute('test', ['--protractor'], outsideCI);
 
     expect(res.code).to.equal(0);
     expect(res.stdout).to.contain('afterLaunch hook');

@@ -3,8 +3,8 @@ const retryPromise = require('retry-promise').default;
 const tp = require('../../../test-helpers/test-phases');
 const fx = require('../../../test-helpers/fixtures');
 const {
-  outsideTeamCity,
-  insideTeamCity,
+  outsideCI,
+  insideCI,
   insideWatchMode,
 } = require('../../../test-helpers/env-variables');
 const { killSpawnProcessAndHisChildren } = require('yoshi-helpers');
@@ -13,7 +13,7 @@ describe('test --jasmine', () => {
   let test, child;
 
   beforeEach(() => {
-    test = tp.create(outsideTeamCity);
+    test = tp.create(outsideCI);
   });
 
   afterEach(function() {
@@ -29,7 +29,7 @@ describe('test --jasmine', () => {
   it('should pass with exit code 0', () => {
     const res = test
       .setup(passingProject())
-      .execute('test', ['--jasmine'], outsideTeamCity);
+      .execute('test', ['--jasmine'], outsideCI);
 
     expect(res.code).to.equal(0);
     expect(res.stdout).to.contain('1 spec, 0 failures');
@@ -38,7 +38,7 @@ describe('test --jasmine', () => {
   it('should pass with exit code 1', () => {
     const res = test
       .setup(failingProject())
-      .execute('test', ['--jasmine'], outsideTeamCity);
+      .execute('test', ['--jasmine'], outsideCI);
 
     expect(res.code).to.equal(1);
     expect(res.stdout).to.contain('1 spec, 1 failure');
@@ -80,7 +80,7 @@ describe('test --jasmine', () => {
           },
         }),
       })
-      .execute('test', ['--jasmine'], outsideTeamCity);
+      .execute('test', ['--jasmine'], outsideCI);
 
     expect(res.code).to.equal(0);
     expect(res.stdout).to.contain('1 spec, 0 failures');
@@ -89,7 +89,7 @@ describe('test --jasmine', () => {
   it('should use the right reporter when running inside TeamCity', () => {
     const res = test
       .setup(passingProject())
-      .execute('test', ['--jasmine'], insideTeamCity);
+      .execute('test', ['--jasmine'], insideCI);
 
     expect(res.code).to.equal(0);
     expect(res.stdout).to.contain(
@@ -122,7 +122,7 @@ describe('test --jasmine', () => {
   it('should load helpers', () => {
     const res = test
       .setup(passingProjectWithHelper())
-      .execute('test', ['--jasmine'], outsideTeamCity);
+      .execute('test', ['--jasmine'], outsideCI);
 
     expect(res.code).to.equal(0);
     expect(res.stdout).to.contain('1 spec, 0 failures');

@@ -9,7 +9,7 @@ const {
   authenticateToRegistry,
 } = require('./utils/publishMonorepo');
 
-const isCI = !!process.env.TEAMCITY_VERSION;
+const isCI = !!process.env.YOSHI_CI;
 
 const filterProject = process.env.FILTER_PROJECT;
 

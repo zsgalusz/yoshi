@@ -5,8 +5,8 @@ const { killSpawnProcessAndHisChildren } = require('yoshi-helpers');
 const tp = require('../../../test-helpers/test-phases');
 const fx = require('../../../test-helpers/fixtures');
 const {
-  insideTeamCity,
-  outsideTeamCity,
+  insideCI,
+  outsideCI,
   teamCityArtifactVersion,
   noArtifactVersion,
 } = require('../../../test-helpers/env-variables');
@@ -37,7 +37,7 @@ describe('Webpack basic configs', () => {
   describe('Common configurations', () => {
     describe('Basic flow', () => {
       beforeEach(() => {
-        res = test.execute('build', [], insideTeamCity);
+        res = test.execute('build', [], insideCI);
       });
 
       it('should exit with exit code 0 on success', () =>
@@ -136,7 +136,7 @@ describe('Webpack basic configs', () => {
             'pom.xml': fx.pom(),
           })
           .execute('build', [], {
-            ...insideTeamCity,
+            ...insideCI,
             ARTIFACT_VERSION,
           });
 
@@ -152,7 +152,7 @@ describe('Webpack basic configs', () => {
             'pom.xml': fx.pom(),
           })
           .execute('build', [], {
-            ...insideTeamCity,
+            ...insideCI,
             BUILD_VCS_NUMBER: 'this_is_hash',
           });
 
@@ -167,7 +167,7 @@ describe('Webpack basic configs', () => {
             'src/client.js': `console.log('test');`,
           })
           .execute('build', [], {
-            ...outsideTeamCity,
+            ...outsideCI,
             ARTIFACT_VERSION: '',
           });
 
@@ -200,7 +200,7 @@ describe('Webpack basic configs', () => {
             }),
           })
           .execute('build', [], {
-            ...insideTeamCity,
+            ...insideCI,
             ARTIFACT_VERSION,
           });
 
@@ -387,7 +387,7 @@ describe('Webpack basic configs', () => {
           keepFunctionNames: true,
         }),
       });
-      test.execute('build', [], insideTeamCity);
+      test.execute('build', [], insideCI);
 
       expect(test.content('dist/statics/app.bundle.min.js')).to.contain(
         'class LongClassName',
@@ -401,7 +401,7 @@ describe('Webpack basic configs', () => {
         'pom.xml': fx.pom(),
         'package.json': fx.packageJson(),
       });
-      test.execute('build', [], insideTeamCity);
+      test.execute('build', [], insideCI);
 
       expect(test.content('dist/statics/app.bundle.min.js')).not.to.contain(
         'class LongClassName',
@@ -417,7 +417,7 @@ describe('Webpack basic configs', () => {
           keepFunctionNames: true,
         }),
       });
-      test.execute('build', [], insideTeamCity);
+      test.execute('build', [], insideCI);
 
       expect(test.content('dist/statics/app.bundle.min.js')).to.contain(
         'function LongFunctionName',
@@ -431,7 +431,7 @@ describe('Webpack basic configs', () => {
         'pom.xml': fx.pom(),
         'package.json': fx.packageJson(),
       });
-      test.execute('build', [], insideTeamCity);
+      test.execute('build', [], insideCI);
 
       expect(test.content('dist/statics/app.bundle.min.js')).not.to.contain(
         'function LongFunctionName',

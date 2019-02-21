@@ -14,8 +14,8 @@ module.exports = {
       await emitConfigs({ targetFolder: appConfDir });
 
       globalObject.app = bootstrapServer({
-        port: getPort(),
-        managementPort: getPort(),
+        port: await getPort(),
+        managementPort: await getPort(),
         appConfDir,
       });
 

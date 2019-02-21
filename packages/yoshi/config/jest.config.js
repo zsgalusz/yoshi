@@ -1,6 +1,6 @@
 const merge = require('lodash/merge');
 const projectConfig = require('yoshi-config');
-const { inTeamCity } = require('yoshi-helpers');
+const isCI = require('is-ci');
 
 const jestProjectConfig = projectConfig.jestConfig;
 
@@ -15,7 +15,7 @@ config.transformIgnorePatterns = (config.transformIgnorePatterns || []).concat([
   '/node_modules/(?!(.*?\\.st\\.css$))',
 ]);
 
-if (inTeamCity()) {
+if (isCI) {
   config.testResultsProcessor = require.resolve('jest-teamcity-reporter');
 }
 

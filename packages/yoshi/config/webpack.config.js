@@ -29,11 +29,11 @@ const {
   toIdentifier,
   isSingleEntry,
   isProduction: checkIsProduction,
-  inTeamCity: checkInTeamCity,
   isTypescriptProject: checkIsTypescriptProject,
   getProjectArtifactId,
 } = require('yoshi-helpers');
 const { addEntry } = require('../src/webpack-utils');
+const isCI = require('is-ci');
 
 const reScript = /\.js?$/;
 const reStyle = /\.(css|less|scss|sass)$/;
@@ -48,16 +48,12 @@ const disableModuleConcat = process.env.DISABLE_MODULE_CONCATENATION === 'true';
 
 const isProduction = checkIsProduction();
 
-const inTeamCity = checkInTeamCity();
-
 const isTypescriptProject = checkIsTypescriptProject();
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 
 const computedSeparateCss =
-  project.separateCss === 'prod'
-    ? inTeamCity || isProduction
-    : project.separateCss;
+  project.separateCss === 'prod' ? isCI || isProduction : project.separateCss;
 
 const artifactVersion = process.env.ARTIFACT_VERSION;
 
@@ -475,11 +471,11 @@ function createCommonWebpackConfig({
     // Once we are in a local build, we create cheap eval source map only
     // for a development build (hence the !isProduction)
     devtool:
-      inTeamCity || withLocalSourceMaps
+      isCI || withLocalSourceMaps
         ? 'source-map'
         : !isProduction
-          ? 'cheap-module-eval-source-map'
-          : false,
+        ? 'cheap-module-eval-source-map'
+        : false,
   };
 
   return config;
@@ -608,8 +604,8 @@ function createClientWebpackConfig({
         runtimeMode: 'shared',
         globalRuntimeId: '__stylable_yoshi__',
         generate: {
-          runtimeStylesheetId: 'namespace'
-        }
+          runtimeStylesheetId: 'namespace',
+        },
       }),
 
       // https://github.com/th0r/webpack-bundle-analyzer

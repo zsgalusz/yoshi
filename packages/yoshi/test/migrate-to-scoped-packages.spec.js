@@ -6,8 +6,8 @@ const fx = require('../../../test-helpers/fixtures');
 const { killSpawnProcessAndHisChildren } = require('yoshi-helpers');
 const {
   migrateToScopedPackages,
-  insideTeamCity,
-  outsideTeamCity,
+  insideCI,
+  outsideCI,
 } = require('../../../test-helpers/env-variables');
 
 describe('Migrate to scoped packages task', () => {
@@ -37,7 +37,7 @@ describe('Migrate to scoped packages task', () => {
     child = setup(test, JSON.stringify(pkg)).spawn(
       'start',
       [],
-      merge({}, outsideTeamCity),
+      merge({}, outsideCI),
     );
 
     return waitUntilStarted(test).then(() => {
@@ -55,7 +55,7 @@ describe('Migrate to scoped packages task', () => {
     child = setup(test, JSON.stringify(pkg)).spawn(
       'start',
       [],
-      merge({}, migrateToScopedPackages, outsideTeamCity),
+      merge({}, migrateToScopedPackages, outsideCI),
     );
 
     return waitUntilStarted(test).then(() => {
@@ -75,7 +75,7 @@ describe('Migrate to scoped packages task', () => {
     child = setup(test, JSON.stringify(pkg)).spawn(
       'start',
       [],
-      merge({}, outsideTeamCity),
+      merge({}, outsideCI),
     );
 
     return waitUntilStarted(test).then(() => {
@@ -95,7 +95,7 @@ describe('Migrate to scoped packages task', () => {
     child = setup(test, JSON.stringify(pkg)).spawn(
       'start',
       [],
-      merge({}, migrateToScopedPackages, outsideTeamCity),
+      merge({}, migrateToScopedPackages, outsideCI),
     );
 
     return waitUntilStarted(test).then(() => {
@@ -116,7 +116,7 @@ describe('Migrate to scoped packages task', () => {
     child = setup(test, JSON.stringify(pkg)).spawn(
       'start',
       [],
-      merge({}, migrateToScopedPackages, insideTeamCity),
+      merge({}, migrateToScopedPackages, insideCI),
     );
 
     return waitUntilStarted(test).then(() => {
@@ -135,7 +135,7 @@ describe('Migrate to scoped packages task', () => {
     child = setup(test, JSON.stringify(pkg)).spawn(
       'start',
       [],
-      merge({}, migrateToScopedPackages, outsideTeamCity),
+      merge({}, migrateToScopedPackages, outsideCI),
     );
 
     return waitUntilStarted(test).then(() => {
@@ -163,7 +163,7 @@ describe('Migrate to scoped packages task', () => {
     child = setup(test, JSON.stringify(pkg)).spawn(
       'start',
       [],
-      merge({}, migrateToScopedPackages, outsideTeamCity),
+      merge({}, migrateToScopedPackages, outsideCI),
     );
 
     return waitUntilStarted(test).then(() => {

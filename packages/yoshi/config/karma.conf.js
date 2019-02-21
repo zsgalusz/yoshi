@@ -1,6 +1,7 @@
 const path = require('path');
 const _ = require('lodash');
-const { tryRequire, inTeamCity } = require('yoshi-helpers');
+const { tryRequire } = require('yoshi-helpers');
+const isCI = require('is-ci');
 
 const projectConfig = tryRequire(path.resolve('karma.conf.js')) || {
   files: [],
@@ -22,7 +23,7 @@ const teamCityConfig = {
 };
 
 module.exports = config => {
-  const configuration = inTeamCity()
+  const configuration = isCI
     ? _.mergeWith(baseConfig, teamCityConfig, customizer)
     : baseConfig;
   const merged = _.mergeWith(configuration, projectConfig, customizer);
