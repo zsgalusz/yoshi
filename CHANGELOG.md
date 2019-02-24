@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.16.6 (Feb 24, 2019)
+
+#### :bug: Bug
+
+* `yoshi-helpers`, `yoshi`
+  * [#1004](https://github.com/wix/yoshi/pull/1004) Fix `mocha-teamcity-reporter` test ([@yairhaimo](https://github.com/yairhaimo))
+
 ## 2.16.5 (Feb 21, 2019)
 
 #### :bug: Bug
