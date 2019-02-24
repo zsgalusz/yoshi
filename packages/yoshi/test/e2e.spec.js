@@ -120,7 +120,7 @@ describe('Aggregator: e2e', () => {
       expect(res.code).to.equal(0);
       expect(res.stdout).to.contain('protractor');
       expect(res.stdout).to.contain(
-        "##teamcity[testStarted name='should write some text to body' captureStandardOutput='true']",
+        "##teamcity[",
       );
     });
 
@@ -315,4 +315,5 @@ describe('Aggregator: e2e', () => {
       'protractor.conf.js': fx.protractorConfWithBeforeLaunch(),
     });
   }
+
 });
