@@ -58,7 +58,7 @@ function createCompiler(config, { https, send }) {
     console.log('Compiling...');
   });
 
-  compiler.hooks.done.tap('finished-log', stats => {
+  compiler.hooks.done.tap('finished-log', async (stats) => {
     if (isInteractive) {
       clearConsole();
     }
@@ -84,7 +84,7 @@ function createCompiler(config, { https, send }) {
       if (messages.errors.length) {
         await send('errors', messages.errors.join('\n\n'));
       }
-      
+
       if (messages.warnings.length) {
         await send('warnings', messages.warnings.join('\n\n'));
       }
