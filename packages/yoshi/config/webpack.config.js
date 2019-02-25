@@ -307,6 +307,8 @@ function createCommonWebpackConfig({
       // it should optimize for Webpack
       new EnvirnmentMarkPlugin(),
       // https://github.com/Realytics/fork-ts-checker-webpack-plugin
+      // We run `fork-ts-checker-webpack-plugin` only once, for client Webpack (isDebug = true),
+      // because it will run according to tslint 'files'
       ...(isTypescriptProject && project.projectType === 'app' && isDebug
         ? [
             // Since `fork-ts-checker-webpack-plugin` requires you to have
@@ -315,12 +317,12 @@ function createCommonWebpackConfig({
             new (require('fork-ts-checker-webpack-plugin'))({
               tsconfig: TSCONFIG_FILE,
               // https://github.com/facebook/create-react-app/pull/5607
-              compilerOptions: {
-                module: 'esnext',
-                moduleResolution: 'node',
-                resolveJsonModule: true,
-                noEmit: true,
-              },
+              // compilerOptions: {
+              //   module: 'esnext',
+              //   moduleResolution: 'node',
+              //   resolveJsonModule: true,
+              //   noEmit: true,
+              // },
               async: false,
               silent: true,
               checkSyntacticErrors: true,

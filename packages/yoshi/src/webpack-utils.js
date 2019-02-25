@@ -4,17 +4,27 @@ const webpack = require('webpack');
 const clearConsole = require('react-dev-utils/clearConsole');
 const { prepareUrls } = require('react-dev-utils/WebpackDevServerUtils');
 const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
+const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
 const serverHandler = require('serve-handler');
 const project = require('yoshi-config');
 const { STATICS_DIR } = require('yoshi-config/paths');
 const { PORT } = require('./constants');
 const { redirectMiddleware } = require('../src/tasks/cdn/server-api');
 const WebpackDevServer = require('webpack-dev-server');
+const forkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const {
+  isTypescriptProject: checkIsTypescriptProject,
+} = require('yoshi-helpers');
 
 const isInteractive = process.stdout.isTTY;
+const isTypescriptProject = checkIsTypescriptProject();
 
-function createCompiler(config, { https }) {
+function createCompiler(config, { https, send }) {
   let compiler;
+  let tsMessagesResolver;
+  const tsMessagesPromise = new Promise(resolve => {
+    tsMessagesResolver = msgs => resolve(msgs);
+  });
 
   try {
     compiler = webpack(config);
@@ -25,6 +35,21 @@ function createCompiler(config, { https }) {
     console.log();
     process.exit(1);
   }
+
+  isTypescriptProject && forkTsCheckerWebpackPlugin
+    .getCompilerHooks(compiler)
+    .receive.tap('afterTypeScriptCheck', (diagnostics, lints) => {
+      const allMsgs = [...diagnostics, ...lints];
+      const format = message =>
+        `${message.file}\n${typescriptFormatter(message, true)}`;
+
+      tsMessagesResolver({
+        errors: allMsgs.filter(msg => msg.severity === 'error').map(format),
+        warnings: allMsgs
+          .filter(msg => msg.severity === 'warning')
+          .map(format),
+      });
+    });
 
   compiler.hooks.invalid.tap('recompile-log', () => {
     if (isInteractive) {
@@ -39,7 +64,35 @@ function createCompiler(config, { https }) {
     }
 
     const messages = formatWebpackMessages(stats.toJson({}, true));
-    const isSuccessful = !messages.errors.length && !messages.warnings.length;
+    let isSuccessful = !messages.errors.length && !messages.warnings.length;
+
+    // no errors + TS
+    if (isTypescriptProject && isSuccessful) {
+      const delayedMsg = setTimeout(() => {
+        console.log(
+          chalk.yellow(
+            'Files successfully emitted, waiting for typecheck results...'
+          )
+        );
+      }, 100);
+
+      const messages = await tsMessagesPromise;
+      clearTimeout(delayedMsg);
+
+      isSuccessful = !messages.errors.length && !messages.warnings.length;
+
+      if (messages.errors.length) {
+        await send('errors', messages.errors.join('\n\n'));
+      }
+      
+      if (messages.warnings.length) {
+        await send('warnings', messages.warnings.join('\n\n'));
+      }
+      // if (isInteractive) {
+      //   clearConsole();
+      // }
+    }
+
 
     if (isSuccessful) {
       console.log(chalk.green('Compiled successfully!'));
@@ -114,6 +167,7 @@ function createCompiler(config, { https }) {
     if (messages.warnings.length) {
       console.log(chalk.yellow('Compiled with warnings.\n'));
       console.log(messages.warnings.join('\n\n'));
+      await send('errors', messages.warnings.join('\n\n'));
     }
   });
 

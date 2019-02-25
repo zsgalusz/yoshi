@@ -89,7 +89,13 @@ module.exports = async () => {
   });
 
   // Configure compilation
-  const multiCompiler = createCompiler([clientConfig, serverConfig], { https });
+  const multiCompiler = createCompiler([clientConfig, serverConfig], {
+    https, 
+    send: (...args) => {
+      // Uses the hoisted dev server instance from bellow
+      return devServer.send(...args)
+    }
+  });
   const compilationPromise = waitForCompilation(multiCompiler);
 
   const [clientCompiler, serverCompiler] = multiCompiler.compilers;
