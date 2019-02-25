@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.1.0-alpha.2 (2019-02-25)
+
+> Changelog will be added later
+
 ## 4.1.0-alpha.1 (2019-02-07)
 
 #### :boom: Breaking Change
@@ -58,20 +62,24 @@
 ## 3.30.5 (2019-02-21)
 
 #### :bug: Bug Fix
-* `yoshi-helpers`, `yoshi`
-  * [#1000](https://github.com/wix/yoshi/pull/1000) Upgrade `mocha-teamcity-reporter` to v2 ([@yairhaimo](https://github.com/yairhaimo))
+
+- `yoshi-helpers`, `yoshi`
+  - [#1000](https://github.com/wix/yoshi/pull/1000) Upgrade `mocha-teamcity-reporter` to v2 ([@yairhaimo](https://github.com/yairhaimo))
 
 #### :nail_care: Polish
-* `yoshi-config`, `yoshi`
-  * [#977](https://github.com/wix/yoshi/pull/977) Remove `ajv` from `yoshi` and upgrade the version ([@ranyitz](https://github.com/ranyitz))
+
+- `yoshi-config`, `yoshi`
+  - [#977](https://github.com/wix/yoshi/pull/977) Remove `ajv` from `yoshi` and upgrade the version ([@ranyitz](https://github.com/ranyitz))
 
 #### :memo: Documentation
-* `tslint-config-yoshi`
-  * [#993](https://github.com/wix/yoshi/pull/993) Update README.md with `tslint-config-yoshi` ([@sidoruk-sv](https://github.com/sidoruk-sv))
+
+- `tslint-config-yoshi`
+  - [#993](https://github.com/wix/yoshi/pull/993) Update README.md with `tslint-config-yoshi` ([@sidoruk-sv](https://github.com/sidoruk-sv))
 
 #### :house: Internal
-* `create-yoshi-app`, `eslint-config-yoshi-base`, `tslint-config-yoshi-base`, `yoshi-helpers`, `yoshi`
-  * [#978](https://github.com/wix/yoshi/pull/978) Do not pack `dist` and `test` in `yoshi` main package ([@ranyitz](https://github.com/ranyitz))
+
+- `create-yoshi-app`, `eslint-config-yoshi-base`, `tslint-config-yoshi-base`, `yoshi-helpers`, `yoshi`
+  - [#978](https://github.com/wix/yoshi/pull/978) Do not pack `dist` and `test` in `yoshi` main package ([@ranyitz](https://github.com/ranyitz))
 
 ## 3.30.4 (2019-02-20)
 
