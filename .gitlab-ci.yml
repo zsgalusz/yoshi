@@ -8,7 +8,7 @@ stages:
   before_script:
     - npm i
   cache:
-    key: node_modules
+    key: node_modules-${CI_COMMIT_REF_SLUG}
     paths:
       - node_modules/
       - packages/babel-preset-yoshi/node_modules/
