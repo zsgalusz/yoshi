@@ -70,11 +70,14 @@ function createCompiler(config, { https, send }) {
       //clearConsole();
     }
 
-    let messages = formatWebpackMessages(stats.toJson({}, true));
-    let isSuccessful = !messages.errors.length && !messages.warnings.length;
+    const statsData = stats.toJson({
+      all: false,
+      warnings: true,
+      errors: true,
+    });
 
     // no errors + TS
-    if (isTypescriptProject && isSuccessful) {
+    if (isTypescriptProject && statsData.errors.length === 0) {
       const delayedMsg = setTimeout(() => {
         console.log(
           chalk.yellow(
@@ -83,10 +86,16 @@ function createCompiler(config, { https, send }) {
         );
       }, 100);
 
-      messages = await tsMessagesPromise;
+      const messages = await tsMessagesPromise;
       clearTimeout(delayedMsg);
 
-      isSuccessful = !messages.errors.length && !messages.warnings.length;
+      statsData.errors.push(...messages.errors);
+      statsData.warnings.push(...messages.warnings);
+
+      // Push errors and warnings into compilation result
+      // to show them after page refresh triggered by user.
+      stats.stats[0].errors.push(...messages.errors);
+      stats.stats[0].warnings.push(...messages.warnings);
 
       if (messages.errors.length) {
         await send('errors', messages.errors);
@@ -95,11 +104,13 @@ function createCompiler(config, { https, send }) {
       if (messages.warnings.length) {
         await send('warnings', messages.warnings);
       }
-      // if (isInteractive) {
-      //   clearConsole();
-      // }
+      if (isInteractive) {
+        // clearConsole();
+      }
     }
 
+    const messages = formatWebpackMessages(statsData);
+    const isSuccessful = !messages.errors.length && !messages.warnings.length;
     if (isSuccessful) {
       console.log(chalk.green('Compiled successfully!'));
 
