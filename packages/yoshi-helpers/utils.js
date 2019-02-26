@@ -13,6 +13,7 @@ const xmldoc = require('xmldoc');
 const { staticsDomain } = require('./constants');
 const findProcess = require('find-process');
 const isCI = require('is-ci');
+const os = require('os');
 
 module.exports.copyFile = (source, target) =>
   new Promise((resolve, reject) => {
@@ -114,11 +115,22 @@ module.exports.getProcessIdOnPort = async port => {
 };
 
 function getDirectoryOfProcessById(pid) {
-  return childProcess
-    .execSync(`lsof -p ${pid} | grep cwd | awk '{print $9}'`, {
-      encoding: 'utf-8',
-    })
-    .trim();
+  let cwd;
+  switch (os.type()) {
+    case 'Linux':
+      cwd = fs.readlinkSync('/proc/' + pid + '/cwd');
+      break;
+    case 'Darwin':
+      cwd = childProcess
+        .execSync(`lsof -p ${pid} | grep cwd | awk '{print $9}'`, {
+          encoding: 'utf-8',
+        })
+        .trim();
+      break;
+    default:
+      throw new Error('unsupported OS');
+  }
+  return cwd;
 }
 
 const getCommandArgByPid = (pid, argIndex = 0) => {
