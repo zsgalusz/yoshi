@@ -71,7 +71,6 @@ describe('Aggregator: Test', () => {
       const TEST_PORT = 3335;
       server = await takePort(TEST_PORT);
       const res = test
-        .verbose()
         .setup(executionOptions(TEST_PORT))
         .execute('test', undefined, outsideCI);
 
@@ -860,7 +859,6 @@ describe('Aggregator: Test', () => {
             'test/some.spec.js': `it.only("pass", () => 1);`,
             'package.json': fx.packageJson(),
           })
-          .verbose()
           .execute('test', ['--mocha', '--coverage']);
 
         expect(res.code).to.equal(0);

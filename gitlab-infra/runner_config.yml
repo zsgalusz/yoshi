@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gitlab-runner
+  namespace: fed-infra
+data:
+  config.toml: |
+    concurrent = 4
+
+    [[runners]]
+      name = "Kubernetes Runner"
+      url = "https://gitlab.com/"
+      token = "E7EU4eNcWdrHgUV_uW9h"
+      executor = "kubernetes"
+      [runners.kubernetes]
+        namespace = "fed-infra"
+        image = "busybox"

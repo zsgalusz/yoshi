@@ -61,7 +61,6 @@ describe('test --jasmine', () => {
   it('should output test coverage when --coverage is passed', () => {
     const res = test
       .setup(passingProject())
-      .verbose()
       .execute('test', ['--jasmine', '--coverage']);
 
     expect(res.code).to.equal(0);
