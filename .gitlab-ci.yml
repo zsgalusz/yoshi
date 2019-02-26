@@ -74,20 +74,28 @@ app-flow:
 
 templates-client:
   extends: .use-node-modules-cache
+  tags:
+    - private
   stage: test
   script: npm run test:templates:client
 
 templates-fullstack:
   extends: .use-node-modules-cache
+  tags:
+    - private
   stage: test
   script: npm run test:templates:fullstack
 
 templates-business-manager-module:
   extends: .use-node-modules-cache
+  tags:
+    - private
   stage: test
   script: npm run test:templates:business-manager-module
 
 templates-server:
   extends: .use-node-modules-cache
+  tags:
+    - private
   stage: test
   script: npm run test:templates:server
