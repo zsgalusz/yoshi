@@ -22,9 +22,7 @@ const isTypescriptProject = checkIsTypescriptProject();
 function createCompiler(config, { https, send }) {
   let compiler;
   let tsMessagesResolver;
-  const tsMessagesPromise = new Promise(resolve => {
-    tsMessagesResolver = msgs => resolve(msgs);
-  });
+  let tsMessagesPromise;
 
   try {
     compiler = webpack(config);
@@ -36,34 +34,43 @@ function createCompiler(config, { https, send }) {
     process.exit(1);
   }
 
-  isTypescriptProject && forkTsCheckerWebpackPlugin
-    .getCompilerHooks(compiler)
-    .receive.tap('afterTypeScriptCheck', (diagnostics, lints) => {
-      const allMsgs = [...diagnostics, ...lints];
-      const format = message =>
-        `${message.file}\n${typescriptFormatter(message, true)}`;
-
-      tsMessagesResolver({
-        errors: allMsgs.filter(msg => msg.severity === 'error').map(format),
-        warnings: allMsgs
-          .filter(msg => msg.severity === 'warning')
-          .map(format),
+  if (isTypescriptProject) {
+    //we want the promise to be register for each change
+    compiler.compilers[0].hooks.beforeCompile.tap('beforeCompile', () => {
+      tsMessagesPromise = new Promise(resolve => {
+        tsMessagesResolver = msgs => resolve(msgs);
       });
     });
 
+    forkTsCheckerWebpackPlugin
+     .getCompilerHooks(compiler.compilers[0])
+     .receive.tap('afterTypeScriptCheck', (diagnostics, lints) => {
+       const allMsgs = [...diagnostics, ...lints];
+       const format = message =>
+         `${message.file}\n${typescriptFormatter(message, true)}`;
+
+       tsMessagesResolver({
+         errors: allMsgs.filter(msg => msg.severity === 'error').map(format),
+         warnings: allMsgs
+           .filter(msg => msg.severity === 'warning')
+           .map(format),
+       });
+     });
+  }
+
   compiler.hooks.invalid.tap('recompile-log', () => {
     if (isInteractive) {
-      clearConsole();
+      //clearConsole();
     }
     console.log('Compiling...');
   });
 
   compiler.hooks.done.tap('finished-log', async (stats) => {
     if (isInteractive) {
-      clearConsole();
+      //clearConsole();
     }
 
-    const messages = formatWebpackMessages(stats.toJson({}, true));
+    let messages = formatWebpackMessages(stats.toJson({}, true));
     let isSuccessful = !messages.errors.length && !messages.warnings.length;
 
     // no errors + TS
@@ -76,7 +83,7 @@ function createCompiler(config, { https, send }) {
         );
       }, 100);
 
-      const messages = await tsMessagesPromise;
+      messages = await tsMessagesPromise;
       clearTimeout(delayedMsg);
 
       isSuccessful = !messages.errors.length && !messages.warnings.length;

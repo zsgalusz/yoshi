@@ -9,6 +9,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const StylableWebpackPlugin = require('@stylable/webpack-plugin');
 const TpaStyleWebpackPlugin = require('tpa-style-webpack-plugin');
+const resolve = require('resolve');
 const RtlCssPlugin = require('rtlcss-webpack-plugin');
 const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
 const WriteFilePlugin = require('write-file-webpack-plugin');
@@ -323,8 +324,23 @@ function createCommonWebpackConfig({
               //   resolveJsonModule: true,
               //   noEmit: true,
               // },
-              async: false,
+              typescript: resolve.sync('typescript', {
+                basedir:
+                  '/private/var/folders/jv/q0y63ly12_gggw58s5lts8747fw3rr/T/9a7ef92717416e5d1e958bf43ef9c3cd/node_modules',
+              }),
+              reportFiles: [
+                '**',
+                '!**/*.json',
+                '!**/__tests__/**',
+                '!**/?(*.)(spec|test).*',
+                '!**/src/setupProxy.*',
+                '!**/src/setupTests.*',
+              ],
+              async: true,
               silent: true,
+              watch:
+                '/private/var/folders/jv/q0y63ly12_gggw58s5lts8747fw3rr/T/9a7ef92717416e5d1e958bf43ef9c3cd/src',
+              useTypescriptIncrementalApi: true,
               checkSyntacticErrors: true,
               formatter: typescriptFormatter,
             }),
