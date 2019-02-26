@@ -43,19 +43,19 @@ function createCompiler(config, { https, send }) {
     });
 
     forkTsCheckerWebpackPlugin
-     .getCompilerHooks(compiler.compilers[0])
-     .receive.tap('afterTypeScriptCheck', (diagnostics, lints) => {
-       const allMsgs = [...diagnostics, ...lints];
-       const format = message =>
-         `${message.file}\n${typescriptFormatter(message, true)}`;
+      .getCompilerHooks(compiler.compilers[0])
+      .receive.tap('afterTypeScriptCheck', (diagnostics, lints) => {
+        const allMsgs = [...diagnostics, ...lints];
+        const format = message =>
+          `${message.file}\n${typescriptFormatter(message, true)}`;
 
-       tsMessagesResolver({
-         errors: allMsgs.filter(msg => msg.severity === 'error').map(format),
-         warnings: allMsgs
-           .filter(msg => msg.severity === 'warning')
-           .map(format),
-       });
-     });
+        tsMessagesResolver({
+          errors: allMsgs.filter(msg => msg.severity === 'error').map(format),
+          warnings: allMsgs
+            .filter(msg => msg.severity === 'warning')
+            .map(format),
+        });
+      });
   }
 
   compiler.hooks.invalid.tap('recompile-log', () => {
@@ -65,7 +65,7 @@ function createCompiler(config, { https, send }) {
     console.log('Compiling...');
   });
 
-  compiler.hooks.done.tap('finished-log', async (stats) => {
+  compiler.hooks.done.tap('finished-log', async stats => {
     if (isInteractive) {
       //clearConsole();
     }
@@ -78,8 +78,8 @@ function createCompiler(config, { https, send }) {
       const delayedMsg = setTimeout(() => {
         console.log(
           chalk.yellow(
-            'Files successfully emitted, waiting for typecheck results...'
-          )
+            'Files successfully emitted, waiting for typecheck results...',
+          ),
         );
       }, 100);
 
@@ -89,17 +89,16 @@ function createCompiler(config, { https, send }) {
       isSuccessful = !messages.errors.length && !messages.warnings.length;
 
       if (messages.errors.length) {
-        await send('errors', messages.errors.join('\n\n'));
+        await send('errors', messages.errors);
       }
 
       if (messages.warnings.length) {
-        await send('warnings', messages.warnings.join('\n\n'));
+        await send('warnings', messages.warnings);
       }
       // if (isInteractive) {
       //   clearConsole();
       // }
     }
-
 
     if (isSuccessful) {
       console.log(chalk.green('Compiled successfully!'));
@@ -174,7 +173,6 @@ function createCompiler(config, { https, send }) {
     if (messages.warnings.length) {
       console.log(chalk.yellow('Compiled with warnings.\n'));
       console.log(messages.warnings.join('\n\n'));
-      await send('errors', messages.warnings.join('\n\n'));
     }
   });
 
