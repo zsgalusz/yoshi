@@ -94,8 +94,8 @@ function createCompiler(config, { https, send }) {
 
       // Push errors and warnings into compilation result
       // to show them after page refresh triggered by user.
-      stats.stats[0].errors.push(...messages.errors);
-      stats.stats[0].warnings.push(...messages.warnings);
+      stats.stats[0].compilation.errors.push(...messages.errors);
+      stats.stats[0].compilation.warnings.push(...messages.warnings);
 
       if (messages.errors.length) {
         await send('errors', messages.errors);
