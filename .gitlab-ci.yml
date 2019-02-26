@@ -5,6 +5,8 @@ stages:
   - test
 
 .use-node-modules-cache:
+  before_script:
+    - npm i
   cache:
     key: node_modules
     paths:
