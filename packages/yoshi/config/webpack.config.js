@@ -318,14 +318,9 @@ function createCommonWebpackConfig({
             new (require('fork-ts-checker-webpack-plugin'))({
               tsconfig: TSCONFIG_FILE,
               // https://github.com/facebook/create-react-app/pull/5607
-              compilerOptions: {
-                module: 'esnext',
-                moduleResolution: 'node',
-                resolveJsonModule: true,
-                noEmit: true,
-              },
               async: false,
               silent: true,
+              useTypescriptIncrementalApi: true,
               checkSyntacticErrors: true,
               formatter: typescriptFormatter,
             }),

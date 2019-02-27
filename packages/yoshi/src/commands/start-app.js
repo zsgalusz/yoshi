@@ -105,6 +105,7 @@ module.exports = async () => {
   });
 
   serverCompiler.watch({ 'info-verbosity': 'none' }, async (error, stats) => {
+    devServer._stats = stats;
     const jsonStats = stats.toJson();
 
     // If the spawned server process has died, restart it
