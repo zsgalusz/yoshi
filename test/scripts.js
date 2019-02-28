@@ -28,6 +28,9 @@ module.exports = class Scripts {
       },
     });
 
+    startProcess.stdout.pipe(process.stdout);
+    startProcess.stderr.pipe(process.stderr);
+
     // `startProcess` will never resolve but if it fails this
     // promise will reject immediately
     await Promise.race([
