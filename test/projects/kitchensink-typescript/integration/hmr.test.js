@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { initTest, waitForPort, waitForPortToFree } = require('../../../utils');
 
-jest.setTimeout(20 * 1000);
+jest.setTimeout(40 * 1000);
 
 const clientFilePath = path.join(
   process.env.TEST_DIRECTORY,
@@ -39,6 +39,8 @@ describe('hmr', () => {
         'CSS Modules are working!',
         'Overridden content!',
       );
+
+      console.log('writing', clientFilePath, editedContent);
 
       fs.writeFileSync(clientFilePath, editedContent);
 
