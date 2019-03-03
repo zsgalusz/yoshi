@@ -324,6 +324,7 @@ function createCommonWebpackConfig({
               checkSyntacticErrors: true,
               formatter: typescriptFormatter,
               reportFiles: ['**'],
+              workers: 1,
               watch: SRC_DIR,
             }),
           ]
