@@ -9,8 +9,6 @@
   <a href="https://www.npmjs.com/package/yoshi"><img src="https://img.shields.io/npm/dm/yoshi.svg" alt="downloads"></a>
 </p>
 
-Test commit
-
 ## Getting started
 
 Generate a new project:
