@@ -320,7 +320,6 @@ function createCommonWebpackConfig({
               // https://github.com/facebook/create-react-app/pull/5607
               async: false,
               silent: false,
-              useTypescriptIncrementalApi: true,
               checkSyntacticErrors: true,
               formatter: typescriptFormatter,
               reportFiles: ['**'],
