@@ -16,6 +16,11 @@ const originalServerContent = fs.readFileSync(serverFilePath, 'utf-8');
 describe('hmr', () => {
   describe('client side', () => {
     it('reloads the browser on javascript changes', async () => {
+      page.on('console', msg => {
+        for (let i = 0; i < msg.args().length; ++i)
+          console.log(`${i}: ${msg.args()[i]}`);
+      });
+
       console.log('111');
 
       await initTest('css-inclusion');

@@ -691,7 +691,7 @@ function createClientWebpackConfig({
   if (isHmr) {
     addEntry(clientConfig, [
       require.resolve('webpack/hot/dev-server'),
-      require.resolve('webpack-dev-server/client'),
+      require.resolve('./client'),
     ]);
   }
 
