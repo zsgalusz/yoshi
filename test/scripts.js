@@ -28,6 +28,18 @@ module.exports = class Scripts {
       },
     });
 
+    startProcess.on('exit', e => {
+      console.log('exit', e);
+    });
+
+    startProcess.on('close', e => {
+      console.log('close', e);
+    });
+
+    startProcess.on('error', e => {
+      console.log('error', e);
+    });
+
     startProcess.stdout.pipe(process.stdout);
     startProcess.stderr.pipe(process.stderr);
 
