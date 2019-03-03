@@ -16,11 +16,17 @@ const originalServerContent = fs.readFileSync(serverFilePath, 'utf-8');
 describe('hmr', () => {
   describe('client side', () => {
     it('reloads the browser on javascript changes', async () => {
+      console.log('111');
+
       await initTest('css-inclusion');
+
+      console.log('222');
 
       expect(await page.$eval('#css-inclusion', elm => elm.textContent)).toBe(
         'CSS Modules are working!',
       );
+
+      console.log('333');
 
       const originalContent = fs.readFileSync(clientFilePath, 'utf-8');
 
@@ -31,7 +37,11 @@ describe('hmr', () => {
 
       fs.writeFileSync(clientFilePath, editedContent);
 
+      console.log('444');
+
       await page.waitForNavigation();
+
+      console.log('555');
 
       expect(await page.$eval('#css-inclusion', elm => elm.textContent)).toBe(
         'Overridden content!',
@@ -39,15 +49,21 @@ describe('hmr', () => {
 
       fs.writeFileSync(clientFilePath, originalContent);
 
+      console.log('666');
+
       await page.waitForNavigation();
+
+      console.log('777');
 
       expect(await page.$eval('#css-inclusion', elm => elm.textContent)).toBe(
         'CSS Modules are working!',
       );
+
+      console.log('888');
     });
   });
 
-  describe('server side', () => {
+  describe.skip('server side', () => {
     afterEach(async () => {
       fs.writeFileSync(serverFilePath, originalServerContent);
 
