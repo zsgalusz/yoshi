@@ -323,6 +323,8 @@ function createCommonWebpackConfig({
               useTypescriptIncrementalApi: true,
               checkSyntacticErrors: true,
               formatter: typescriptFormatter,
+              reportFiles: ['**'],
+              watch: SRC_DIR,
             }),
           ]
         : []),
