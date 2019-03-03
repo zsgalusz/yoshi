@@ -44,37 +44,37 @@ module.exports = async ({
   const failures = [];
 
   // Test production build (CI env)
-  try {
-    console.log(chalk.blue(`> Building project for production`));
-    console.log();
+  // try {
+  //   console.log(chalk.blue(`> Building project for production`));
+  //   console.log();
 
-    await scripts.build(ciEnv);
+  //   await scripts.build(ciEnv);
 
-    console.log();
-    console.log(
-      chalk.blue(`> Running app's own tests against production build`),
-    );
-    console.log();
+  //   console.log();
+  //   console.log(
+  //     chalk.blue(`> Running app's own tests against production build`),
+  //   );
+  //   console.log();
 
-    await scripts.test(ciEnv);
+  //   await scripts.test(ciEnv);
 
-    console.log();
-    console.log(chalk.blue(`> Running production integration tests`));
-    console.log();
+  //   console.log();
+  //   console.log(chalk.blue(`> Running production integration tests`));
+  //   console.log();
 
-    const serveResult = await scripts.serve();
+  //   const serveResult = await scripts.serve();
 
-    try {
-      await execa.shell(
-        `npx jest --config='jest.production.config.js' --no-cache --runInBand`,
-        options,
-      );
-    } finally {
-      await serveResult.done();
-    }
-  } catch (error) {
-    failures.push(error);
-  }
+  //   try {
+  //     await execa.shell(
+  //       `npx jest --config='jest.production.config.js' --no-cache --runInBand`,
+  //       options,
+  //     );
+  //   } finally {
+  //     await serveResult.done();
+  //   }
+  // } catch (error) {
+  //   failures.push(error);
+  // }
 
   // Test local build (local env)
   try {
@@ -85,13 +85,13 @@ module.exports = async ({
     const startResult = await scripts.start(localEnv);
 
     try {
-      console.log();
-      console.log(
-        chalk.blue(`> Running app's own tests against development build`),
-      );
-      console.log();
+      // console.log();
+      // console.log(
+      //   chalk.blue(`> Running app's own tests against development build`),
+      // );
+      // console.log();
 
-      await scripts.test(localEnv);
+      // await scripts.test(localEnv);
 
       console.log();
       console.log(chalk.blue(`> Running development integration tests`));
@@ -109,18 +109,18 @@ module.exports = async ({
   }
 
   // Run additional tests (errors, analyze)
-  try {
-    console.log();
-    console.log(chalk.blue(`> Running additional integration tests`));
-    console.log();
+  // try {
+  //   console.log();
+  //   console.log(chalk.blue(`> Running additional integration tests`));
+  //   console.log();
 
-    await execa.shell(
-      `npx jest --config='jest.plain.config.js' --no-cache --runInBand`,
-      options,
-    );
-  } catch (error) {
-    failures.push(error);
-  }
+  //   await execa.shell(
+  //     `npx jest --config='jest.plain.config.js' --no-cache --runInBand`,
+  //     options,
+  //   );
+  // } catch (error) {
+  //   failures.push(error);
+  // }
 
   // Clean eventually
   await fs.remove(rootDirectory);

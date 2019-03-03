@@ -6,7 +6,7 @@ const testProject = require('./utils/testProject');
 
 const isCI = !!process.env.TEAMCITY_VERSION;
 
-const filterProject = process.env.FILTER_PROJECT;
+const filterProject = 'typescript'; // process.env.FILTER_PROJECT;
 
 // Publish the entire monorepo and install everything from CI to get
 // the maximum reliability
