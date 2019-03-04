@@ -315,12 +315,11 @@ function createCommonWebpackConfig({
             // Since `fork-ts-checker-webpack-plugin` requires you to have
             // TypeScript installed when its required, we only require it if
             // this is a TypeScript project
-            new (require('fork-ts-checker-webpack-plugin'))({
+            new (require('./fork-ts-checker-webpack-plugin/lib'))({
               tsconfig: TSCONFIG_FILE,
               // https://github.com/facebook/create-react-app/pull/5607
               async: false,
               silent: false,
-              useTypescriptIncrementalApi: true,
               checkSyntacticErrors: true,
               formatter: typescriptFormatter,
               reportFiles: ['**'],
