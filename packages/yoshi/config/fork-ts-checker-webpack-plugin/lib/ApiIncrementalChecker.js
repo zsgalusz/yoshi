@@ -57,8 +57,14 @@ class ApiIncrementalChecker {
     }
     nextIteration() {
         // do nothing
+        console.log('------------------------------------');
+        console.log('nextIteration');
+        console.log('------------------------------------');
     }
     getDiagnostics(_cancellationToken) {
+        console.log('------------------------------------');
+        console.log('getDiagnostics');
+        console.log('------------------------------------');
         return __awaiter(this, void 0, void 0, function* () {
             const diagnostics = yield this.tsIncrementalCompiler.processChanges();
             this.lastUpdatedFiles = diagnostics.updatedFiles;
