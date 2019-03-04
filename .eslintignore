@@ -5,4 +5,4 @@ packages/eslint-config-yoshi-base/__tests__/rules
 test/projects/*/src/errors
 packages/create-yoshi-app/templates/business-manager-module/test/e2e/drivers/app.driver.js
 packages/yoshi/config/client
-/Users/yanivef/wix/yoshi/packages/yoshi/config/fork-ts-checker-webpack-plugin
+packages/yoshi/config/fork-ts-checker-webpack-plugin
