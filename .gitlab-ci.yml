@@ -6,7 +6,7 @@ stages:
 
 .use-node-modules-cache:
   before_script:
-    - npm install --unsafe-perm
+    - npm install --unsafe-perm --verbose
   cache:
     key: node_modules-${CI_COMMIT_REF_SLUG}
     paths:
@@ -30,7 +30,7 @@ stages:
 
 install:
   stage: build
-  script: npm install --unsafe-perm
+  script: npm install --unsafe-perm --verbose
   cache:
     key: node_modules
     policy: push
