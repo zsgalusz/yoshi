@@ -1,0 +1,51 @@
+global:
+  hosts:
+    domain: fed-infra.tbd.sphera.tools
+  ingress:
+    configureCertmanager: false
+    tls:
+      enabled: true
+      secretName:
+    annotations:
+        certmanager.k8s.io/cluster-issuer: letsencrypt-prod
+        kubernetes.io/ingress.class: nginx
+        kubernetes.io/tls-acme: "true"
+
+operator:
+  enabled: false
+
+nginx-ingress:
+  enabled: false
+
+certmanager:
+  install: false
+
+gitlab-runner:
+  runners:
+    namespace: fed-infra
+    privileged: true
+  rbac:
+    create: false
+    clusterWideAccess: false
+    serviceAccountName: gitlab-sa
+
+prometheus:
+  rbac:
+    create: false
+
+
+gitlab:
+  unicorn:
+    ingress:
+      tls:
+        secretName: gitlab.fed-infra.tbd.sphera.tools-tls
+
+registry:
+  ingress:
+    tls:
+      secretName: registry.fed-infra.tbd.sphera.tools-tls
+
+minio:
+  ingress:
+    tls:
+      secretName: minio.fed-infra.tbd.sphera.tools-tls
