@@ -77,25 +77,53 @@ templates-client:
   tags:
     - private
   stage: test
-  script: npm run test:templates:client
+  script: npm run test:templates -- client
+
+templates-client-typescript:
+  extends: .use-node-modules-cache
+  tags:
+    - private
+  stage: test
+  script: npm run test:templates -- client-typescript
 
 templates-fullstack:
   extends: .use-node-modules-cache
   tags:
     - private
   stage: test
-  script: npm run test:templates:fullstack
+  script: npm run test:templates -- fullstack
+
+templates-fullstack-typescript:
+  extends: .use-node-modules-cache
+  tags:
+    - private
+  stage: test
+  script: npm run test:templates -- fullstack-typescript
 
 templates-business-manager-module:
   extends: .use-node-modules-cache
   tags:
     - private
   stage: test
-  script: npm run test:templates:business-manager-module
+  script: npm run test:templates -- business-manager-module
+
+templates-business-manager-module-typescript:
+  extends: .use-node-modules-cache
+  tags:
+    - private
+  stage: test
+  script: npm run test:templates -- business-manager-module-typescript
 
 templates-server:
   extends: .use-node-modules-cache
   tags:
     - private
   stage: test
-  script: npm run test:templates:server
+  script: npm run test:templates -- server
+
+templates-server-typescript:
+  extends: .use-node-modules-cache
+  tags:
+    - private
+  stage: test
+  script: npm run test:templates -- server-typescript
