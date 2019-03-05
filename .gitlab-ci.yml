@@ -52,6 +52,11 @@ install:
       - packages/yoshi-helpers/node_modules/
       - packages/yoshi-style-dependencies/node_modules/
 
+check-node-modules:
+  extends: .use-node-modules-cache
+  stage: test
+  script: ls -ltr ./node_modules
+
 unit:
   extends: .use-node-modules-cache
   stage: test
