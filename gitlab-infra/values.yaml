@@ -58,24 +58,24 @@ runners:
 
   ## Build Container specific configuration
   ##
-  builds:
+  # builds:
     # cpuLimit: 200m
     # memoryLimit: 256Mi
-    cpuRequests: 100m
-    memoryRequests: 128Mi
+    # cpuRequests: 100m
+    # memoryRequests: 128Mi
 
   ## Service Container specific configuration
   ##
-  services:
+  # services:
     # cpuLimit: 200m
     # memoryLimit: 256Mi
-    cpuRequests: 100m
-    memoryRequests: 128Mi
+    # cpuRequests: 100m
+    # memoryRequests: 128Mi
 
   ## Helper Container specific configuration
   ##
-  helpers:
+  # helpers:
     # cpuLimit: 200m
     # memoryLimit: 256Mi
-    cpuRequests: 100m
-    memoryRequests: 128Mi
+    # cpuRequests: 100m
+    # memoryRequests: 128Mi
