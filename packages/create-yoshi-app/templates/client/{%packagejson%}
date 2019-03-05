@@ -11,7 +11,7 @@
     "start": "yoshi start",
     "precommit": "lint-staged",
     "pretest": "yoshi build",
-    "test": "yoshi test --jest",
+    "test": "yoshi test",
     "posttest": "yoshi lint",
     "release": "yoshi release"
   },
@@ -21,12 +21,12 @@
     "express-session": "~1.15.0",
     "husky": "~0.14.0",
     "lint-staged": "^7.2.2",
-    "jest-yoshi-preset": "^3.5.0",
+    "jest-yoshi-preset": "^4.1.0-alpha.1",
     "puppeteer": "^1.1.0",
     "react-test-renderer": "~15.6.0",
     "velocity": "~0.7.0",
-    "yoshi": "^3.0.0",
-    "yoshi-style-dependencies": "^3.0.0"
+    "yoshi": "^4.1.0-alpha.1",
+    "yoshi-style-dependencies": "^4.1.0-alpha.1"
   },
   "dependencies": {
     "axios": "~0.16.0",
@@ -50,12 +50,10 @@
   "jest": {
     "preset": "jest-yoshi-preset"
   },
-  "babel": {
-    "presets": [
-      "yoshi"
-    ]
-  },
   "eslintConfig": {
     "extends": "yoshi"
+  },
+  "stylelint": {
+    "extends": "stylelint-config-yoshi"
   }
 }

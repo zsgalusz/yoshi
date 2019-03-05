@@ -1,5 +1,3 @@
-declare module '*.scss';
-declare module '*.json';
 declare module 'react-module-container' {
   import * as React from 'react';
   import {PageComponentId} from '@wix/business-manager-api';

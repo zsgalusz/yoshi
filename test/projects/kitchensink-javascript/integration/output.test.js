@@ -45,7 +45,7 @@ describe('output', () => {
     try {
       await global.scripts.build();
     } catch (error) {
-      expect(error.stderr).toMatch('SyntaxError: Unexpected token (1:9)');
+      expect(error.stderr).toMatch('Unexpected token (1:9)');
     }
   });
 
@@ -57,7 +57,7 @@ describe('output', () => {
     try {
       await global.scripts.build();
     } catch (error) {
-      expect(error.stderr).toMatch('(1:1) Unclosed block');
+      expect(error.stderr).toMatch('Unclosed block');
     }
   });
 

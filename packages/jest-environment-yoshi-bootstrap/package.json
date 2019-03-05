@@ -1,6 +1,6 @@
 {
   "name": "jest-environment-yoshi-bootstrap",
-  "version": "3.30.5",
+  "version": "4.1.0-alpha.3",
   "description": "bootstrap environment for jest",
   "main": "index.js",
   "keywords": [
@@ -11,13 +11,13 @@
   "author": "Ronen Amiel & Ran Yitzhaki",
   "license": "ISC",
   "peerDependencies": {
-    "jest": "^23.0.0"
+    "jest": "^24.1.0"
   },
   "dependencies": {
-    "yoshi-config": "3.30.5",
-    "yoshi-helpers": "3.30.5"
+    "yoshi-config": "4.1.0-alpha.3",
+    "yoshi-helpers": "4.1.0-alpha.3"
   },
   "devDependencies": {
-    "jest-environment-node": "^23.0.0"
+    "jest-environment-node": "^24.0.0"
   }
 }

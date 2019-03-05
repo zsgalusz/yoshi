@@ -41,12 +41,13 @@ const fx = {
           compilerOptions: {
             module: 'commonjs',
             target: 'es5',
-            lib: ['es5', 'es6'],
+            lib: ['esnext'],
             moduleResolution: 'node',
             sourceMap: true,
             outDir: 'dist',
             declaration: true,
             noImplicitAny: false,
+            resolveJsonModule: true,
           },
           exclude: ['node_modules', 'maven', 'dist'],
         },
@@ -243,13 +244,13 @@ const fx = {
   </project>
   `,
   defaultServerPort: () => 3002,
-  httpServer: (message, port) => `
+  httpServer: (message, port = fx.defaultServerPort()) => `
     'use strict';
 
     const http = require('http');
 
     const hostname = 'localhost';
-    const port = ${port || fx.defaultServerPort()};
+    const port = ${port} || process.env.PORT || ${fx.defaultServerPort()};
     const server = http.createServer((req, res) => {
       res.statusCode = 200;
       res.setHeader('Content-Type', 'text/plain');

@@ -73,17 +73,14 @@ const loadConfig = () => {
     enhancedTpaStyle: getConfig('enhancedTpaStyle', false),
     features: getConfig('features', {}),
     externals: getConfig('externals', []),
-    babel: _.get(packagejson, 'babel'),
     transpileTests: getConfig('transpileTests', true),
-    runIndividualTranspiler: getConfig('runIndividualTranspiler', true),
     jestConfig: _.get(packagejson, 'jest', {}),
     petriSpecsConfig: getConfig('petriSpecs', {}),
     performanceBudget: getConfig('performance'),
     resolveAlias: getConfig('resolveAlias', {}),
     keepFunctionNames: getConfig('keepFunctionNames', false),
     umdNamedDefine: getConfig('umdNamedDefine', true),
-    experimentalServerBundle: getConfig('experimentalServerBundle', false),
-    experimentalTSTarget: getConfig('experimentalTSTarget', false),
+    projectType: getConfig('projectType', null),
     unprocessedModules: p => {
       const allSourcesButExternalModules = function(filePath) {
         filePath = path.normalize(filePath);

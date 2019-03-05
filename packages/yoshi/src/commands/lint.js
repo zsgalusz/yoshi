@@ -2,8 +2,10 @@ const path = require('path');
 const execa = require('execa');
 const { createRunner } = require('haste-core');
 const parseArgs = require('minimist');
+const chalk = require('chalk');
 const tslint = require('../tasks/tslint');
 const eslint = require('../tasks/eslint');
+const stylelint = require('../tasks/stylelint');
 const LoggerPlugin = require('../plugins/haste-plugin-yoshi-logger');
 const globs = require('yoshi-config/globs');
 
@@ -12,7 +14,6 @@ const {
   shouldRunStylelint,
   watchMode,
 } = require('yoshi-helpers');
-const { printAndExitOnErrors } = require('../error-handler');
 
 const { hooks } = require('yoshi-config');
 
@@ -23,12 +24,11 @@ const runner = createRunner({
 const shouldWatch = watchMode();
 const cliArgs = parseArgs(process.argv.slice(2));
 
-module.exports = runner.command(async tasks => {
+module.exports = runner.command(async () => {
   if (shouldWatch) {
     return;
   }
 
-  const { stylelint } = tasks;
   // Variadic arguments are placed inside the "_" property array
   // https://github.com/substack/minimist#var-argv--parseargsargs-opts
   // The first argument is the command itself (lint), we retrieve all the rest
@@ -44,73 +44,81 @@ module.exports = runner.command(async tasks => {
 
   const { prelint } = hooks;
 
-  if (shouldRunOnSpecificFiles) {
-    if ((await shouldRunStylelint()) && styleFiles.length) {
-      await runStyleLint(styleFiles);
-    }
+  const lintErrors = [];
 
-    if (isTypescriptProject() && (tsFiles.length || jsFiles.length)) {
-      await runTsLint([...tsFiles, ...jsFiles]);
-    } else if (jsFiles.length) {
-      await runEsLint(jsFiles);
-    }
-
-    return null;
+  if (prelint) {
+    await execa.shell(prelint, { stdio: 'inherit' });
   }
 
   if (await shouldRunStylelint()) {
-    await runStyleLint([`${globs.base}/**/*.scss`, `${globs.base}/**/*.less`]);
+    const styleFilesToLint =
+      shouldRunOnSpecificFiles && styleFiles.length
+        ? styleFiles
+        : [`${globs.base}/**/*.scss`, `${globs.base}/**/*.less`];
+
+    try {
+      await runStyleLint(styleFilesToLint);
+    } catch (error) {
+      lintErrors.push(error);
+    }
   }
 
   if (isTypescriptProject()) {
-    await runTsLint();
+    const tsFilesToLint =
+      shouldRunOnSpecificFiles && (tsFiles.length || jsFiles.length)
+        ? [...tsFiles, ...jsFiles]
+        : undefined;
+
+    try {
+      await runTsLint(tsFilesToLint);
+    } catch (error) {
+      lintErrors.push(error);
+    }
   } else {
-    await runEsLint(['*.js', `${globs.base}/**/*.js`]);
+    const jsFilesToLint =
+      shouldRunOnSpecificFiles && jsFiles.length
+        ? jsFiles
+        : ['*.js', `${globs.base}/**/*.js`];
+
+    try {
+      await runEsLint(jsFilesToLint);
+    } catch (error) {
+      lintErrors.push(error);
+    }
+  }
+
+  if (lintErrors.length) {
+    console.error(chalk.red(lintErrors.join('\n\n')));
+    process.exit(1);
   }
 
   function runStyleLint(pattern) {
-    console.log(`running style lint on ${pattern}`);
-
-    return printAndExitOnErrors(() =>
-      stylelint({ pattern, options: { formatter: 'string' } }),
-    );
+    return stylelint({ pattern, fix: cliArgs.fix });
   }
 
   async function runTsLint(pattern) {
     const tsconfigFilePath = path.resolve('tsconfig.json');
     const tslintFilePath = path.resolve('tslint.json');
 
-    return printAndExitOnErrors(async () => {
-      if (prelint) {
-        await execa.shell(prelint, { stdio: 'inherit' });
-      }
-
-      return tslint({
-        tsconfigFilePath,
-        tslintFilePath,
-        pattern,
-        options: { fix: cliArgs.fix, formatter: cliArgs.format || 'stylish' },
-      });
+    return tslint({
+      tsconfigFilePath,
+      tslintFilePath,
+      pattern,
+      options: { fix: cliArgs.fix, formatter: cliArgs.format || 'stylish' },
     });
   }
 
   async function runEsLint(pattern) {
-    return printAndExitOnErrors(async () => {
-      if (prelint) {
-        await execa.shell(prelint, { stdio: 'inherit' });
-      }
+    console.log(`running es lint on ${pattern}`);
 
-      console.log(`running es lint on ${pattern}`);
-
-      return eslint({
-        pattern,
-        options: {
-          cache: true,
-          cacheLocation: 'target/.eslintcache',
-          fix: cliArgs.fix,
-          formatter: cliArgs.format,
-        },
-      });
+    return eslint({
+      pattern,
+      options: {
+        cache: true,
+        cacheLocation: 'target/.eslintcache',
+        fix: cliArgs.fix,
+        formatter: cliArgs.format,
+      },
     });
   }
 });

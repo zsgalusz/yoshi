@@ -38,7 +38,7 @@ describe('webpack', () => {
       await initTest('css-auto-prefixer');
 
       await matchCSS('css-auto-prefixer', page, [
-        /-webkit-appearance:.+;-moz-appearance:.+;appearance:.+/,
+        /-webkit-user-select:.+;-moz-user-select:.+;-ms-user-select:.+;user-select:.+/,
       ]);
     });
 
@@ -46,7 +46,7 @@ describe('webpack', () => {
       await initTest('css-image-url');
 
       await matchCSS('css-image-url', page, [
-        /background-image:url\(components\/features\/assets\/large-bart-simpson.gif.+\)/,
+        /background-image:url\(media\/large-bart-simpson.gif\)/,
       ]);
     });
   });
@@ -88,7 +88,7 @@ describe('webpack', () => {
       await initTest('scss-auto-prefixer');
 
       await matchCSS('scss-auto-prefixer', page, [
-        /-webkit-appearance:.+;-moz-appearance:.+;appearance:.+/,
+        /-webkit-user-select:.+;-moz-user-select:.+;-ms-user-select:.+;user-select:.+/,
       ]);
     });
 
@@ -154,7 +154,7 @@ describe('webpack', () => {
       await initTest('sass-auto-prefixer');
 
       await matchCSS('sass-auto-prefixer', page, [
-        /-webkit-appearance:.+;-moz-appearance:.+;appearance:.+/,
+        /-webkit-user-select:.+;-moz-user-select:.+;-ms-user-select:.+;user-select:.+/,
       ]);
     });
   });
@@ -196,7 +196,7 @@ describe('webpack', () => {
       await initTest('less-auto-prefixer');
 
       await matchCSS('less-auto-prefixer', page, [
-        /-webkit-appearance:.+;-moz-appearance:.+;appearance:.+/,
+        /-webkit-user-select:.+;-moz-user-select:.+;-ms-user-select:.+;user-select:.+/,
       ]);
     });
 
@@ -259,9 +259,7 @@ describe('webpack', () => {
         elm => elm.src,
       );
 
-      expect(imageSource).toMatch(
-        /^.+components\/features\/assets\/large-bart-simpson.gif.+$/,
-      );
+      expect(imageSource).toMatch(/^.+media\/large-bart-simpson.gif$/);
     });
 
     it('inline svg inclusion', async () => {
@@ -273,6 +271,33 @@ describe('webpack', () => {
       );
 
       expect(imageSource).toMatch(/svg/);
+    });
+
+    it('component svg inclusion', async () => {
+      await initTest('component-svg-inclusion');
+
+      const result = await page.$eval(
+        '#component-svg-inclusion',
+        elm => elm.innerHTML,
+      );
+
+      expect(result).toMatch(/(<svg)([^<]*|[^>]*)/);
+    });
+
+    it('svg inclusion', async () => {
+      await initTest('svg-inclusion');
+
+      const imageSource = await page.$eval('#svg-inclusion', elm => elm.src);
+
+      expect(imageSource).toMatch(/data:image\/svg.+/);
+    });
+
+    it('svg css inclusion', async () => {
+      await initTest('svg-inclusion-css');
+
+      await matchCSS('svg-inclusion-css', page, [
+        /background:url\("data:image\/svg.+\)/,
+      ]);
     });
   });
 

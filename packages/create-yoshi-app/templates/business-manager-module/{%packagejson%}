@@ -11,7 +11,7 @@
     "start": "yoshi start --entry-point ./dist/test/dev/server.js",
     "precommit": "lint-staged",
     "pretest": "yoshi build",
-    "test": "yoshi test --jest",
+    "test": "yoshi test",
     "posttest": "yoshi lint",
     "release": "yoshi release"
   },
@@ -22,7 +22,7 @@
     "enzyme": "^3.7.0",
     "enzyme-adapter-react-16": "^1.5.0",
     "husky": "~0.14.0",
-    "jest-yoshi-preset": "^3.20.0",
+    "jest-yoshi-preset": "^4.1.0-alpha.1",
     "lint-staged": "^7.2.2",
     "prop-types": "~15.5.0",
     "puppeteer": "^1.10.0",
@@ -30,8 +30,8 @@
     "react-dom": "^16.6.3",
     "react-module-container": "~1.0.0",
     "react-test-renderer": "16.6.3",
-    "yoshi": "^3.0.0",
-    "yoshi-style-dependencies": "^3.0.0"
+    "yoshi": "^4.1.0-alpha.1",
+    "yoshi-style-dependencies": "^4.1.0-alpha.1"
   },
   "dependencies": {
     "axios": "^0.16.2",
@@ -63,15 +63,13 @@
       "react-module-container": "reactModuleContainer"
     }
   },
-  "babel": {
-    "presets": [
-      "yoshi"
-    ]
-  },
   "eslintConfig": {
     "extends": "yoshi",
     "globals": {
       "testKitEnv": true
     }
+  },
+  "stylelint": {
+    "extends": "stylelint-config-yoshi"
   }
 }

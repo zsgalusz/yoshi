@@ -95,11 +95,6 @@ const schema = {
         },
       },
     },
-    runIndividualTranspiler: {
-      description:
-        "In case you don't want to transpile your server (node) code, and you still need .babelrc/tsconfig, you can add runIndividualTranspiler flag to skip server transpiling.",
-      type: 'boolean',
-    },
     petriSpecs: {
       description: 'Configure options for the petriSpecs command',
       type: 'object',
@@ -179,14 +174,10 @@ const schema = {
         'Indicates whether the current project is a universal project.',
       type: 'boolean',
     },
-    experimentalServerBundle: {
+    projectType: {
       description:
         'An experimental way of running an app by creating a bundle specifically for the server.',
-      type: 'boolean',
-    },
-    experimentalTSTarget: {
-      description: 'An experimental TypeScript compilation target.',
-      type: 'boolean',
+      enum: ['app', null],
     },
   },
 };

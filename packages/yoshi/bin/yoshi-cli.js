@@ -42,7 +42,7 @@ prog
   .allowUnknownOption()
   .action(() => runCLI('test'));
 
-if (config.experimentalServerBundle) {
+if (config.projectType === 'app') {
   prog
     .command('build')
     .description('Experimental way of building an app to production')
@@ -81,7 +81,7 @@ if (config.experimentalServerBundle) {
       '--manual-restart',
       'Get SIGHUP on change and manage application reboot manually',
     )
-    .option('--no-test', 'Do not spawn npm test after start')
+    .option('--with-tests', 'Spawn npm test after start')
     .option('--no-server', 'Do not spawn the app server')
     .option('--debug', 'Allow app-server debugging')
     .option('--production', 'start using unminified production build')

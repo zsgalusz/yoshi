@@ -1,5 +1,8 @@
 module.exports = {
-  extends: ['prettier', require.resolve('./test')],
+  extends: [
+    require.resolve('eslint-config-prettier'),
+    require.resolve('./test'),
+  ],
 
   parser: 'babel-eslint',
 
@@ -15,7 +18,6 @@ module.exports = {
     ecmaVersion: 6,
     ecmaFeatures: {
       generators: true,
-      experimentalObjectRestSpread: true,
     },
   },
 

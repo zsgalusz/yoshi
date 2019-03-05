@@ -1,6 +1,9 @@
 const { unprocessedModules } = require('yoshi-config');
+const { createBabelConfig } = require('../index');
 
-require('babel-register')({
-  only: unprocessedModules,
-  plugins: [require.resolve('babel-plugin-transform-es2015-modules-commonjs')],
+const babelConfig = createBabelConfig();
+
+require('@babel/register')({
+  only: [unprocessedModules],
+  ...babelConfig,
 });

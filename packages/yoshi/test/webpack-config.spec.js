@@ -46,7 +46,7 @@ describe('Webpack basic configs', () => {
       it('should have a context ./src and output to ./dist', () =>
         // client.js
         expect(test.content('dist/statics/app.bundle.js')).to.contain(
-          'const aClientFunction',
+          'var aClientFunction',
         ));
 
       it('should resolve modules relatively to current context', () =>
@@ -110,9 +110,7 @@ describe('Webpack basic configs', () => {
         })
         .execute('build');
 
-      expect(test.content('dist/statics/app.bundle.js')).to.contain(
-        'const some',
-      );
+      expect(test.content('dist/statics/app.bundle.js')).to.contain('var some');
     });
 
     it('should set chunk filename', () => {
@@ -161,7 +159,7 @@ describe('Webpack basic configs', () => {
         );
       });
 
-      it('should use "/" for default public path', () => {
+      it('should use local dev-server url for public path when not on CI', () => {
         test
           .setup({
             'src/client.js': `console.log('test');`,
@@ -172,7 +170,7 @@ describe('Webpack basic configs', () => {
           });
 
         expect(test.content('dist/statics/app.bundle.js')).to.contain(
-          `__webpack_require__.p = "/"`,
+          `__webpack_require__.p = "http://localhost:3200/"`,
         );
       });
 
@@ -206,29 +204,6 @@ describe('Webpack basic configs', () => {
 
         expect(test.content('dist/statics/app.bundle.js')).to.contain(
           `__webpack_require__.p = "https://static.parastorage.com/unpkg/my-package@2.3.4/dist/statics"`,
-        );
-      });
-
-      it('should prepend dynamic public path (AKA __webpack_public_path__)', () => {
-        test
-          .setup({
-            'src/image.jpg': '(^_^)'.repeat(2500),
-            'src/client.js': `const img = require('./image.jpg');`,
-          })
-          .execute('build');
-
-        const content = test.content('dist/statics/app.bundle.js');
-        const value = `typeof window !== 'undefined' && window.__STATICS_BASE_URL__ || __webpack_require__.p;`;
-
-        // Make sure it was the last override of __webpack_require__.p
-        expect(
-          content
-            .split('__webpack_require__.p = ')
-            .pop()
-            .indexOf(value),
-        ).to.equal(0);
-        expect(content).to.contain(
-          'module.exports = __webpack_require__.p + "image.jpg?',
         );
       });
 
@@ -390,7 +365,7 @@ describe('Webpack basic configs', () => {
       test.execute('build', [], insideCI);
 
       expect(test.content('dist/statics/app.bundle.min.js')).to.contain(
-        'class LongClassName',
+        'function LongClassName',
       );
       test.teardown();
     });

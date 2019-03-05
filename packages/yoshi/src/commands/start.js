@@ -4,7 +4,9 @@ process.env.NODE_ENV = 'development';
 
 const parseArgs = require('minimist');
 
-const cliArgs = parseArgs(process.argv.slice(2));
+const cliArgs = parseArgs(process.argv.slice(2), {
+  boolean: ['with-tests'],
+});
 
 if (cliArgs.production) {
   // run start with production configuration
@@ -29,32 +31,34 @@ const {
 const globs = require('yoshi-config/globs');
 const {
   isTypescriptProject,
-  isBabelProject,
   shouldRunLess,
   shouldRunSass,
   shouldTransformHMRRuntime,
   suffix,
   watch,
   isProduction,
+  createBabelConfig,
 } = require('yoshi-helpers');
 const { debounce } = require('lodash');
+const wixAppServer = require('../tasks/app-server');
+const openBrowser = require('react-dev-utils/openBrowser');
 
 const runner = createRunner({
   logger: new LoggerPlugin(),
 });
 
 const addJsSuffix = suffix('.js');
-const shouldRunTests = cliArgs.test !== false;
+const shouldRunTests = cliArgs['with-tests'] === true;
 const debugPort = cliArgs.debug;
 const debugBrkPort = cliArgs['debug-brk'];
 const entryPoint = addJsSuffix(cliArgs['entry-point'] || 'index.js');
 
 module.exports = runner.command(
   async tasks => {
-    const { sass, less, copy, clean, babel, typescript } = tasks;
+    const { sass, less, copy, clean, typescript } = tasks;
 
-    const wixAppServer = tasks[require.resolve('../tasks/app-server')];
     const wixCdn = tasks[require.resolve('../tasks/cdn')];
+    const babel = tasks[require.resolve('../tasks/babel')];
     const migrateScopePackages =
       tasks[require.resolve('../tasks/migrate-to-scoped-packages')];
     const wixPetriSpecs = tasks[require.resolve('../tasks/petri-specs')];
@@ -86,7 +90,7 @@ module.exports = runner.command(
 
     const ssl = cliArgs.ssl || servers.cdn.ssl;
 
-    await Promise.all([
+    const [localUrlForBrowser] = await Promise.all([
       transpileJavascriptAndRunServer(),
       ...transpileCss(),
       copy(
@@ -148,6 +152,8 @@ module.exports = runner.command(
         { title: 'maven-statics', log: false },
       ),
     ]);
+
+    openBrowser(localUrlForBrowser);
 
     if (shouldRunTests && !isProduction()) {
       crossSpawn('npm', ['test', '--silent'], {
@@ -247,32 +253,38 @@ module.exports = runner.command(
           rootDir: '.',
           outDir: './dist/',
         });
-        await appServer();
 
-        return watch(
+        await watch(
           { pattern: [path.join('dist', '**', '*.js'), 'index.js'] },
           debounce(appServer, 500, { maxWait: 1000 }),
         );
-      }
 
-      if (isBabelProject()) {
-        watch(
-          { pattern: [path.join(globs.base, '**', '*.js{,x}'), 'index.js'] },
-          async changed => {
-            await babel({ pattern: changed, target: 'dist', sourceMaps: true });
-            await appServer();
-          },
-        );
-
-        await babel({
-          pattern: [path.join(globs.base, '**', '*.js{,x}'), 'index.js'],
-          target: 'dist',
-          sourceMaps: true,
-        });
         return appServer();
       }
 
-      watch({ pattern: globs.babel }, appServer);
+      const baseBabelConfig = createBabelConfig();
+
+      const babelConfig = {
+        ...baseBabelConfig,
+        sourceMaps: true,
+        target: 'dist',
+      };
+
+      watch(
+        { pattern: [path.join(globs.base, '**', '*.js{,x}'), 'index.js'] },
+        async changed => {
+          await babel({
+            pattern: changed,
+            ...babelConfig,
+          });
+          return appServer();
+        },
+      );
+
+      await babel({
+        pattern: [path.join(globs.base, '**', '*.js{,x}'), 'index.js'],
+        ...babelConfig,
+      });
 
       return appServer();
     }

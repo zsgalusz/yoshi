@@ -8,10 +8,10 @@
     "email": "{%authorEmail%}"
   },
   "scripts": {
-    "start": "yoshi start --no-test --entry-point=index-dev.js",
+    "start": "yoshi start --entry-point=index-dev.js",
     "precommit": "lint-staged",
     "pretest": "yoshi build",
-    "test": "yoshi test --jest",
+    "test": "yoshi test",
     "posttest": "yoshi lint",
     "release": "yoshi release"
   },
@@ -37,10 +37,10 @@
     "enzyme": "~2.9.0",
     "husky": "~0.14.0",
     "lint-staged": "^7.2.2",
-    "jest-yoshi-preset": "^3.5.0",
+    "jest-yoshi-preset": "^4.1.0-alpha.1",
     "puppeteer": "^1.1.0",
-    "yoshi": "^3.0.0",
-    "yoshi-style-dependencies": "^3.0.0",
+    "yoshi": "^4.1.0-alpha.1",
+    "yoshi-style-dependencies": "^4.1.0-alpha.1",
     "@wix/wix-bootstrap-testkit": "latest",
     "@wix/wix-config-emitter": "latest"
   },
@@ -57,15 +57,13 @@
     },
     "hmr": "auto"
   },
-  "babel": {
-    "presets": [
-      "yoshi"
-    ]
-  },
   "eslintConfig": {
     "extends": "yoshi",
     "globals": {
       "app": false
     }
+  },
+  "stylelint": {
+    "extends": "stylelint-config-yoshi"
   }
 }

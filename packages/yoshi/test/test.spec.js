@@ -72,7 +72,7 @@ describe('Aggregator: Test', () => {
       server = await takePort(TEST_PORT);
       const res = test
         .setup(executionOptions(TEST_PORT))
-        .execute('test', undefined, outsideCI);
+        .execute('test', ['--mocha'], outsideCI);
 
       expect(res.code).to.equal(1);
       expect(res.stderr).to.include(
@@ -85,7 +85,7 @@ describe('Aggregator: Test', () => {
       test.setup(executionOptions(TEST_PORT));
       const testPath = test.tmp;
       child = await takePortFromAnotherProcess(testPath, TEST_PORT);
-      const res = test.execute('test', undefined, outsideCI);
+      const res = test.execute('test', ['--mocha'], outsideCI);
 
       expect(res.code).to.equal(0);
       expect(res.stdout).to.include(
@@ -104,42 +104,17 @@ describe('Aggregator: Test', () => {
       test.teardown();
     });
 
-    it('should pass with exit code 0 with mocha as default', function() {
+    it('should pass with exit code 0 with jest as default', function() {
       this.timeout(40000);
       const res = test
         .setup({
-          'test/component.spec.js': 'it.only("pass", () => 1);',
-          'protractor.conf.js': `
-            const http = require("http");
-
-            exports.config = {
-              framework: "jasmine",
-              specs: ["dist/test/**/*.e2e.js"],
-              onPrepare: () => {
-                const server = http.createServer((req, res) => {
-                  const response = "<html><body><script src=http://localhost:3200/app.bundle.js></script></body></html>";
-                  res.end(response);
-                });
-
-                return server.listen(1337);
-              }
-            };
-          `,
-          'dist/test/some.e2e.js': `
-            it("should write to body", () => {
-              browser.ignoreSynchronization = true;
-              browser.get("http://localhost:1337");
-              expect(element(by.css("body")).getText()).toEqual("");
-            });
-          `,
+          'test/component.spec.js': 'it.only("pass", async () => 1);',
           'package.json': fx.packageJson(),
         })
         .execute('test', undefined, outsideCI);
 
       expect(res.code).to.equal(0);
-      expect(res.stdout).to.contain('1 passing');
-      expect(res.stdout).to.contains('protractor');
-      expect(res.stdout).to.contain('1 spec, 0 failures');
+      expect(res.stderr).to.contain('1 passed');
     });
   });
 
@@ -242,11 +217,6 @@ describe('Aggregator: Test', () => {
             },
           },
           {},
-          {
-            babel: {
-              presets: [require.resolve('babel-preset-yoshi')],
-            },
-          },
         ),
         'pom.xml': fx.pom(),
         'protractor.conf.js': fx.protractorConf({
@@ -337,6 +307,20 @@ describe('Aggregator: Test', () => {
               .someclass {
                 color: yellow;
             }`,
+        '__tests__/svg.test.js': `
+            import React from 'react';
+            import imageUrl, { ReactComponent as Image } from '../assets/image.svg';
+
+            it('should be able to import svg as a react component (reactComponent)', () => {
+              expect(typeof Image).toBe('function');
+            });
+
+            it('should be able to import svg as a url (default)', () => {
+              expect(typeof imageUrl).toBe('string');
+            });
+            `,
+        'assets/image.svg':
+          '<svg height="210" width="400"><path d="M150 0 L75 200 L225 200 Z" /></svg>',
         'foo.js': `
               const s = require('./foo.scss');
               module.exports = function() {
@@ -383,7 +367,7 @@ describe('Aggregator: Test', () => {
       });
 
       it('should pass all tests', () => {
-        expect(res.stderr).to.contain('5 passed, 5 total');
+        expect(res.stderr).to.contain('7 passed, 7 total');
       });
 
       it('should not try to start cdn', () => {
@@ -527,7 +511,7 @@ describe('Aggregator: Test', () => {
                 }
               };
             `,
-            'test/e2e/some.e2e.spec.js': `
+            'test/e2e/some.e2e.js': `
               it('should succeed', async () => {
                 await page.goto('http://localhost:${serverPort}');
                 expect(await page.$eval('body', e => e.innerText)).toEqual('${e2eTestSampleText}');
@@ -555,9 +539,6 @@ describe('Aggregator: Test', () => {
             },
             {},
             {
-              babel: {
-                presets: [require.resolve('babel-preset-yoshi')],
-              },
               jest: {
                 preset: 'jest-yoshi-preset',
               },
@@ -590,7 +571,7 @@ describe('Aggregator: Test', () => {
               }
             };
           `,
-          'test/e2e/some.e2e.spec.js': `
+          'test/e2e/some.e2e.js': `
               it('should succeed', async () => {
                 await page.goto('http://localhost:${serverPort}');
                 await page.waitForSelector('h1');
@@ -622,7 +603,7 @@ describe('Aggregator: Test', () => {
   describe('--mocha', () => {
     let test;
     let res;
-    const imageExtensions = ['png', 'svg', 'jpg', 'jpeg', 'gif'];
+    const imageExtensions = ['png', 'jpg', 'jpeg', 'gif'];
     const audioExtensions = ['wav', 'mp3'];
     before(() => {
       test = tp.create();
@@ -630,9 +611,6 @@ describe('Aggregator: Test', () => {
         .setup({
           ...setupMediaFilesExtensions(imageExtensions, 'image'),
           ...setupMediaFilesExtensions(audioExtensions, 'audio'),
-          '.babelrc': `{"plugins": ["${require.resolve(
-            'babel-plugin-transform-es2015-modules-commonjs',
-          )}"]}`,
           'test/mocha-setup.js': 'global.foo = 123',
           'src/getData1.graphql': 'query GetData1 { id, name }',
           'src/getData2.gql': 'query GetData2 { id, name }',
@@ -687,6 +665,20 @@ describe('Aggregator: Test', () => {
               assert.equal((await (await fetch('http://localhost:3200/index.html')).text()).trim(), 'hello world')
               console.log('passed e2e');
             });`,
+          'test/svg.spec.js': `
+            import React from 'react';
+            import imageUrl, { ReactComponent as Image } from '../assets/image.svg';
+            import assert from 'assert';
+
+            it('should be able to import svg as a react component (reactComponent)', () => {
+              assert.equal(typeof Image, 'function');
+            });
+
+            it('should be able to import svg as a url (default)', () => {
+              assert.equal(typeof imageUrl, 'string');
+            });`,
+          'assets/image.svg':
+            '<svg height="210" width="400"><path d="M150 0 L75 200 L225 200 Z" /></svg>',
           'src/some.scss': '',
           'package.json': `{
             "name": "a",
@@ -744,7 +736,7 @@ describe('Aggregator: Test', () => {
       expect(res.stdout).to.contain('passed css');
     });
 
-    describe('with babel-register', () => {
+    describe('with @babel/register', () => {
       it('should transpile both sources and specified 3rd party modules in runtime', () => {
         expect(res.stdout).to.contain('passed babel');
       });
@@ -845,12 +837,11 @@ describe('Aggregator: Test', () => {
             'test/bar.js': 'export default 5;',
             'test/some.spec.js': `import foo from './bar';`,
             'package.json': fx.packageJson({ transpileTests: false }),
-            '.babelrc': JSON.stringify({ presets: ['yoshi'] }),
           })
           .execute('test', ['--mocha']);
 
         expect(res.code).to.equal(1);
-        expect(res.stderr).to.contain('Unexpected identifier');
+        expect(res.stderr).to.match(/Unexpected (identifier|token)/);
       });
 
       it('should output test coverage when --coverage is passed', () => {
@@ -880,13 +871,10 @@ describe('Aggregator: Test', () => {
         expect(res.stdout).to.not.contain('cdn');
       });
 
-      describe('with babel-register', () => {
+      describe('with @babel/register', () => {
         it('should transpile explicitly configured externalUnprocessedModules', function() {
           const res = customTest
             .setup({
-              '.babelrc': `{"plugins": ["${require.resolve(
-                'babel-plugin-transform-es2015-modules-commonjs',
-              )}"]}`,
               'node_modules/my-unprocessed-module/index.js': 'export default 1',
               'test/some.js': `import x from 'my-unprocessed-module'; export default x => x`,
               'test/some.spec.js': `import identity from './some'; it.only("pass", () => 1);`,
@@ -906,7 +894,6 @@ describe('Aggregator: Test', () => {
         it('should transpile es modules w/o any configurations', () => {
           const res = customTest
             .setup({
-              '.babelrc': '{}',
               'test/some.spec.js': `
               import assert from 'assert';
               it.only("pass", () => {
@@ -948,22 +935,6 @@ describe('Aggregator: Test', () => {
         expect(res.code).to.equal(0);
         expect(res.stdout).to.contain('1 passing');
         expect(res.stdout).to.contain('hello');
-      });
-
-      it('should not transpile tests if no tsconfig/.babelrc/babel configuration', () => {
-        const res = customTest
-          .setup({
-            'test/some.js': 'export default x => x',
-            'test/some.spec.js': `import identity from './some'; it.only("pass", () => 1);`,
-            'package.json': `{
-                "name": "a",\n
-                "version": "1.0.4"
-              }`,
-          })
-          .execute('test', ['--mocha']);
-
-        expect(res.code).to.equal(1);
-        expect(res.stderr).to.contain('Unexpected identifier');
       });
 
       describe('stylable integration', () => {

@@ -21,7 +21,7 @@ const $inject = 'something.$inject = ["$http"];';
 describe('Aggregator: Build', () => {
   let test;
 
-  describe('simple development project with separate styles (sass and less), babel, JSON, commons chunks with custom name and some UMD modules', () => {
+  describe('simple development project with separate styles (sass and less), babel, JSON, commons chunks with custom name, some UMD modules and source maps', () => {
     let resp;
     const compiledSaasStyle = '.a .b {\n  color: red; }';
     const compiledLessStyle = '.a .b {\n  color: red;\n}';
@@ -41,9 +41,6 @@ describe('Aggregator: Build', () => {
       resp = test
         .setup(
           {
-            '.babelrc': `{"presets": [["${require.resolve(
-              'babel-preset-env',
-            )}", {"modules": false}]]}`,
             '.bowerrc': JSON.stringify(bowerrc, null, 2),
             'petri-specs/specs.infra.Dummy.json': fx.petriSpec(),
             'src/a.js': 'export default "I\'m a module!";',
@@ -79,7 +76,7 @@ describe('Aggregator: Build', () => {
             'app/c/style.less': `@import (once) '../b/style.less';`,
             'app/d/style.less': `@import (once) 'some-module/style.less';`,
             'app/e/style.scss':
-              '.a {\n.b {\ncolor: black;\n}\n}\n .c {\ndisplay: flex;\n}',
+              '.a {\n.b {\ncolor: black;\n}\n}\n .c {\nuser-select: none;\n}',
             'app/e/style.less': '.a .b {\n  color: black;\n}',
             'node_modules/some-module/style.less': fx.less(),
             'app/assets/some-file': 'a',
@@ -114,7 +111,7 @@ describe('Aggregator: Build', () => {
             ),
           ],
         )
-        .execute('build', []);
+        .execute('build', ['--source-map']);
     });
 
     afterEach(function() {
@@ -161,7 +158,7 @@ describe('Aggregator: Build', () => {
 
       it('should output relative paths in css url statements', () => {
         expect(test.content('./dist/statics/third.css')).to.contain(
-          'url(assets/image.jpg',
+          'url(media/image.jpg',
         );
       });
     });
@@ -202,13 +199,13 @@ describe('Aggregator: Build', () => {
 
       it('should generate css attributes prefixes for on separate css file', () => {
         expect(test.content(`dist/statics/first.css`)).to.match(
-          /display: -webkit-box/g,
+          /-webkit-user-select: none;/g,
         );
         expect(test.content(`dist/statics/first.css`)).to.match(
-          /display: -ms-flexbox/g,
+          /-ms-user-select:/g,
         );
         expect(test.content(`dist/statics/first.css`)).to.match(
-          /display: flex/g,
+          /user-select: none;/g,
         );
       });
 
@@ -244,7 +241,7 @@ describe('Aggregator: Build', () => {
 
       it('should not create `/es` directory if no `module` field in `package.json` was specified and no commonjs plugin added', () => {
         expect(test.list('dist')).to.not.include('es');
-        expect(test.content('dist/src/a.js')).to.contain('export default');
+        expect(test.content('dist/src/a.js')).to.contain('exports.default');
       });
     });
 
@@ -429,9 +426,6 @@ describe('Aggregator: Build', () => {
       test = tp.create();
       resp = test
         .setup({
-          '.babelrc': `{"presets": ["${require.resolve(
-            'babel-preset-yoshi',
-          )}"]}`,
           'src/a.js': `import {xxx} from './b'; console.log(xxx);`,
           'src/b.js': `export const xxx = 111111; export const yyy = 222222;`,
           'package.json': fx.packageJson({
@@ -456,7 +450,7 @@ describe('Aggregator: Build', () => {
     });
 
     it('should transpile imports to commonjs', () => {
-      expect(test.content('dist/src/a.js')).to.contain("require('./b')");
+      expect(test.content('dist/src/a.js')).to.contain('require("./b")');
     });
 
     it('should tree shake unused variable', () => {
@@ -475,7 +469,7 @@ describe('Aggregator: Build', () => {
         .setup({
           'tsconfig.json': fx.tsconfig({
             compilerOptions: {
-              lib: ['es2015'],
+              lib: ['esnext'],
             },
           }),
           'src/a.ts': `import {xxx} from './b'; import('./c').then(() => console.log(xxx));`,
@@ -524,11 +518,8 @@ describe('Aggregator: Build', () => {
 
       resp = test
         .setup({
-          '.babelrc': `{"presets": [["${require.resolve(
-            'babel-preset-env',
-          )}", {"modules": false}]]}`,
           'src/a.js': `export default "I'm a module!"; import './a.scss'; import './a.st.css'; require('lodash/map')`,
-          'src/a.scss': `.x {.y {display: flex;}}`,
+          'src/a.scss': `.x {.y {user-select: none;}}`,
           'src/a.st.css': `.root {.stylableClass {color: pink;}}`,
           'src/assets/file': '1',
           'src/something.js': fx.angularJs(),
@@ -591,13 +582,13 @@ describe('Aggregator: Build', () => {
 
     it('should generate css attributes prefixes', () => {
       expect(test.content(`dist/statics/app.bundle.js`)).to.match(
-        /display: -webkit-box;/g,
+        /-webkit-user-select: none;/g,
       );
       expect(test.content(`dist/statics/app.bundle.js`)).to.match(
-        /display: -ms-flexbox;/g,
+        /-ms-user-select:/g,
       );
       expect(test.content(`dist/statics/app.bundle.js`)).to.match(
-        /display: flex;/g,
+        /user-select: none;/g,
       );
     });
 
@@ -632,11 +623,8 @@ describe('Aggregator: Build', () => {
           'src/something.ts': fx.angularJs(),
           'something/something.js': fx.angularJs(),
           'something.js': fx.angularJs(),
-          'src/styles/style.scss': `.a {.b {color: red;}}`,
+          'src/styles/style.scss': `.a {.b {color: red;}} .c{margin: 10px 20px 10px 20px;}`,
           'tsconfig.json': fx.tsconfig(),
-          '.babelrc': `{"plugins": ["${require.resolve(
-            'babel-plugin-transform-es2015-block-scoping',
-          )}"]}`,
           'package.json': fx.packageJson(
             {
               entry: './client',
@@ -729,6 +717,15 @@ describe('Aggregator: Build', () => {
       );
       expect(test.content('dist/statics/app.min.css')).to.contain(
         '{color:red}',
+      );
+    });
+
+    it('should generate css bundle minified with cssnano on ci', () => {
+      expect(test.content('dist/statics/app.min.css')).not.to.contain(
+        '{margin:10px 20px 10px 20px}',
+      );
+      expect(test.content('dist/statics/app.min.css')).to.contain(
+        '{margin:10px 20px}',
       );
     });
 
@@ -942,39 +939,6 @@ describe('Aggregator: Build', () => {
       test.teardown();
     });
 
-    describe('build project w/o individual transpilation', () => {
-      it('should not transpile if no tsconfig/babelrc', () => {
-        const resp = test
-          .setup({
-            'src/b.ts': 'const b = 2;',
-            'src/a/a.js': 'const a = 1;',
-            'package.json': fx.packageJson(),
-          })
-          .execute('build');
-
-        expect(resp.stdout).to.not.contain(`Finished 'babel'`);
-        expect(resp.code).to.equal(0);
-        expect(test.list('/')).not.to.include('dist');
-      });
-
-      it('should not transpile if runIndividualTranspiler = false', () => {
-        const resp = test
-          .setup({
-            '.babelrc': '{}',
-            'src/b.ts': 'const b = 2;',
-            'src/a/a.js': 'const a = 1;',
-            'package.json': fx.packageJson({
-              runIndividualTranspiler: false,
-            }),
-          })
-          .execute('build');
-
-        expect(resp.stdout).to.not.contain(`Finished 'babel'`);
-        expect(resp.code).to.equal(0);
-        expect(test.list('/')).not.to.include('dist');
-      });
-    });
-
     describe('build project with angular dependency and w/o entry files and default entries', () => {
       it('should exit with code 0 and not create bundle.js when there is no custom entry configures and default entry does not exist', () => {
         const res = test
@@ -996,7 +960,6 @@ describe('Aggregator: Build', () => {
         it('should fail with exit code 1', () => {
           const resp = test
             .setup({
-              '.babelrc': '{}',
               'src/a.js': 'function ()',
               'package.json': fx.packageJson(),
               'pom.xml': fx.pom(),
@@ -1064,6 +1027,22 @@ describe('Aggregator: Build', () => {
         expect(res.code).to.equal(1);
       });
 
+      it('should fail when a module has missing exports', () => {
+        const resp = test
+          .setup({
+            'src/client.js': `import { hello } from './hello'; console.log(hello);`,
+            'src/hello.js': `const hello = 'world'; export default 'world';`,
+            'package.json': fx.packageJson(),
+            'pom.xml': fx.pom(),
+          })
+          .execute('build');
+
+        expect(resp.code).to.equal(1);
+        expect(resp.stderr).to.contain(
+          "export 'hello' was not found in './hello'",
+        );
+      });
+
       it("should fail with exit code 1 when yoshi can't transpile less file", () => {
         const resp = test
           .setup({
@@ -1088,7 +1067,6 @@ describe('Aggregator: Build', () => {
           })
           .execute('build');
         expect(res.code).to.equal(1);
-        expect(res.stdout).to.contain('Module build failed');
         expect(res.stderr).to.contain('Unexpected token (2:0)');
       });
     });
@@ -1119,9 +1097,6 @@ describe('Aggregator: Build', () => {
             'src/foo.js': "console.log('bar')",
             'package.json': JSON.stringify({
               name: 'my-project',
-              babel: {
-                presets: [require.resolve('babel-preset-yoshi')],
-              },
             }),
           })
           .execute('build');

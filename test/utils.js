@@ -1,4 +1,6 @@
+const net = require('net');
 const http = require('http');
+const retry = require('async-retry');
 const waitPort = require('wait-port');
 const { parastorageCdnUrl, localCdnUrl } = require('./constants');
 
@@ -64,16 +66,46 @@ const matchJS = async (chunkName, page, regexes) => {
 };
 
 async function waitForPort(port, { timeout = 20000 } = {}) {
-  const portFound = await waitPort({ port, timeout, output: 'silent' });
+  const portNumber = parseInt(port, 10);
+
+  const portFound = await waitPort({
+    port: portNumber,
+    timeout,
+    output: 'silent',
+  });
 
   if (!portFound) {
-    throw new Error(`Timed out waiting for "${port}".`);
+    throw new Error(`Timed out waiting for "${portNumber}".`);
   }
 }
 
 const initTest = async feature => {
-  await page.goto(`http://localhost:3000/${feature}`);
+  await page.goto(`http://localhost:${process.env.PORT}/${feature}`);
 };
+
+function isPortTaken(port) {
+  return new Promise((resolve, reject) => {
+    const tester = net
+      .createServer()
+      .once('error', err => {
+        err.code !== 'EADDRINUSE' ? reject(err) : resolve(true);
+      })
+      .once('listening', () => {
+        tester
+          .once('close', () => {
+            resolve(false);
+          })
+          .close();
+      })
+      .listen(port);
+  });
+}
+
+function waitForPortToFree(port) {
+  return retry(async () => {
+    expect(await isPortTaken(port)).toEqual(false);
+  });
+}
 
 module.exports = {
   request,
@@ -81,4 +113,5 @@ module.exports = {
   matchCSS,
   initTest,
   waitForPort,
+  waitForPortToFree,
 };

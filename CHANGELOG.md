@@ -1,22 +1,114 @@
 # Changelog
 
+## 4.1.0-alpha.3 (2019-02-26)
+
+#### :rocket: New Feature
+
+- `yoshi`
+  - [#992](https://github.com/wix/yoshi/pull/992) Improve app flow: Show server errors in the browser and refresh the browser on server changes ([@ronami](https://github.com/ronami))
+
+#### :bug: Bug Fix
+
+- `yoshi`
+  - [#1016](https://github.com/wix/yoshi/pull/1016) properly log port when waiting for server to start ([@netanelgilad](https://github.com/netanelgilad))
+  - [#1017](https://github.com/wix/yoshi/pull/1017) Generate correct public path on local build ([@ranyitz](https://github.com/ranyitz))
+
+## 4.1.0-alpha.2 (2019-02-25)
+
+#### :boom: Breaking Change
+
+- `babel-plugin-transform-hmr-runtime`, `create-yoshi-app`, `jest-environment-yoshi-bootstrap`, `jest-environment-yoshi-puppeteer`, `jest-yoshi-preset`, `yoshi`
+  - [#954](https://github.com/wix/yoshi/pull/954) Migrate to Jest 24 ([@matveyok](https://github.com/matveyok))
+- `create-yoshi-app`, `jest-environment-yoshi-puppeteer`, `jest-yoshi-preset`, `yoshi-config`, `yoshi-helpers`, `yoshi`
+
+  - [#808](https://github.com/wix/yoshi/pull/808) Update test globs ([@ranyitz](https://github.com/ranyitz))
+
+#### :nail_care: Polish
+
+- `yoshi-config`, `yoshi`
+  - [#1010](https://github.com/wix/yoshi/pull/1010) Change 'appflow' FT ([@yanivefraim](https://github.com/yanivefraim))
+
+#### :house: Internal
+
+- `create-yoshi-app`, `jest-yoshi-preset`, `yoshi`
+  - [#1011](https://github.com/wix/yoshi/pull/1011) Fix server/business-manager generators for version 4 ([@yanivefraim](https://github.com/yanivefraim))
+
+## 4.1.0-alpha.1 (2019-02-07)
+
+#### :boom: Breaking Change
+
+- `create-yoshi-app`, `eslint-config-yoshi-base`, `eslint-config-yoshi`, `jest-environment-yoshi-puppeteer`, `jest-yoshi-preset`, `tslint-config-yoshi`, `yoshi-angular-dependencies`, `yoshi-helpers`, `yoshi-style-dependencies`, `yoshi`
+  - [#955](https://github.com/wix/yoshi/pull/955) Bump old dependencies and target only relevant latest browsers with `autoprefixer` ([@ronami](https://github.com/ronami))
+
+## 4.1.0-alpha.0 (2019-02-05)
+
+#### :boom: Breaking Change
+
+- `babel-preset-yoshi`, `create-yoshi-app`, `jest-yoshi-preset`, `yoshi-config`, `yoshi-helpers`, `yoshi`
+  - [#917](https://github.com/wix/yoshi/pull/917) Configure Babel to ignore `babelrc` and use `babel-preset-yoshi` ([@ronami](https://github.com/ronami))
+- `create-yoshi-app`, `yoshi`
+  - [#940](https://github.com/wix/yoshi/pull/940) Predefined Typescript definitions for Yoshi. **Requires a minimum version of Typescript 2.9** ([@saarkuriel](https://github.com/saarkuriel))
+  - [#738](https://github.com/wix/yoshi/pull/738) Don't run tests in `start` by default ([@Schniz](https://github.com/Schniz))
+- `create-yoshi-app`, `jest-yoshi-preset`, `yoshi`
+  - [#781](https://github.com/wix/yoshi/pull/781) Allow using SVGs as React components ([@ranyitz](https://github.com/ranyitz))
+- `yoshi`
+  - [#765](https://github.com/wix/yoshi/pull/765) Remove `DynamicPublicPath` plugin from `webpack.config.js` ([@netanelgilad](https://github.com/netanelgilad))
+- `eslint-config-yoshi-base`, `eslint-config-yoshi`, `yoshi`
+  - [#712](https://github.com/wix/yoshi/pull/712) Migrate to `eslint` version 5 ([@ronami](https://github.com/ronami))
+- `babel-plugin-transform-hmr-runtime`, `babel-preset-yoshi`, `jest-yoshi-preset`, `yoshi-helpers`, `yoshi`
+  - [#646](https://github.com/wix/yoshi/pull/646) Transpile JavaScript using Babel 7 ([@yavorsky](https://github.com/yavorsky))
+
+#### :rocket: New Feature
+
+- `create-yoshi-app`, `stylelint-config-yoshi`, `yoshi`
+  - [#750](https://github.com/wix/yoshi/pull/750) Lint Stylesheets by default ([@Schniz](https://github.com/Schniz))
+- `yoshi`
+  - [#711](https://github.com/wix/yoshi/pull/711) Use `cssnano` as a CSS minifier ([@ronami](https://github.com/ronami))
+  - [#538](https://github.com/wix/yoshi/pull/538) Wait for app-server port before finishing app-server task ([@netanelgilad](https://github.com/netanelgilad))
+
+#### :nail_care: Polish
+
+- `yoshi-config`, `yoshi`
+  - [#948](https://github.com/wix/yoshi/pull/948) Remove `experimentalTSTarget` configuration option ([@saarkuriel](https://github.com/saarkuriel))
+- `yoshi`
+  - [#937](https://github.com/wix/yoshi/pull/937) Use `svg-url-loader` instead of `url-loader` to optimize bundle size ([@saarkuriel](https://github.com/saarkuriel))
+  - [#739](https://github.com/wix/yoshi/pull/739) Generate separate assets into `dist/statics/assets` ([@ronami](https://github.com/ronami))
+  - [#714](https://github.com/wix/yoshi/pull/714) Move from `uglifyjs` to `terser` ([@ronami](https://github.com/ronami))
+  - [#715](https://github.com/wix/yoshi/pull/715) Small `webpack` improvements ([@ronami](https://github.com/ronami))
+
+#### :memo: Documentation
+
+- `stylelint-config-yoshi`
+  - [#807](https://github.com/wix/yoshi/pull/807) Add documentation for stylesheet linting ([@Schniz](https://github.com/Schniz))
+
+#### :house: Internal
+
+- `babel-preset-yoshi`, `yoshi`
+  - [#815](https://github.com/wix/yoshi/pull/815) Fix app flow tests on version 4.x ([@ronami](https://github.com/ronami))
+- `yoshi`
+  - [#734](https://github.com/wix/yoshi/pull/734) Open browser on `yoshi start` ([@netanelgilad](https://github.com/netanelgilad))
+
 ## 3.30.5 (2019-02-21)
 
 #### :bug: Bug Fix
-* `yoshi-helpers`, `yoshi`
-  * [#1000](https://github.com/wix/yoshi/pull/1000) Upgrade `mocha-teamcity-reporter` to v2 ([@yairhaimo](https://github.com/yairhaimo))
+
+- `yoshi-helpers`, `yoshi`
+  - [#1000](https://github.com/wix/yoshi/pull/1000) Upgrade `mocha-teamcity-reporter` to v2 ([@yairhaimo](https://github.com/yairhaimo))
 
 #### :nail_care: Polish
-* `yoshi-config`, `yoshi`
-  * [#977](https://github.com/wix/yoshi/pull/977) Remove `ajv` from `yoshi` and upgrade the version ([@ranyitz](https://github.com/ranyitz))
+
+- `yoshi-config`, `yoshi`
+  - [#977](https://github.com/wix/yoshi/pull/977) Remove `ajv` from `yoshi` and upgrade the version ([@ranyitz](https://github.com/ranyitz))
 
 #### :memo: Documentation
-* `tslint-config-yoshi`
-  * [#993](https://github.com/wix/yoshi/pull/993) Update README.md with `tslint-config-yoshi` ([@sidoruk-sv](https://github.com/sidoruk-sv))
+
+- `tslint-config-yoshi`
+  - [#993](https://github.com/wix/yoshi/pull/993) Update README.md with `tslint-config-yoshi` ([@sidoruk-sv](https://github.com/sidoruk-sv))
 
 #### :house: Internal
-* `create-yoshi-app`, `eslint-config-yoshi-base`, `tslint-config-yoshi-base`, `yoshi-helpers`, `yoshi`
-  * [#978](https://github.com/wix/yoshi/pull/978) Do not pack `dist` and `test` in `yoshi` main package ([@ranyitz](https://github.com/ranyitz))
+
+- `create-yoshi-app`, `eslint-config-yoshi-base`, `tslint-config-yoshi-base`, `yoshi-helpers`, `yoshi`
+  - [#978](https://github.com/wix/yoshi/pull/978) Do not pack `dist` and `test` in `yoshi` main package ([@ranyitz](https://github.com/ranyitz))
 
 ## 3.30.4 (2019-02-20)
 
@@ -46,21 +138,21 @@
 ## 3.30.2 (2019-02-10)
 
 - `yoshi`
-- [#975](https://github.com/wix/yoshi/pull/975) lock ajv version [yurynix](https://github.com/yurynix)
+  - [#975](https://github.com/wix/yoshi/pull/975) lock ajv version [yurynix](https://github.com/yurynix)
 
 ## 3.30.1 (2019-02-07)
 
 #### :house: Internal
 
 - `create-yoshi-app`
-- [#970](https://github.com/wix/yoshi/pull/970) Fix clash between test infra's .npmrc and .npmrc generated by the templates [cowchimp](https://github.com/cowchimp)
+  - [#970](https://github.com/wix/yoshi/pull/970) Fix clash between test infra's .npmrc and .npmrc generated by the templates [cowchimp](https://github.com/cowchimp)
 - `yohsi`
-- [#951](https://github.com/wix/yoshi/pull/951) Use fs-extra's `pathExists` instead of deprecated `exists` and make `fs-extra` a dependency instead of dev-dep. [yaelhe](https://github.com/yaelhe)
+  - [#951](https://github.com/wix/yoshi/pull/951) Use fs-extra's `pathExists` instead of deprecated `exists` and make `fs-extra` a dependency instead of dev-dep. [yaelhe](https://github.com/yaelhe)
 
 #### :nail_care: Polish
 
 - `yoshi`
-- [#965](https://github.com/wix/yoshi/pull/965) Fail early if Yoshi is being run with an old Node version [cowchimp](https://github.com/cowchimp)
+  - [#965](https://github.com/wix/yoshi/pull/965) Fail early if Yoshi is being run with an old Node version [cowchimp](https://github.com/cowchimp)
 
 ## 3.30.0 (2019-02-04)
 

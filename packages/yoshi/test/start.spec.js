@@ -6,6 +6,7 @@ const fetch = require('node-fetch');
 const retryPromise = require('retry-promise').default;
 const https = require('https');
 const { takePort } = require('../../../test-helpers/http-helpers');
+const detect = require('detect-port');
 
 describe('Aggregator: Start', () => {
   let test, child;
@@ -60,7 +61,6 @@ describe('Aggregator: Start', () => {
               className: PropTypes.string
             };`,
               'src/styles.css': `.a { color: red }`,
-              '.babelrc': `{"presets": ["babel-preset-yoshi"]}`,
               'package.json': fx.packageJson(),
             })
             .spawn('start', '--production');
@@ -87,7 +87,7 @@ describe('Aggregator: Start', () => {
             'package.json': fx.packageJson(),
             'pom.xml': fx.pom(),
           })
-          .spawn('start');
+          .spawn('start', '--with-tests');
 
         return checkStdout('Testing with Mocha');
       });
@@ -212,7 +212,7 @@ describe('Aggregator: Start', () => {
           .spawn('start');
 
         return checkServerIsServing({ port: 3200, file: 'app.bundle.js' }).then(
-          content => expect(content).to.contain(`"reload":false`),
+          content => expect(content).to.match(/reload\\?":false/),
         );
       });
     });
@@ -227,7 +227,7 @@ describe('Aggregator: Start', () => {
           .spawn('start');
 
         return checkServerIsServing({ port: 3200, file: 'app.bundle.js' }).then(
-          content => expect(content).to.contain('"hmr":true'),
+          content => expect(content).to.match(/hmr\\?":true/),
         );
       });
 
@@ -249,12 +249,12 @@ describe('Aggregator: Start', () => {
           port: 3200,
           file: 'app.bundle.js',
         });
-        expect(appBundleContent).to.contain('"hmr":true');
+        expect(appBundleContent).to.match(/hmr\\?":true/);
         const app2BundleContent = await checkServerIsServing({
           port: 3200,
           file: 'app2.bundle.js',
         });
-        expect(app2BundleContent).to.contain('"hmr":true');
+        expect(app2BundleContent).to.match(/hmr\\?":true/);
       });
 
       it('should create bundle with disabled hot module replacement if there is {hmr: false} in config', () => {
@@ -269,7 +269,7 @@ describe('Aggregator: Start', () => {
           .spawn('start');
 
         return checkServerIsServing({ port: 3200, file: 'app.bundle.js' }).then(
-          content => expect(content).to.contain(`"hmr":false`),
+          content => expect(content).to.match(/hmr\\?":false/),
         );
       });
 
@@ -278,9 +278,6 @@ describe('Aggregator: Start', () => {
           .setup({
             'src/client.js': `import { render } from 'react-dom';
               render(<App />, rootEl);`,
-            '.babelrc': `{"presets": ["${require.resolve(
-              'babel-preset-yoshi',
-            )}"]}`,
             'package.json': fx.packageJson(
               {
                 hmr: 'auto',
@@ -288,33 +285,7 @@ describe('Aggregator: Start', () => {
               },
               {
                 react: '16.0.0',
-              },
-            ),
-          })
-          .spawn('start');
-
-        return checkServerIsServing({ port: 3200, file: 'app.bundle.js' }).then(
-          content => {
-            expect(content).to.contain('module.hot.accept()');
-            expect(content).to.contain('react-hot-loader');
-          },
-        );
-      });
-
-      it('should wrap react root element with react-hot-loader HOC for default entry', () => {
-        child = test
-          .setup({
-            'src/client.js': `import { render } from 'react-dom';
-              render(<App />, rootEl);`,
-            '.babelrc': `{"presets": ["${require.resolve(
-              'babel-preset-yoshi',
-            )}"]}`,
-            'package.json': fx.packageJson(
-              {
-                hmr: 'auto',
-              },
-              {
-                react: '16.0.0',
+                'react-dom': '16.0.0',
               },
             ),
           })
@@ -343,8 +314,8 @@ describe('Aggregator: Start', () => {
 
         return checkServerIsServing({ port: 3200, file: 'app.bundle.js' }).then(
           content => {
-            expect(content).to.not.contain(`"reload":false`);
-            expect(content).to.not.contain(`"hot":false`);
+            expect(content).to.not.match(/hmr\\?":false/);
+            expect(content).to.not.match(/hot\\?":false/);
           },
         );
       });
@@ -632,7 +603,6 @@ describe('Aggregator: Start', () => {
               'index.js': `require('./src/server')`,
               'package.json': fx.packageJson(),
               'pom.xml': fx.pom(),
-              '.babelrc': '{}',
             })
             .spawn('start');
 
@@ -689,24 +659,46 @@ describe('Aggregator: Start', () => {
               'src/someFile.js': '',
               'index.js': `
                 console.log('onInit');
-                setInterval(() => {}, 1000);
+                const http = require('http');
+
+                const hostname = 'localhost';
+                const port = process.env.PORT;
+                const server = http.createServer((req, res) => {
+                  res.statusCode = 200;
+                  res.setHeader('Content-Type', 'text/plain');
+                  res.end('hello');
+                });
+
+                server.listen(port, hostname, () => {
+                  console.log('Running a server...');
+                });
+
                 process.on('SIGHUP', () => console.log('onRestart'));
               `,
               'package.json': fx.packageJson(),
-              '.babelrc': '{}',
             })
             .spawn('start', ['--manual-restart']);
         });
 
-        it('should send SIGHUP to entryPoint process on change', () =>
-          checkServerLogContains('onInit').then(() =>
-            triggerChangeAndCheckForRestartMessage(),
-          ));
+        it('should send SIGHUP to entryPoint process on change', async () => {
+          await checkStdout('Application is now available', {
+            backoff: 100,
+            max: 30,
+          });
 
-        it('should not restart server', () =>
-          checkServerLogContains('onInit', { backoff: 200 })
-            .then(() => triggerChangeAndCheckForRestartMessage())
-            .then(() => expect(serverLogContent()).to.not.contain('onInit')));
+          await triggerChangeAndCheckForRestartMessage();
+        });
+
+        it('should not restart server', async () => {
+          await checkStdout('Application is now available', {
+            backoff: 100,
+            max: 30,
+          });
+
+          await triggerChangeAndCheckForRestartMessage();
+
+          expect(serverLogContent()).to.not.contain('onInit');
+        });
 
         function triggerChangeAndCheckForRestartMessage() {
           clearServerLog();
@@ -716,13 +708,87 @@ describe('Aggregator: Start', () => {
       });
     });
 
+    it('should print application ready message only after the server port is avaialble', async () => {
+      const port = await detect(3005);
+
+      // Intentionally start listening after a timeout, to check that we indeed wait for the port
+      child = test
+        .setup({
+          'index.js': `
+          'use strict';
+
+          const http = require('http');
+
+          const hostname = 'localhost';
+          const port = process.env.PORT;
+          const server = http.createServer((req, res) => {
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'text/plain');
+            res.end('hello');
+          });
+
+          setTimeout(() => {
+            server.listen(port, hostname, () => {
+              console.log('Running a server...');
+            });
+          }, 1000);
+        `,
+          'package.json': fx.packageJson(),
+        })
+        .spawn('start', [], { PORT: port });
+
+      await checkStdout('Application is now available', {
+        backoff: 100,
+        max: 30,
+      });
+      await fetch(`http://localhost:${port}`);
+
+      expect(test.stdout).not.to.contain(
+        'Still waiting for app-server to start',
+      );
+    });
+
+    it('should pring waiting for app server to start message if the server did not start in time', async () => {
+      const port = await detect(3005);
+
+      // Intentionally start listening after a timeout, to check that we indeed wait for the port
+      child = test
+        .setup({
+          'index.js': `
+          'use strict';
+
+          const http = require('http');
+
+          const hostname = 'localhost';
+          const port = process.env.PORT;
+          const server = http.createServer((req, res) => {
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'text/plain');
+            res.end('hello');
+          });
+
+          setTimeout(() => {
+            server.listen(port, hostname, () => {
+              console.log('Running a server...');
+            });
+          }, 5000);
+        `,
+          'package.json': fx.packageJson(),
+        })
+        .spawn('start', [], { PORT: port });
+
+      await checkStdout('Still waiting for app-server to start', {
+        backoff: 100,
+        max: 40,
+      });
+    });
+
     it(`should use yoshi-clean before building`, () => {
       child = test
         .setup({
           'dist/src/old.js': `const hello = "world!";`,
           'src/new.js': 'const world = "hello!";',
           'package.json': fx.packageJson(),
-          '.babelrc': '{}',
         })
         .spawn('start');
 
@@ -754,7 +820,7 @@ describe('Aggregator: Start', () => {
     });
   });
 
-  function checkServerLogCreated({ backoff = 100, max = 50 } = {}) {
+  function checkServerLogCreated({ backoff = 100, max = 20 } = {}) {
     return retryPromise({ backoff, max }, () => {
       const created = test.contains('target/server.log');
 
@@ -772,9 +838,9 @@ describe('Aggregator: Start', () => {
     test.write('target/server.log', '');
   }
 
-  function checkServerLogContains(str, { backoff = 100, max = 50 } = {}) {
+  function checkServerLogContains(str, { backoff = 100, max = 20 } = {}) {
     return checkServerLogCreated({ backoff, max }).then(() =>
-      retryPromise({ backoff }, () => {
+      retryPromise({ backoff, max }, () => {
         const content = serverLogContent();
 
         return content.includes(str)
@@ -802,10 +868,10 @@ describe('Aggregator: Start', () => {
     );
   }
 
-  function checkStdout(str) {
-    return retryPromise({ backoff: 100, max: 50 }, () =>
-      test.stdout.indexOf(str) > -1 ? Promise.resolve() : Promise.reject(),
-    );
+  function checkStdout(str, { backoff = 100, max = 100 } = {}) {
+    return retryPromise({ backoff, max }, async () => {
+      expect(test.stdout).to.contain(str);
+    });
   }
 
   function fetchCDN(port, { path = '/', backoff = 100, max = 50 } = {}) {
@@ -889,3 +955,9 @@ describe('Aggregator: Start', () => {
     );
   }
 });
+
+function reversePromise(promise) {
+  return new Promise((resolve, reject) => {
+    promise.then(reject).catch(resolve);
+  });
+}

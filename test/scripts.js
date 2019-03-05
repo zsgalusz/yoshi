@@ -6,23 +6,23 @@ const { waitForPort } = require('./utils');
 const terminateAsync = promisify(terminate);
 
 const defaultOptions = {
-  FORCE_COLOR: '0',
   BROWSER: 'none',
 };
 
 module.exports = class Scripts {
-  constructor(testDirectory) {
+  constructor({ silent = false, testDirectory }) {
+    this.silent = silent;
     this.testDirectory = testDirectory;
+    this.serverProcessPort = 3000;
+    this.staticsServerPort = 3200;
   }
 
   async start(env) {
-    const port = 3000;
-
     const startProcess = execa('npx', ['yoshi', 'start'], {
       cwd: this.testDirectory,
       // stdio: 'inherit',
       env: {
-        PORT: port,
+        PORT: this.serverProcessPort,
         ...defaultOptions,
         ...env,
       },
@@ -31,14 +31,17 @@ module.exports = class Scripts {
     // `startProcess` will never resolve but if it fails this
     // promise will reject immediately
     await Promise.race([
-      waitForPort(port, { timeout: 60 * 1000 }),
+      Promise.all([
+        waitForPort(this.serverProcessPort, { timeout: 60 * 1000 }),
+        waitForPort(this.staticsServerPort, { timeout: 60 * 1000 }),
+      ]),
       startProcess,
     ]);
 
     return {
-      port,
+      port: this.serverProcessPort,
       done() {
-        return terminate(startProcess.pid);
+        return terminateAsync(startProcess.pid);
       },
     };
   }
@@ -55,7 +58,7 @@ module.exports = class Scripts {
 
     return {
       done() {
-        return terminate(buildProcess.pid);
+        return terminateAsync(buildProcess.pid);
       },
     };
   }
@@ -67,17 +70,25 @@ module.exports = class Scripts {
         ...defaultOptions,
         ...env,
       },
-      // stdio: 'inherit',
+      stdio: this.silent ? 'pipe' : 'inherit',
+    });
+  }
+
+  async test(env = {}) {
+    return execa('npx', ['yoshi', 'test'], {
+      cwd: this.testDirectory,
+      env: {
+        ...defaultOptions,
+        ...env,
+      },
+      stdio: this.silent ? 'pipe' : 'inherit',
     });
   }
 
   async serve() {
-    const staticsServerPort = 3200;
-    const appServerProcessPort = 3000;
-
     const staticsServerProcess = execa(
       'npx',
-      ['serve', '-p', staticsServerPort, '-s', 'dist/statics/'],
+      ['serve', '-p', this.staticsServerPort, '-s', 'dist/statics/'],
       {
         cwd: this.testDirectory,
         // stdio: 'inherit',
@@ -88,16 +99,18 @@ module.exports = class Scripts {
       cwd: this.testDirectory,
       // stdio: 'inherit',
       env: {
-        PORT: appServerProcessPort,
+        PORT: this.serverProcessPort,
       },
     });
 
-    await waitForPort(staticsServerPort);
-    await waitForPort(appServerProcessPort);
+    await Promise.all([
+      waitForPort(this.staticsServerPort),
+      waitForPort(this.serverProcessPort),
+    ]);
 
     return {
-      staticsServerPort,
-      appServerProcessPort,
+      staticsServerPort: this.staticsServerPort,
+      appServerProcessPort: this.serverProcessPort,
       done() {
         return Promise.all([
           terminateAsync(staticsServerProcess.pid),

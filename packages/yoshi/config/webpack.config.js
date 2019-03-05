@@ -6,15 +6,17 @@ const nodeExternals = require('webpack-node-externals');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const StylableWebpackPlugin = require('@stylable/webpack-plugin');
 const TpaStyleWebpackPlugin = require('tpa-style-webpack-plugin');
 const RtlCssPlugin = require('rtlcss-webpack-plugin');
 const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
 const WriteFilePlugin = require('write-file-webpack-plugin');
 const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
-const DynamicPublicPath = require('../src/webpack-plugins/dynamic-public-path');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const { localIdentName } = require('../src/constants');
+const EnvirnmentMarkPlugin = require('../src/webpack-plugins/environment-mark-plugin');
+
 const {
   ROOT_DIR,
   SRC_DIR,
@@ -31,15 +33,18 @@ const {
   isProduction: checkIsProduction,
   isTypescriptProject: checkIsTypescriptProject,
   getProjectArtifactId,
+  createBabelConfig,
 } = require('yoshi-helpers');
-const { addEntry } = require('../src/webpack-utils');
+const { addEntry, overrideRules } = require('../src/webpack-utils');
 const isCI = require('is-ci');
 
 const reScript = /\.js?$/;
 const reStyle = /\.(css|less|scss|sass)$/;
-const reAssets = /\.(png|jpg|jpeg|gif|svg|woff|woff2|ttf|otf|eot|wav|mp3)$/;
+const reAssets = /\.(png|jpg|jpeg|gif|woff|woff2|ttf|otf|eot|wav|mp3)$/;
 
 const extensions = ['.js', '.jsx', '.ts', '.tsx', '.json'];
+
+const babelConfig = createBabelConfig({ modules: false });
 
 const disableTsThreadOptimization =
   process.env.DISABLE_TS_THREAD_OPTIMIZATION === 'true';
@@ -57,11 +62,14 @@ const computedSeparateCss =
 
 const artifactVersion = process.env.ARTIFACT_VERSION;
 
+const staticAssetName = 'media/[name].[ext]';
+
 // default public path
 let publicPath = '/';
 
-if (isDevelopment) {
-  // Set the local dev-server url as a path
+if (!isCI || isDevelopment) {
+  // When on local machine or on dev environment,
+  // set the local dev-server url as the public path
   publicPath = project.servers.cdn.url;
 }
 
@@ -101,19 +109,6 @@ const splitChunksConfig = isObject(useSplitChunks)
 const entry = project.entry || project.defaultEntry;
 
 const possibleServerEntries = ['./server', '../test/dev-server'];
-
-function overrideRules(rules, patch) {
-  return rules.map(ruleToPatch => {
-    let rule = patch(ruleToPatch);
-    if (rule.rules) {
-      rule = { ...rule, rules: overrideRules(rule.rules, patch) };
-    }
-    if (rule.oneOf) {
-      rule = { ...rule, oneOf: overrideRules(rule.oneOf, patch) };
-    }
-    return rule;
-  });
-}
 
 // Common function to get style loaders
 const getStyleLoaders = ({
@@ -182,6 +177,7 @@ const getStyleLoaders = ({
                       ...cssLoaderOptions,
                       modules: false,
                     },
+                    sideEffects: true,
                   },
                   {
                     // https://github.com/webpack/css-loader
@@ -195,7 +191,19 @@ const getStyleLoaders = ({
                 options: {
                   // https://github.com/facebookincubator/create-react-app/issues/2677
                   ident: 'postcss',
-                  plugins: [require('autoprefixer')],
+                  plugins: [
+                    require('autoprefixer')({
+                      // https://github.com/browserslist/browserslist
+                      browsers: [
+                        '> 0.5%',
+                        'last 2 versions',
+                        'Firefox ESR',
+                        'not dead',
+                        'ie >= 11',
+                      ].join(','),
+                      flexbox: 'no-2009',
+                    }),
+                  ],
                   sourceMap: isDebug,
                 },
               },
@@ -203,15 +211,15 @@ const getStyleLoaders = ({
               // https://github.com/bholloway/resolve-url-loader
               {
                 loader: 'resolve-url-loader',
-                options: { attempts: 1 },
               },
             ]
           : [
               {
-                loader: 'css-loader/locals',
+                loader: 'css-loader',
                 options: {
                   ...cssLoaderOptions,
                   importLoaders: 2 + Number(tpaStyle),
+                  exportOnlyLocals: true,
                   sourceMap: false,
                 },
               },
@@ -264,6 +272,8 @@ function createCommonWebpackConfig({
       pathinfo: isDebug,
       filename: isDebug ? '[name].bundle.js' : '[name].bundle.min.js',
       chunkFilename: isDebug ? '[name].chunk.js' : '[name].chunk.min.js',
+      hotUpdateMainFilename: 'updates/[hash].hot-update.json',
+      hotUpdateChunkFilename: 'updates/[id].[hash].hot-update.js',
     },
 
     resolve: {
@@ -293,22 +303,15 @@ function createCommonWebpackConfig({
       new CaseSensitivePathsPlugin(),
       // Way of communicating to `babel-preset-yoshi` or `babel-preset-wix` that
       // it should optimize for Webpack
-      { apply: () => (process.env.IN_WEBPACK = 'true') },
+      new EnvirnmentMarkPlugin(),
       // https://github.com/Realytics/fork-ts-checker-webpack-plugin
-      ...(isTypescriptProject && project.experimentalServerBundle && isDebug
+      ...(isTypescriptProject && project.projectType === 'app' && isDebug
         ? [
             // Since `fork-ts-checker-webpack-plugin` requires you to have
             // TypeScript installed when its required, we only require it if
             // this is a TypeScript project
             new (require('fork-ts-checker-webpack-plugin'))({
               tsconfig: TSCONFIG_FILE,
-              // https://github.com/facebook/create-react-app/pull/5607
-              compilerOptions: {
-                module: 'esnext',
-                moduleResolution: 'node',
-                resolveJsonModule: true,
-                noEmit: true,
-              },
               async: false,
               silent: true,
               checkSyntacticErrors: true,
@@ -320,6 +323,9 @@ function createCommonWebpackConfig({
     ],
 
     module: {
+      // Makes missing exports an error instead of warning
+      strictExportPresence: true,
+
       rules: [
         // https://github.com/wix/externalize-relative-module-loader
         ...(project.features.externalizeRelativeLodash
@@ -403,6 +409,9 @@ function createCommonWebpackConfig({
             },
             {
               loader: 'babel-loader',
+              options: {
+                ...babelConfig,
+              },
             },
           ],
         },
@@ -416,41 +425,72 @@ function createCommonWebpackConfig({
               loader: 'svg-inline-loader',
             },
 
+            // Allows you to use two kinds of imports for SVG:
+            // import logoUrl from './logo.svg'; gives you the URL.
+            // import { ReactComponent as Logo } from './logo.svg'; gives you a component.
+            {
+              test: /\.svg$/,
+              issuer: {
+                test: /\.(j|t)sx?$/,
+              },
+              use: [
+                require.resolve('@svgr/webpack'),
+                {
+                  loader: 'svg-url-loader',
+                  options: {
+                    iesafe: true,
+                    noquotes: true,
+                    limit: 10000,
+                  },
+                },
+              ],
+            },
+            {
+              test: /\.svg$/,
+              use: [
+                {
+                  loader: 'svg-url-loader',
+                  options: {
+                    iesafe: true,
+                    limit: 10000,
+                  },
+                },
+              ],
+            },
+            // Rules for Markdown
+            {
+              test: /\.md$/,
+              loader: 'raw-loader',
+            },
+
+            // Rules for HAML
+            {
+              test: /\.haml$/,
+              loader: 'ruby-haml-loader',
+            },
+
+            // Rules for HTML
+            {
+              test: /\.html$/,
+              loader: 'html-loader',
+            },
+
+            // Rules for GraphQL
+            {
+              test: /\.(graphql|gql)$/,
+              loader: 'graphql-tag/loader',
+            },
             // Try to inline assets as base64 or return a public URL to it if it passes
             // the 10kb limit
             {
               test: reAssets,
               loader: 'url-loader',
               options: {
-                name: '[path][name].[ext]?[hash]',
+                name: staticAssetName,
                 limit: 10000,
               },
             },
           ],
-        },
-
-        // Rules for Markdown
-        {
-          test: /\.md$/,
-          loader: 'raw-loader',
-        },
-
-        // Rules for HAML
-        {
-          test: /\.haml$/,
-          loader: 'ruby-haml-loader',
-        },
-
-        // Rules for HTML
-        {
-          test: /\.html$/,
-          loader: 'html-loader',
-        },
-
-        // Rules for GraphQL
-        {
-          test: /\.(graphql|gql)$/,
-          loader: 'graphql-tag/loader',
         },
       ],
     },
@@ -512,14 +552,14 @@ function createClientWebpackConfig({
       splitChunks: useSplitChunks ? splitChunksConfig : false,
       concatenateModules: isProduction && !disableModuleConcat,
       minimizer: [
-        new UglifyJsPlugin({
+        new TerserPlugin({
           // Use multi-process parallel running to improve the build speed
           // Default number of concurrent runs: os.cpus().length - 1
           parallel: true,
           // Enable file caching
           cache: true,
           sourceMap: true,
-          uglifyOptions: {
+          terserOptions: {
             output: {
               // support emojis
               ascii_only: true,
@@ -527,6 +567,9 @@ function createClientWebpackConfig({
             keep_fnames: project.keepFunctionNames,
           },
         }),
+
+        // https://github.com/NMFR/optimize-css-assets-webpack-plugin
+        new OptimizeCSSAssetsPlugin(),
       ],
     },
 
@@ -576,9 +619,6 @@ function createClientWebpackConfig({
             new RtlCssPlugin(isDebug ? '[name].rtl.css' : '[name].rtl.min.css'),
           ]
         : []),
-
-      // Hacky way of correcting Webpack's publicPath
-      new DynamicPublicPath(),
 
       // https://webpack.js.org/plugins/define-plugin/
       new webpack.DefinePlugin({
@@ -678,8 +718,6 @@ function createServerWebpackConfig({ isDebug = true, isHmr = false } = {}) {
       libraryTarget: 'umd',
       libraryExport: 'default',
       globalObject: "(typeof self !== 'undefined' ? self : this)",
-      hotUpdateMainFilename: 'updates/[hash].hot-update.json',
-      hotUpdateChunkFilename: 'updates/[id].[hash].hot-update.js',
       // Point sourcemap entries to original disk location (format as URL on Windows)
       devtoolModuleFilenameTemplate: info =>
         path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
@@ -703,6 +741,20 @@ function createServerWebpackConfig({ isDebug = true, isHmr = false } = {}) {
               options: {
                 ...rule.options,
                 emitFile: false,
+              },
+            };
+          }
+
+          if (rule.loader === 'babel-loader') {
+            const serverBabelConfig = createBabelConfig({
+              modules: false,
+              targets: 'current node',
+            });
+
+            return {
+              ...rule,
+              options: {
+                ...serverBabelConfig,
               },
             };
           }

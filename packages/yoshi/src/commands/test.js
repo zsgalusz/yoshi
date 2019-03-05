@@ -38,8 +38,7 @@ const noOptions =
   !cliArgs.protractor;
 
 if (noOptions) {
-  cliArgs.mocha = true;
-  cliArgs.protractor = true;
+  cliArgs.jest = true;
 }
 
 const debugPort = cliArgs.debug;
@@ -87,7 +86,7 @@ module.exports = runner.command(
 
     if (cliArgs.mocha) {
       if (shouldRunPuppeteer) {
-        specsPattern.push(globs.protractor);
+        specsPattern.push(globs.e2eTests);
         await bootstrapCdn();
       }
 

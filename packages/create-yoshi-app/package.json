@@ -1,6 +1,6 @@
 {
   "name": "create-yoshi-app",
-  "version": "3.30.5",
+  "version": "4.1.0-alpha.3",
   "description": "create yoshi powered apps",
   "keywords": [
     "create",
@@ -37,20 +37,20 @@
     "chalk": "^2.4.1",
     "commander": "^2.16.0",
     "constant-case": "^2.0.0",
-    "execa": "^0.10.0",
+    "execa": "^1.0.0",
     "fs-extra": "^7.0.0",
-    "globby": "^8.0.2",
+    "globby": "^9.0.0",
     "parse-git-config": "^2.0.2",
     "prompts": "^1.1.1",
     "validate-npm-package-name": "^3.0.0",
-    "yoshi-helpers": "3.30.5"
+    "yoshi-helpers": "4.1.0-alpha.3"
   },
   "devDependencies": {
     "chokidar": "^2.0.4",
     "clipboardy": "^1.2.3",
     "expect": "^23.6.0",
     "find-cache-dir": "^2.0.0",
-    "jest": "^23.3.0",
+    "jest": "^24.1.0",
     "minimist": "^1.2.0",
     "mocha": "^5.2.0",
     "mocha-env-reporter": "^3.0.0",

@@ -9,21 +9,19 @@ const globs = require('yoshi-config/globs');
 const path = require('path');
 const { STATS_FILE } = require('yoshi-config/paths');
 const {
-  runIndividualTranspiler,
   petriSpecsConfig,
   clientProjectName,
   isAngularProject,
   clientFilesPath,
-  experimentalTSTarget,
 } = require('yoshi-config');
 const {
   watchMode,
   isTypescriptProject,
-  isBabelProject,
   shouldExportModule,
   shouldRunWebpack,
   shouldRunLess,
   shouldRunSass,
+  createBabelConfig,
 } = require('yoshi-helpers');
 const { printAndExitOnErrors } = require('../error-handler');
 
@@ -40,10 +38,11 @@ module.exports = runner.command(
       return;
     }
 
-    const { less, clean, copy, babel, sass, webpack, typescript } = tasks;
+    const { less, clean, copy, sass, webpack, typescript } = tasks;
 
     const migrateScopePackages =
       tasks[require.resolve('../tasks/migrate-to-scoped-packages')];
+    const babel = tasks[require.resolve('../tasks/babel')];
     const wixPetriSpecs = tasks[require.resolve('../tasks/petri-specs')];
     const wixMavenStatics = tasks[require.resolve('../tasks/maven-statics')];
     const wixDepCheck = tasks[require.resolve('../tasks/dep-check')];
@@ -60,14 +59,16 @@ module.exports = runner.command(
       ),
     ]);
 
-    const esTarget = shouldExportModule();
+    const useEsTarget = shouldExportModule();
 
     await Promise.all([
       printAndExitOnErrors(() =>
-        transpileJavascript({ esTarget }).then(() => transpileNgAnnotate()),
+        transpileJavascript({ esTarget: useEsTarget }).then(() =>
+          transpileNgAnnotate(),
+        ),
       ),
-      ...transpileCss({ esTarget }),
-      ...copyAssets({ esTarget }),
+      ...transpileCss({ esTarget: useEsTarget }),
+      ...copyAssets({ esTarget: useEsTarget }),
       bundle(),
       printAndExitOnErrors(() =>
         wixPetriSpecs(
@@ -240,13 +241,13 @@ module.exports = runner.command(
     function transpileJavascript({ esTarget } = {}) {
       const transpilations = [];
 
-      if (isTypescriptProject() && runIndividualTranspiler) {
+      if (isTypescriptProject()) {
         transpilations.push(
           typescript({
             project: 'tsconfig.json',
             rootDir: '.',
             outDir: globs.dist({ esTarget }),
-            ...(esTarget ? { module: experimentalTSTarget ? 'esNext' : 'es2015' } : {}),
+            ...(esTarget ? { module: 'esNext' } : {}),
           }),
         );
         if (esTarget) {
@@ -259,21 +260,29 @@ module.exports = runner.command(
             }),
           );
         }
-      } else if (isBabelProject() && runIndividualTranspiler) {
+      } else {
+        const babelConfig = createBabelConfig();
+
         transpilations.push(
-          babel({
-            pattern: globs.babel,
-            target: globs.dist({ esTarget }),
-          }),
+          babel(
+            {
+              pattern: globs.babel,
+              target: globs.dist({ esTarget: false }),
+              ...babelConfig,
+            },
+            {
+              title: 'babel',
+            },
+          ),
         );
         if (esTarget) {
+          const esBabelConfig = createBabelConfig({ modules: false });
+
           transpilations.push(
             babel({
               pattern: globs.babel,
-              target: globs.dist({ esTarget: false }),
-              plugins: require.resolve(
-                'babel-plugin-transform-es2015-modules-commonjs',
-              ),
+              target: globs.dist({ esTarget: true }),
+              ...esBabelConfig,
             }),
           );
         }
