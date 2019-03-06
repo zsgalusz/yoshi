@@ -73,7 +73,8 @@ unit:
 lint:
   extends: .use-node-modules-cache
   stage: test
-  before_script: ls -ltr
+  before_script:
+    - ls -ltr
   script: npm run lint
 
 integration:
