@@ -35,7 +35,7 @@ install:
   stage: build
   script: npm install --unsafe-perm
   cache:
-    key: node_modules
+    key: node_modules-${CI_COMMIT_REF_SLUG}
     policy: push
     paths:
       - node_modules/
