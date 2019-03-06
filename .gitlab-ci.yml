@@ -9,11 +9,12 @@ stages:
 
 .use-node-modules-cache:
   before_script:
-    - npm install --unsafe-perm
+    - npm install --unsafe-perm --no-audit
   cache:
     key: node_modules-${CI_COMMIT_REF_SLUG}
     paths:
       - node_modules/
+      - packages/babel-plugin-transform-hmr-runtime/node_modules
       - packages/babel-preset-yoshi/node_modules/
       - packages/bootstrap-hot-loader/node_modules/
       - packages/create-yoshi-app/node_modules/
@@ -33,7 +34,7 @@ stages:
 
 install:
   stage: build
-  script: npm install --unsafe-perm
+  script: npm install --unsafe-perm --no-audit
   cache:
     key: node_modules-${CI_COMMIT_REF_SLUG}
     policy: push
@@ -54,30 +55,6 @@ install:
       - packages/yoshi-config/node_modules/
       - packages/yoshi-helpers/node_modules/
       - packages/yoshi-style-dependencies/node_modules/
-
-check-node-modules:
-  cache:
-    key: node_modules-${CI_COMMIT_REF_SLUG}
-    paths:
-      - node_modules/
-      - packages/babel-preset-yoshi/node_modules/
-      - packages/bootstrap-hot-loader/node_modules/
-      - packages/create-yoshi-app/node_modules/
-      - packages/eslint-config-yoshi/node_modules/
-      - packages/eslint-config-yoshi-base/node_modules/
-      - packages/jest-environment-yoshi-bootstrap/node_modules/
-      - packages/jest-environment-yoshi-puppeteer/node_modules/
-      - packages/jest-yoshi-preset/node_modules/
-      - packages/tslint-config-yoshi/node_modules/
-      - packages/tslint-config-yoshi-base/node_modules/
-      - packages/yoshi/node_modules/
-      - packages/yoshi-angular-dependencies/node_modules/
-      - packages/yoshi-config/node_modules/
-      - packages/yoshi-helpers/node_modules/
-      - packages/yoshi-style-dependencies/node_modules/
-    policy: pull
-  stage: test
-  script: ls -ltr ./node_modules
 
 unit:
   extends: .use-node-modules-cache
