@@ -1,5 +1,8 @@
 image: netanelgilad/yoshi-ci:node10
 
+variables:
+  YOSHI_CI: 1
+
 stages:
   - build
   - test
