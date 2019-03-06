@@ -2,17 +2,24 @@ image: netanelgilad/yoshi-ci:node10
 
 variables:
   YOSHI_CI: 1
+  NPM_CONFIG_AUDIT: false
+  NPM_CONFIG_CACHE: .npm-cache
 
 stages:
   - build
   - test
 
+print-env:
+  stage: build
+  script: env
+
 .use-node-modules-cache:
   before_script:
-    - npm install --unsafe-perm --no-audit
+    - npm install --unsafe-perm
   cache:
     key: node_modules-${CI_COMMIT_REF_SLUG}
     paths:
+      - .npm-cache/
       - node_modules/
       - packages/babel-plugin-transform-hmr-runtime/node_modules
       - packages/babel-preset-yoshi/node_modules/
@@ -34,11 +41,12 @@ stages:
 
 install:
   stage: build
-  script: npm install --unsafe-perm --no-audit
+  script: npm install --unsafe-perm
   cache:
     key: node_modules-${CI_COMMIT_REF_SLUG}
     policy: push
     paths:
+      - .npm-cache/
       - node_modules/
       - packages/babel-plugin-transform-hmr-runtime/node_modules
       - packages/babel-preset-yoshi/node_modules/

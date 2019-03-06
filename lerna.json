@@ -3,7 +3,6 @@
   "packages": [
     "packages/*"
   ],
-  "npmClientArgs": ["--no-audit"],
   "changelog": {
     "repo": "wix/yoshi",
     "cacheDir": ".changelog",
