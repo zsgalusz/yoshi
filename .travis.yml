@@ -29,6 +29,20 @@ script:
   - 'if [ $TEST_SUITE = "test:app-flow" ]; then npm run test:app-flow; fi'
   - 'if [ $TEST_SUITE = "test:unit" ]; then npm run test:unit; fi'
   - 'if [ $TEST_SUITE = "test:integration" ]; then npm run test:integration; fi'
+  - |
+    if [ $TEST_SUITE = "website" AND $TRAVIS_PULL_REQUEST = "false" AND $TRAVIS_BRANCH = "master" ]; then
+      git config --global user.name "${GH_NAME}"
+      git config --global user.email "${GH_EMAIL}"
+      echo "machine github.com login ${GH_NAME} password ${GH_TOKEN}" > ~/.netrc
+      cd website && yarn install && GIT_USER="${GH_NAME}" yarn run publish-gh-pages
+     fi
+  - |
+    if [ $TEST_SUITE = "website" AND $TRAVIS_PULL_REQUEST != "false" ]; then
+      cd website
+      yarn install
+      yarn build
+      npx surge --project ./build --domain wix-yoshi-${TRAVIS_PULL_REQUEST}.surge.sh
+    fi
 
 env:
   matrix:
@@ -45,3 +59,6 @@ matrix:
     - os: linux
       node_js: 10
       env: TEST_SUITE="test:integration"
+    - os: linux
+      node_js: 10
+      env: TEST_SUITE="website"
