@@ -1,4 +1,4 @@
-image: netanelgilad/yoshi-ci:node10
+image: netanelgilad/yoshi-ci:node10_1
 
 variables:
   YOSHI_CI: 1
