@@ -44,7 +44,6 @@ install:
   script: npm install --unsafe-perm
   cache:
     key: node_modules-${CI_COMMIT_REF_SLUG}
-    policy: push
     paths:
       - ".npm-cache/"
       - node_modules/
