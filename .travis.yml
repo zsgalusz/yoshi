@@ -12,6 +12,7 @@ addons:
 install: true
 cache:
   yarn: true
+  npm: true
 jobs:
   include:
     - name: "website"
