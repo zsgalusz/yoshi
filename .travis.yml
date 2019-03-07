@@ -43,24 +43,21 @@ jobs:
       after_success:
         - npx surge --project ./build --domain wix-yoshi-${TRAVIS_PULL_REQUEST}.surge.sh
 
-    - name: "test:integration"
-      before_script:
-        # Puppeteer setup
-        - "sysctl kernel.unprivileged_userns_clone=1"
-        - "export DISPLAY=:99.0"
-        - "sh -e /etc/init.d/xvfb start"
-        # Install
-        - npm install
-      script: npm run test:integration
+script:
+  - 'if [ $TEST_SUITE = "lint" ]; then npm run lint; fi'
+  - 'if [ $TEST_SUITE = "test:app-flow" ]; then npm run test:app-flow; fi'
+  - 'if [ $TEST_SUITE = "test:unit" ]; then npm run test:unit; fi'
+  - 'if [ $TEST_SUITE = "test:integration" ]; then npm run test:integration; fi'
 
-    - name: "test:unit"
-      before_script: npm install
-      script: npm run test:unit
+env:
+  matrix:
+    - TEST_SUITE=test:app-flow
 
-    - name: "test:app-flow"
-      before_script: npm install
-      script: npm run test:app-flow
-
-    - name: "lint"
-      before_script: npm install
-      script: npm run lint
+matrix:
+  include:
+    - os: linux
+      env: TEST_SUITE=lint
+    - os: linux
+      env: TEST_SUITE=test:unit
+    - os: linux
+      env: TEST_SUITE=test:integration
