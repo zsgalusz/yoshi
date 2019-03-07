@@ -58,6 +58,6 @@ matrix:
     - os: linux
       env: TEST_SUITE=lint
     - os: linux
-      env: TEST_SUITE=test:unit
+      env: TEST_SUITE="test:unit"
     - os: linux
-      env: TEST_SUITE=test:integration
+      env: TEST_SUITE="test:integration"
