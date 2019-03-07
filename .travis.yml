@@ -28,6 +28,8 @@ jobs:
       - cd website
       - yarn install
       - yarn build
+      after_success:
+      - npx surge --project ./build --domain wix-yoshi-${TRAVIS_PULL_REQUEST}.surge.sh
     - name: "test:integration"
       before_script:
         # Puppeteer setup
@@ -46,5 +48,4 @@ jobs:
     - name: "lint"
       before_script: npm install
       script: npm run lint
-after_success:
-  - npx surge --project ./build --domain wix-yoshi-${TRAVIS_PULL_REQUEST}.surge.sh
+
