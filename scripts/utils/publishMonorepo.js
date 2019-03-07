@@ -2,11 +2,13 @@ const path = require('path');
 const execa = require('execa');
 const { testRegistry } = require('./constants');
 
-function publishMonorepo() {
+function publishMonorepo({ verdaccioConfigPath }) {
   // Start in root directory even if run from another directory
   process.chdir(path.join(__dirname, '../..'));
 
-  const verdaccio = execa.shell('npx verdaccio --config verdaccio.yaml');
+  const verdaccio = execa.shell(
+    `npx verdaccio --config ${verdaccioConfigPath}`,
+  );
 
   execa.shellSync('npx wait-port 4873 -o silent');
 

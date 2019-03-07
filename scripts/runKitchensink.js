@@ -11,7 +11,9 @@ const filterProject = process.env.FILTER_PROJECT;
 // the maximum reliability
 //
 // Locally with symlink modules for faster feedback
-const cleanup = isCI ? publishMonorepo() : () => {};
+const cleanup = isCI
+  ? publishMonorepo({ verdaccioConfigPath: 'verdaccio.yaml' })
+  : () => {};
 
 // Find all projects to run tests on
 let projects = globby.sync('test/projects/*', {

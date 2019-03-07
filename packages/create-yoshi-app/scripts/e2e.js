@@ -86,7 +86,9 @@ describe('create-yoshi-app + yoshi e2e tests', () => {
   let cleanup;
 
   before(() => {
-    cleanup = publishMonorepo();
+    cleanup = publishMonorepo({
+      verdaccioConfigPath: 'verdaccio-templates.yaml',
+    });
   });
 
   after(() => cleanup());
