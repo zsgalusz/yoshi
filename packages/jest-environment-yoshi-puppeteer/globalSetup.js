@@ -74,6 +74,7 @@ module.exports = async () => {
 
     const webpackDevServerProcess = await getProcessOnPort(servers.cdn.port);
 
+    console.log(require.resolve('yoshi-helpers'));
     if (!webpackDevServerProcess) {
       throw new Error(
         `Running E2E tests requires a server to serve static files. Could not find any dev server on port ${chalk.cyan(

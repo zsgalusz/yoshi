@@ -116,7 +116,9 @@ module.exports.shouldTransformHMRRuntime = () => {
 };
 
 module.exports.getProcessIdOnPort = async port => {
+  console.log('HEEEEE');
   const processes = await findProcess('port', port);
+  console.log(processes);
   if (processes[0]) {
     return processes[0].pid;
   }
