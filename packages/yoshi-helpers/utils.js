@@ -5,9 +5,7 @@ const chokidar = require('chokidar');
 const chalk = require('chalk');
 const psTree = require('ps-tree');
 const childProcess = require('child_process');
-const detect = require('detect-port');
 const project = require('yoshi-config');
-const queries = require('./queries');
 const { POM_FILE } = require('yoshi-config/paths');
 const xmldoc = require('xmldoc');
 const { staticsDomain } = require('./constants');
@@ -157,7 +155,9 @@ module.exports.processIsJest = pid => {
 };
 
 module.exports.getProcessOnPort = async port => {
+  console.log('Looking for processses');
   const processes = await findProcess('port', port);
+  console.log(processes);
   if (!processes.length) {
     return null;
   } else {
