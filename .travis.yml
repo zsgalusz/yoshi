@@ -1,18 +1,29 @@
 language: node_js
+
 sudo: required
+
+os:
+  - linux
+  - osx
+
 node_js:
   - "10"
+
 dist: trusty
+
 addons:
   chrome: stable
   apt:
     packages:
       # This is required to run new chrome on old trusty
       - libnss3
+
 install: true
+
 cache:
   yarn: true
   npm: true
+
 jobs:
   include:
     - name: "website"
@@ -22,6 +33,7 @@ jobs:
         - git config --global user.email "${GH_EMAIL}"
         - echo "machine github.com login ${GH_NAME} password ${GH_TOKEN}" > ~/.netrc
         - cd website && yarn install && GIT_USER="${GH_NAME}" yarn run publish-gh-pages
+
     - name: "website - release to surge"
       if: type = pull_request
       script:
@@ -30,6 +42,7 @@ jobs:
         - yarn build
       after_success:
         - npx surge --project ./build --domain wix-yoshi-${TRAVIS_PULL_REQUEST}.surge.sh
+
     - name: "test:integration"
       before_script:
         # Puppeteer setup
@@ -39,12 +52,15 @@ jobs:
         # Install
         - npm install
       script: npm run test:integration
+
     - name: "test:unit"
       before_script: npm install
       script: npm run test:unit
+
     - name: "test:app-flow"
       before_script: npm install
       script: npm run test:app-flow
+
     - name: "lint"
       before_script: npm install
       script: npm run lint
