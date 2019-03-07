@@ -29,8 +29,8 @@ script:
   - 'if [ $TEST_SUITE = "test:app-flow" ]; then npm run test:app-flow; fi'
   - 'if [ $TEST_SUITE = "test:unit" ]; then npm run test:unit; fi'
   - 'if [ $TEST_SUITE = "test:integration" ]; then npm run test:integration; fi'
-  - 'if [ $TEST_SUITE = "website" && $TRAVIS_PULL_REQUEST = "false" && $TRAVIS_BRANCH = "master" ]; then ./scripts/deployWebsite.sh; fi'
-  - 'if [ $TEST_SUITE = "website" && $TRAVIS_PULL_REQUEST != "false" ]; then ./scripts/deployWebsitePreview.sh; fi'
+  - 'if [[ $TEST_SUITE = "website" ]] && [[ $TRAVIS_PULL_REQUEST = "false" ]] && [[ $TRAVIS_BRANCH = "master" ]]; then ./scripts/deployWebsite.sh; fi'
+  - 'if [[ $TEST_SUITE = "website" ]] && [[ $TRAVIS_PULL_REQUEST != "false" ]]; then ./scripts/deployWebsitePreview.sh; fi'
 
 env:
   matrix:
