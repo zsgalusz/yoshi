@@ -1,10 +1,9 @@
 const chalk = require('chalk');
 const globby = require('globby');
+const isCI = require('is-ci');
 const { publishMonorepo } = require('./utils/publishMonorepo');
 const setupProject = require('./utils/setupProject');
 const testProject = require('./utils/testProject');
-
-const isCI = !!process.env.TEAMCITY_VERSION;
 
 const filterProject = process.env.FILTER_PROJECT;
 

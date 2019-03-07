@@ -2,9 +2,8 @@ const path = require('path');
 const fs = require('fs-extra');
 const tempy = require('tempy');
 const execa = require('execa');
+const isCI = require('is-ci');
 const { authenticateToRegistry } = require('./publishMonorepo');
-
-const isCI = !!process.env.TEAMCITY_VERSION;
 
 module.exports = async templateDirectory => {
   const rootDirectory = tempy.directory();
