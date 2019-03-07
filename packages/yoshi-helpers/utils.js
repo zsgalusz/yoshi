@@ -5,11 +5,11 @@ const chokidar = require('chokidar');
 const chalk = require('chalk');
 const psTree = require('ps-tree');
 const childProcess = require('child_process');
+const detect = require('detect-port');
 const project = require('yoshi-config');
 const { POM_FILE } = require('yoshi-config/paths');
 const xmldoc = require('xmldoc');
 const { staticsDomain } = require('./constants');
-const findProcess = require('find-process');
 const isCI = require('is-ci');
 const os = require('os');
 
@@ -113,13 +113,11 @@ module.exports.shouldTransformHMRRuntime = () => {
   return project.hmr === 'auto' && project.isReactProject;
 };
 
-module.exports.getProcessIdOnPort = async port => {
-  console.log('HEEEEE');
-  const processes = await findProcess('port', port);
-  console.log(processes);
-  if (processes[0]) {
-    return processes[0].pid;
-  }
+module.exports.getProcessIdOnPort = port => {
+  return childProcess
+    .execSync(`lsof -i:${port} -P -t -sTCP:LISTEN`, { encoding: 'utf-8' })
+    .split('\n')[0]
+    .trim();
 };
 
 function getDirectoryOfProcessById(pid) {
@@ -154,19 +152,24 @@ module.exports.processIsJest = pid => {
   return commandArg.split('/').pop() === 'jest';
 };
 
-module.exports.getProcessOnPort = async port => {
-  console.log('Looking for processses');
-  const processes = await findProcess('port', port);
-  console.log(processes);
-  if (!processes.length) {
-    return null;
-  } else {
-    const pid = processes[0].pid;
+module.exports.getProcessOnPort = async (port, shouldCheckTestResult) => {
+  if (shouldCheckTestResult) {
+    const portTestResult = await detect(port);
+
+    if (port === portTestResult) {
+      return null;
+    }
+  }
+  try {
+    const pid = module.exports.getProcessIdOnPort(port);
     const cwd = getDirectoryOfProcessById(pid);
+
     return {
       pid,
       cwd,
     };
+  } catch (e) {
+    return null;
   }
 };
 
