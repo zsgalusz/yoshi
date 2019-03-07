@@ -32,7 +32,7 @@
     "*.js": [
       "eslint"
     ],
-    "*.md": [
+    "*.{md,yml}": [
       "prettier --write",
       "git add"
     ]

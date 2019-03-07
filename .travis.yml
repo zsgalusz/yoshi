@@ -1,7 +1,7 @@
 language: node_js
 sudo: required
 node_js:
-  - '10'
+  - "10"
 dist: trusty
 addons:
   chrome: stable
@@ -18,18 +18,18 @@ jobs:
     - name: "website"
       if: type != pull_request AND branch = master
       script:
-      - git config --global user.name "${GH_NAME}"
-      - git config --global user.email "${GH_EMAIL}"
-      - echo "machine github.com login ${GH_NAME} password ${GH_TOKEN}" > ~/.netrc
-      - cd website && yarn install && GIT_USER="${GH_NAME}" yarn run publish-gh-pages
+        - git config --global user.name "${GH_NAME}"
+        - git config --global user.email "${GH_EMAIL}"
+        - echo "machine github.com login ${GH_NAME} password ${GH_TOKEN}" > ~/.netrc
+        - cd website && yarn install && GIT_USER="${GH_NAME}" yarn run publish-gh-pages
     - name: "website - release to surge"
       if: type = pull_request
       script:
-      - cd website
-      - yarn install
-      - yarn build
+        - cd website
+        - yarn install
+        - yarn build
       after_success:
-      - npx surge --project ./build --domain wix-yoshi-${TRAVIS_PULL_REQUEST}.surge.sh
+        - npx surge --project ./build --domain wix-yoshi-${TRAVIS_PULL_REQUEST}.surge.sh
     - name: "test:integration"
       before_script:
         # Puppeteer setup
@@ -48,4 +48,3 @@ jobs:
     - name: "lint"
       before_script: npm install
       script: npm run lint
-
