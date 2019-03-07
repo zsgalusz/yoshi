@@ -24,25 +24,6 @@ cache:
   yarn: true
   npm: true
 
-jobs:
-  include:
-    - name: "website"
-      if: type != pull_request AND branch = master
-      script:
-        - git config --global user.name "${GH_NAME}"
-        - git config --global user.email "${GH_EMAIL}"
-        - echo "machine github.com login ${GH_NAME} password ${GH_TOKEN}" > ~/.netrc
-        - cd website && yarn install && GIT_USER="${GH_NAME}" yarn run publish-gh-pages
-
-    - name: "website - release to surge"
-      if: type = pull_request
-      script:
-        - cd website
-        - yarn install
-        - yarn build
-      after_success:
-        - npx surge --project ./build --domain wix-yoshi-${TRAVIS_PULL_REQUEST}.surge.sh
-
 script:
   - 'if [ $TEST_SUITE = "lint" ]; then npm run lint; fi'
   - 'if [ $TEST_SUITE = "test:app-flow" ]; then npm run test:app-flow; fi'
@@ -57,7 +38,7 @@ matrix:
   include:
     - os: linux
       node_js: 10
-      env: TEST_SUITE=lint
+      env: TEST_SUITE="lint"
     - os: linux
       node_js: 10
       env: TEST_SUITE="test:unit"
