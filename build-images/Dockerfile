@@ -1,7 +1,7 @@
 FROM ubuntu:trusty AS base
 
 RUN apt-get update
-RUN apt-get install -y wget gnupg2 curl
+RUN apt-get install -y wget gnupg2 curl lsof
 
 RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
     echo "deb http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google.list && \
