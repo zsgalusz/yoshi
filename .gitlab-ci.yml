@@ -15,7 +15,7 @@ print-env:
 
 .use-node-modules-cache:
   before_script:
-    - npm install --unsafe-perm
+    - npm install
   cache:
     key: node_modules-${CI_COMMIT_REF_SLUG}
     paths:
@@ -41,7 +41,7 @@ print-env:
 
 install:
   stage: build
-  script: npm install --unsafe-perm
+  script: npm install
   cache:
     key: node_modules-${CI_COMMIT_REF_SLUG}
     paths:
