@@ -25,6 +25,7 @@ module.exports = async templateDirectory => {
       path.join(rootDirectory, 'node_modules/.bin/yoshi'),
     );
 
+    // todo: globby.sync('packages/*').foreach(...)
     await fs.ensureSymlink(
       path.join(__dirname, '../../packages/yoshi'),
       path.join(testDirectory, 'node_modules/yoshi'),
@@ -33,6 +34,16 @@ module.exports = async templateDirectory => {
     await fs.ensureSymlink(
       path.join(__dirname, '../../packages/jest-yoshi-preset'),
       path.join(testDirectory, 'node_modules/jest-yoshi-preset'),
+    );
+
+    await fs.ensureSymlink(
+      path.join(__dirname, '../../packages/yoshi-style-dependencies'),
+      path.join(testDirectory, 'node_modules/yoshi-style-dependencies'),
+    );
+
+    await fs.ensureSymlink(
+      path.join(__dirname, '../../packages/yoshi-angular-dependencies'),
+      path.join(testDirectory, 'node_modules/yoshi-angular-dependencies'),
     );
   } else {
     // Authenticate and install from our fake registry on CI

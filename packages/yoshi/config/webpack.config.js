@@ -16,6 +16,7 @@ const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const { localIdentName } = require('../src/constants');
 const EnvirnmentMarkPlugin = require('../src/webpack-plugins/environment-mark-plugin');
+const { resolveFromOrDefault } = require('../src/webpack-utils');
 
 const {
   ROOT_DIR,
@@ -145,7 +146,16 @@ const getStyleLoaders = ({
         ...(embedCss
           ? [
               // https://github.com/shepherdwind/css-hot-loader
-              ...(hmr ? [{ loader: 'css-hot-loader' }] : []),
+              ...(hmr
+                ? [
+                    {
+                      loader: resolveFromOrDefault(
+                        'yoshi-style-dependencies',
+                        'css-hot-loader',
+                      ),
+                    },
+                  ]
+                : []),
 
               // Process every style asset with either `style-loader`
               // or `mini-css-extract-plugin`
@@ -162,7 +172,10 @@ const getStyleLoaders = ({
                   ]
                 : [
                     {
-                      loader: 'style-loader',
+                      loader: resolveFromOrDefault(
+                        'yoshi-style-dependencies',
+                        'style-loader',
+                      ),
                       options: {
                         // Reuses a single `<style></style>` element
                         singleton: true,
@@ -176,7 +189,10 @@ const getStyleLoaders = ({
                   // `modules: false`
                   {
                     test: /\.global\.[A-z]*$/,
-                    loader: 'css-loader',
+                    loader: resolveFromOrDefault(
+                      'yoshi-style-dependencies',
+                      'css-loader',
+                    ),
                     options: {
                       ...cssLoaderOptions,
                       modules: false,
@@ -185,13 +201,19 @@ const getStyleLoaders = ({
                   },
                   {
                     // https://github.com/webpack/css-loader
-                    loader: 'css-loader',
+                    loader: resolveFromOrDefault(
+                      'yoshi-style-dependencies',
+                      'style-loader',
+                    ),
                     options: cssLoaderOptions,
                   },
                 ],
               },
               {
-                loader: 'postcss-loader',
+                loader: resolveFromOrDefault(
+                  'yoshi-style-dependencies',
+                  'postcss-loader',
+                ),
                 options: {
                   // https://github.com/facebookincubator/create-react-app/issues/2677
                   ident: 'postcss',
@@ -214,12 +236,18 @@ const getStyleLoaders = ({
 
               // https://github.com/bholloway/resolve-url-loader
               {
-                loader: 'resolve-url-loader',
+                loader: resolveFromOrDefault(
+                  'yoshi-style-dependencies',
+                  'resolve-url-loader',
+                ),
               },
             ]
           : [
               {
-                loader: 'css-loader',
+                loader: resolveFromOrDefault(
+                  'yoshi-style-dependencies',
+                  'css-loader',
+                ),
                 options: {
                   ...cssLoaderOptions,
                   importLoaders: 2 + Number(tpaStyle),
@@ -230,12 +258,14 @@ const getStyleLoaders = ({
             ]),
 
         // https://github.com/wix/wix-tpa-style-loader
-        ...(tpaStyle ? [{ loader: 'wix-tpa-style-loader' }] : []),
+        ...(tpaStyle
+          ? [{ loader: require.resolve('wix-tpa-style-loader') }]
+          : []),
 
         // https://github.com/webpack-contrib/less-loader
         {
           test: /\.less$/,
-          loader: 'less-loader',
+          loader: require.resolve('less-loader'),
           options: {
             sourceMap: embedCss,
             paths: ['.', 'node_modules'],
@@ -245,7 +275,10 @@ const getStyleLoaders = ({
         // https://github.com/webpack-contrib/sass-loader
         {
           test: /\.(scss|sass)$/,
-          loader: 'sass-loader',
+          loader: resolveFromOrDefault(
+            'yoshi-style-dependencies',
+            'sass-loader',
+          ),
           options: {
             sourceMap: embedCss,
             includePaths: ['node_modules', 'node_modules/compass-mixins/lib'],
@@ -336,7 +369,7 @@ function createCommonWebpackConfig({
           ? [
               {
                 test: /[\\/]node_modules[\\/]lodash/,
-                loader: 'externalize-relative-module-loader',
+                loader: require.resolve('externalize-relative-module-loader'),
               },
             ]
           : []),
@@ -346,7 +379,10 @@ function createCommonWebpackConfig({
           ? [
               {
                 test: reScript,
-                loader: 'ng-annotate-loader',
+                loader: resolveFromOrDefault(
+                  'yoshi-angular-dependencies',
+                  'ng-annotate-loader',
+                ),
                 include: project.unprocessedModules,
               },
             ]
@@ -361,7 +397,7 @@ function createCommonWebpackConfig({
               ? []
               : [
                   {
-                    loader: 'thread-loader',
+                    loader: require.resolve('thread-loader'),
                     options: {
                       workers: require('os').cpus().length - 1,
                     },
@@ -370,11 +406,18 @@ function createCommonWebpackConfig({
 
             // https://github.com/huston007/ng-annotate-loader
             ...(project.isAngularProject
-              ? [{ loader: 'ng-annotate-loader' }]
+              ? [
+                  {
+                    loader: resolveFromOrDefault(
+                      'yoshi-angular-dependencies',
+                      'ng-annotate-loader',
+                    ),
+                  },
+                ]
               : []),
 
             {
-              loader: 'ts-loader',
+              loader: require.resolve('ts-loader'),
               options: {
                 // This implicitly sets `transpileOnly` to `true`
                 happyPackMode: !disableTsThreadOptimization,
@@ -406,13 +449,13 @@ function createCommonWebpackConfig({
           include: project.unprocessedModules,
           use: [
             {
-              loader: 'thread-loader',
+              loader: require.resolve('thread-loader'),
               options: {
                 workers: require('os').cpus().length - 1,
               },
             },
             {
-              loader: 'babel-loader',
+              loader: require.resolve('babel-loader'),
               options: {
                 ...babelConfig,
               },
@@ -426,7 +469,7 @@ function createCommonWebpackConfig({
             // Inline SVG images into CSS
             {
               test: /\.inline\.svg$/,
-              loader: 'svg-inline-loader',
+              loader: require.resolve('svg-inline-loader'),
             },
 
             // Allows you to use two kinds of imports for SVG:
@@ -440,7 +483,7 @@ function createCommonWebpackConfig({
               use: [
                 require.resolve('@svgr/webpack'),
                 {
-                  loader: 'svg-url-loader',
+                  loader: require.resolve('svg-url-loader'),
                   options: {
                     iesafe: true,
                     noquotes: true,
@@ -453,7 +496,7 @@ function createCommonWebpackConfig({
               test: /\.svg$/,
               use: [
                 {
-                  loader: 'svg-url-loader',
+                  loader: require.resolve('svg-url-loader'),
                   options: {
                     iesafe: true,
                     limit: 10000,
@@ -464,31 +507,31 @@ function createCommonWebpackConfig({
             // Rules for Markdown
             {
               test: /\.md$/,
-              loader: 'raw-loader',
+              loader: require.resolve('raw-loader'),
             },
 
             // Rules for HAML
             {
               test: /\.haml$/,
-              loader: 'ruby-haml-loader',
+              loader: require.resolve('ruby-haml-loader'),
             },
 
             // Rules for HTML
             {
               test: /\.html$/,
-              loader: 'html-loader',
+              loader: require.resolve('html-loader'),
             },
 
             // Rules for GraphQL
             {
               test: /\.(graphql|gql)$/,
-              loader: 'graphql-tag/loader',
+              loader: require.resolve('graphql-tag/loader'),
             },
             // Try to inline assets as base64 or return a public URL to it if it passes
             // the 10kb limit
             {
               test: reAssets,
-              loader: 'url-loader',
+              loader: require.resolve('url-loader'),
               options: {
                 name: staticAssetName,
                 limit: 10000,

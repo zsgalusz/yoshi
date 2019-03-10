@@ -9,6 +9,7 @@ const { STATICS_DIR } = require('yoshi-config/paths');
 const { PORT } = require('./constants');
 const { redirectMiddleware } = require('../src/tasks/cdn/server-api');
 const WebpackDevServer = require('webpack-dev-server');
+const resolveFrom = require('resolve-from');
 
 const isInteractive = process.stdout.isTTY;
 
@@ -191,10 +192,15 @@ function waitForCompilation(compiler) {
   });
 }
 
+function resolveFromOrDefault(module, loader) {
+  return resolveFrom.silent(module, loader) || loader;
+}
+
 module.exports = {
   createDevServer,
   createCompiler,
   waitForCompilation,
   addEntry,
   overrideRules,
+  resolveFromOrDefault,
 };
