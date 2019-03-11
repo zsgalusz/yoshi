@@ -150,7 +150,6 @@ const schema = {
         'If true, instructs the browser to physically refresh the entire page if / when webpack indicates that a hot patch cannot be applied and a full refresh is needed.',
       type: 'boolean',
     },
-    performance: webpackOptions.properties.performance,
     resolveAlias: {
       description:
         'Allows you to use the Webpack Resolve Alias feature. The configuration object is the same as in Webpack, note that the paths are relative to Webpacks context. For more info, you can read the webpack docs.',

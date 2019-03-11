@@ -678,13 +678,7 @@ function createClientWebpackConfig({
     externals: project.externals,
 
     // https://webpack.js.org/configuration/performance
-    performance: {
-      ...(isProduction
-        ? project.performanceBudget || { hints: false }
-        : {
-            hints: false,
-          }),
-    },
+    performance: { hints: false },
   };
 
   if (isHmr) {

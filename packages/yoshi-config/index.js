@@ -76,7 +76,6 @@ const loadConfig = () => {
     transpileTests: getConfig('transpileTests', true),
     jestConfig: _.get(packagejson, 'jest', {}),
     petriSpecsConfig: getConfig('petriSpecs', {}),
-    performanceBudget: getConfig('performance'),
     resolveAlias: getConfig('resolveAlias', {}),
     keepFunctionNames: getConfig('keepFunctionNames', false),
     umdNamedDefine: getConfig('umdNamedDefine', true),

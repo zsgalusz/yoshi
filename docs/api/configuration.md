@@ -213,12 +213,6 @@ Set to `false` in order to disable hot module replacement. (defaults to true)
 
 If true, instructs the browser to physically refresh the entire page if / when webpack indicates that a hot patch cannot be applied and a full refresh is needed.
 
-## performance
-
-Allows to use the Webpack Performance Budget feature.
-The configuration object is the same as in webpack.
-For more info, you can read the [webpack docs](https://webpack.js.org/configuration/performance/).
-
 ## resolveAlias
 
 Allows you to use the Webpack Resolve Alias feature.
