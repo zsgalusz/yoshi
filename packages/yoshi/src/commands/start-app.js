@@ -4,6 +4,10 @@ process.env.NODE_ENV = 'development';
 const parseArgs = require('minimist');
 
 const cliArgs = parseArgs(process.argv.slice(2), {
+  alias: {
+    server: 'entry-point',
+    https: 'ssl',
+  },
   default: {
     server: 'index.js',
     https: false,
@@ -101,6 +105,7 @@ module.exports = async () => {
   const devServer = await createDevServer(clientCompiler, {
     publicPath: clientConfig.output.publicPath,
     port: project.servers.cdn.port,
+    https,
     host,
   });
 
@@ -193,7 +198,7 @@ module.exports = async () => {
   }
 
   // Once it started, open up the browser
-  openBrowser(`http://localhost:${PORT}`);
+  openBrowser(cliArgs.url || `${https ? 'https' : 'http'}://localhost:${PORT}`);
 
   return {
     persistent: true,
