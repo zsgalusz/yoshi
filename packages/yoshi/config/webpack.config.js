@@ -150,7 +150,7 @@ const getStyleLoaders = ({
                 ? [
                     {
                       loader: resolveFromOrDefault(
-                        'yoshi-style-dependencies',
+                        'node_modules/yoshi-style-dependencies',
                         'css-hot-loader',
                       ),
                     },
@@ -173,7 +173,7 @@ const getStyleLoaders = ({
                 : [
                     {
                       loader: resolveFromOrDefault(
-                        'yoshi-style-dependencies',
+                        'node_modules/yoshi-style-dependencies',
                         'style-loader',
                       ),
                       options: {
@@ -190,7 +190,7 @@ const getStyleLoaders = ({
                   {
                     test: /\.global\.[A-z]*$/,
                     loader: resolveFromOrDefault(
-                      'yoshi-style-dependencies',
+                      'node_modules/yoshi-style-dependencies',
                       'css-loader',
                     ),
                     options: {
@@ -202,8 +202,8 @@ const getStyleLoaders = ({
                   {
                     // https://github.com/webpack/css-loader
                     loader: resolveFromOrDefault(
-                      'yoshi-style-dependencies',
-                      'style-loader',
+                      'node_modules/yoshi-style-dependencies',
+                      'css-loader',
                     ),
                     options: cssLoaderOptions,
                   },
@@ -211,7 +211,7 @@ const getStyleLoaders = ({
               },
               {
                 loader: resolveFromOrDefault(
-                  'yoshi-style-dependencies',
+                  'node_modules/yoshi-style-dependencies',
                   'postcss-loader',
                 ),
                 options: {
@@ -237,7 +237,7 @@ const getStyleLoaders = ({
               // https://github.com/bholloway/resolve-url-loader
               {
                 loader: resolveFromOrDefault(
-                  'yoshi-style-dependencies',
+                  'node_modules/yoshi-style-dependencies',
                   'resolve-url-loader',
                 ),
               },
@@ -245,7 +245,7 @@ const getStyleLoaders = ({
           : [
               {
                 loader: resolveFromOrDefault(
-                  'yoshi-style-dependencies',
+                  'node_modules/yoshi-style-dependencies',
                   'css-loader',
                 ),
                 options: {
@@ -276,7 +276,7 @@ const getStyleLoaders = ({
         {
           test: /\.(scss|sass)$/,
           loader: resolveFromOrDefault(
-            'yoshi-style-dependencies',
+            'node_modules/yoshi-style-dependencies',
             'sass-loader',
           ),
           options: {

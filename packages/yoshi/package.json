@@ -136,7 +136,9 @@
     "write-file-webpack-plugin": "4.5.0",
     "xmldoc": "1.1.2",
     "yoshi-config": "4.1.0-alpha.5",
-    "yoshi-helpers": "4.1.0-alpha.5"
+    "yoshi-helpers": "4.1.0-alpha.5",
+    "yoshi-angular-dependencies": "4.1.0-alpha.5",
+    "yoshi-style-dependencies": "4.1.0-alpha.5"
   },
   "devDependencies": {
     "@babel/plugin-syntax-jsx": "7.2.0",
@@ -181,8 +183,6 @@
     "strip-ansi": "4.0.0",
     "tempy": "0.2.1",
     "typescript": "3.3.3333",
-    "yoshi-angular-dependencies": "4.1.0-alpha.5",
-    "yoshi-style-dependencies": "4.1.0-alpha.5",
     "yoshi-runtime": "1.0.42"
   }
 }
