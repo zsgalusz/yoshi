@@ -90,8 +90,9 @@ const loadConfig = () => {
         );
       };
 
-      const externalUnprocessedModules = ['wix-style-react/src'].concat(
-        getConfig('externalUnprocessedModules', []),
+      const externalUnprocessedModules = getConfig(
+        'externalUnprocessedModules',
+        [],
       );
 
       const externalRegexList = externalUnprocessedModules.map(
