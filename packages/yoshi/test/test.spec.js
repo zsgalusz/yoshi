@@ -152,7 +152,7 @@ describe('Aggregator: Test', () => {
       expect(res.stdout).to.contain('1 spec, 0 failures');
     });
 
-    it(`should use protractor-browser-logs and fail if there are any console errors on the browser`, () => {
+    it('should use protractor-browser-logs and fail if there are any console errors on the browser', () => {
       const res = test
         .setup({
           'protractor.conf.js': fx.protractorConf({ cdnPort: 3200 }),
@@ -172,7 +172,7 @@ describe('Aggregator: Test', () => {
       expect(res.stdout).to.contain('1 spec, 1 failure');
     });
 
-    it(`should not use protractor-browser-logs when FT is off`, () => {
+    it('should not use protractor-browser-logs when FT is off', () => {
       const res = test
         .setup({
           'protractor.conf.js': fx.protractorConf({ cdnPort: 3200 }),

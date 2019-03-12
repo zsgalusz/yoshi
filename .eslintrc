@@ -1,9 +1,25 @@
 {
   "extends": "./packages/eslint-config-yoshi/index.js",
+  "settings": {
+    "react": {
+      "version": "latest"
+    }
+  },
   "rules": {
     "import/no-extraneous-dependencies": "error"
   },
   "overrides": [
+    {
+      "files": [
+        "packages/yoshi/test/**/*"
+      ],
+      "env": {
+        "mocha": true
+      },
+      "rules": {
+        "no-unused-expressions": 0
+      }
+    },
     {
       "files": [
         "test/projects/**/*"
