@@ -1,5 +1,24 @@
 # Changelog
 
+## 3.31.0 (2019-03-13)
+
+#### :rocket: New Feature
+
+- `yoshi-config`
+  - [#1028](https://github.com/wix/yoshi/pull/1028) Add an option to load the config without validating it ([@ranyitz](https://github.com/ranyitz))
+
+#### :nail_care: Polish
+
+- `create-yoshi-app`
+  - [#1002](https://github.com/wix/yoshi/pull/1002) separate templates tests ([@ranyitz](https://github.com/ranyitz))
+
+#### :house: Internal
+
+- `create-yoshi-app`
+  - [#1089](https://github.com/wix/yoshi/pull/1089) Remove deprecated fields from `erb` files in business manager template ([@naamagr](https://github.com/naamagr))
+- `create-yoshi-app`, `yoshi`
+  - [#1008](https://github.com/wix/yoshi/pull/1008) Upgrade templates to node 10 ([@yanivefraim](https://github.com/yanivefraim))
+
 ## 3.30.5 (2019-02-21)
 
 #### :bug: Bug Fix
