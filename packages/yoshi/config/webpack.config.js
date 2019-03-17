@@ -358,7 +358,7 @@ function createCommonWebpackConfig({
         ...(isTypescriptProject
           ? {
               test: [reScript, /\.(ts|tsx)$/],
-              exclude: /(node_modules)/,
+              include: SRC_DIR,
               use: [
                 ...(disableTsThreadOptimization
                   ? []
@@ -388,16 +388,13 @@ function createCommonWebpackConfig({
                     compilerOptions: project.isAngularProject
                       ? {}
                       : {
-                          // force es modules for tree shaking
+                          // Support tree shaking
                           module: 'esnext',
-                          // use same module resolution
                           moduleResolution: 'node',
-                          // optimize target to latest chrome for local development
                           ...(isDevelopment
                             ? {
-                                // allow using Promises, Array.prototype.includes, String.prototype.padStart, etc.
+                                // Optimize for latest chrome
                                 lib: ['es2017'],
-                                // use async/await instead of embedding polyfills
                                 target: 'es2017',
                               }
                             : {}),
@@ -779,9 +776,8 @@ function createServerWebpackConfig({ isDebug = true, isHmr = false } = {}) {
                   : {
                       ...rule.options.compilerOptions,
 
-                      // allow using Promises, Array.prototype.includes, String.prototype.padStart, etc.
+                      // Optimize for latest node
                       lib: ['es2017'],
-                      // use async/await instead of embedding polyfills
                       target: 'es2017',
                     },
               },
