@@ -354,73 +354,76 @@ function createCommonWebpackConfig({
             ]
           : []),
 
-        // Rules for TS / TSX
-        {
-          test: /\.(ts|tsx)$/,
-          exclude: /(node_modules)/,
-          use: [
-            ...(disableTsThreadOptimization
-              ? []
-              : [
-                  {
-                    loader: 'thread-loader',
-                    options: {
-                      workers: require('os').cpus().length - 1,
-                    },
+        // Rules for JS / TS
+        ...(isTypescriptProject
+          ? {
+              test: [reScript, /\.(ts|tsx)$/],
+              exclude: /(node_modules)/,
+              use: [
+                ...(disableTsThreadOptimization
+                  ? []
+                  : [
+                      {
+                        loader: 'thread-loader',
+                        options: {
+                          workers: require('os').cpus().length - 1,
+                        },
+                      },
+                    ]),
+
+                // https://github.com/huston007/ng-annotate-loader
+                ...(project.isAngularProject
+                  ? [
+                      {
+                        loader: 'yoshi-angular-dependencies/ng-annotate-loader',
+                      },
+                    ]
+                  : []),
+
+                {
+                  loader: 'ts-loader',
+                  options: {
+                    // This implicitly sets `transpileOnly` to `true`
+                    happyPackMode: !disableTsThreadOptimization,
+                    compilerOptions: project.isAngularProject
+                      ? {}
+                      : {
+                          // force es modules for tree shaking
+                          module: 'esnext',
+                          // use same module resolution
+                          moduleResolution: 'node',
+                          // optimize target to latest chrome for local development
+                          ...(isDevelopment
+                            ? {
+                                // allow using Promises, Array.prototype.includes, String.prototype.padStart, etc.
+                                lib: ['es2017'],
+                                // use async/await instead of embedding polyfills
+                                target: 'es2017',
+                              }
+                            : {}),
+                        },
                   },
-                ]),
-
-            // https://github.com/huston007/ng-annotate-loader
-            ...(project.isAngularProject
-              ? [{ loader: 'yoshi-angular-dependencies/ng-annotate-loader' }]
-              : []),
-
-            {
-              loader: 'ts-loader',
-              options: {
-                // This implicitly sets `transpileOnly` to `true`
-                happyPackMode: !disableTsThreadOptimization,
-                compilerOptions: project.isAngularProject
-                  ? {}
-                  : {
-                      // force es modules for tree shaking
-                      module: 'esnext',
-                      // use same module resolution
-                      moduleResolution: 'node',
-                      // optimize target to latest chrome for local development
-                      ...(isDevelopment
-                        ? {
-                            // allow using Promises, Array.prototype.includes, String.prototype.padStart, etc.
-                            lib: ['es2017'],
-                            // use async/await instead of embedding polyfills
-                            target: 'es2017',
-                          }
-                        : {}),
-                    },
-              },
-            },
-          ],
-        },
-
-        // Rules for JS
-        {
-          test: reScript,
-          include: project.unprocessedModules,
-          use: [
-            {
-              loader: 'thread-loader',
-              options: {
-                workers: require('os').cpus().length - 1,
-              },
-            },
-            {
-              loader: 'babel-loader',
-              options: {
-                ...babelConfig,
-              },
-            },
-          ],
-        },
+                },
+              ],
+            }
+          : {
+              test: reScript,
+              include: project.unprocessedModules,
+              use: [
+                {
+                  loader: 'thread-loader',
+                  options: {
+                    workers: require('os').cpus().length - 1,
+                  },
+                },
+                {
+                  loader: 'babel-loader',
+                  options: {
+                    ...babelConfig,
+                  },
+                },
+              ],
+            }),
 
         // Rules for assets
         {

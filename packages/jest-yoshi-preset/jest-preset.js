@@ -3,6 +3,11 @@ const chalk = require('chalk');
 const globby = require('globby');
 const { envs } = require('./constants');
 const globs = require('yoshi-config/globs');
+const {
+  isTypescriptProject: checkIsTypescriptProject,
+} = require('yoshi-helpers');
+
+const isTypescriptProject = checkIsTypescriptProject();
 
 const modulePathIgnorePatterns = ['<rootDir>/dist/', '<rootDir>/target/'];
 module.exports = {
@@ -88,8 +93,9 @@ module.exports = {
           ],
 
           transform: {
-            '^.+\\.jsx?$': require.resolve('./transforms/babel'),
-            '^.+\\.tsx?$': require.resolve('ts-jest'),
+            ...(isTypescriptProject
+              ? { '^.+\\.(ts|js)x?$': require.resolve('ts-jest') }
+              : { '^.+\\.jsx?$': require.resolve('./transforms/babel') }),
             '\\.st.css?$': require.resolve('@stylable/jest'),
             '\\.(png|jpg|jpeg|gif|svg|woff|woff2|ttf|otf|eot|wav|mp3|html|md)$': require.resolve(
               './transforms/file',
