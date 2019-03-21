@@ -8,6 +8,7 @@ const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const StylableWebpackPlugin = require('@stylable/webpack-plugin');
+const { resolveNamespaceFactory } = require('@stylable/node');
 const TpaStyleWebpackPlugin = require('tpa-style-webpack-plugin');
 const RtlCssPlugin = require('rtlcss-webpack-plugin');
 const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
@@ -608,8 +609,9 @@ function createClientWebpackConfig({
         runtimeMode: 'shared',
         globalRuntimeId: '__stylable_yoshi__',
         generate: {
-          runtimeStylesheetId: 'namespace'
-        }
+          runtimeStylesheetId: 'namespace',
+        },
+        resolveNamespace: resolveNamespaceFactory(project.name),
       }),
 
       // https://github.com/th0r/webpack-bundle-analyzer
