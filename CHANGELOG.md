@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.31.1 (2019-03-21)
+
+#### :bug: Bug Fix
+* `yoshi`
+  * [#1154](https://github.com/wix/yoshi/pull/1154) Add Stylable Webpack plugin project level hashing ([@yairhaimo](https://github.com/yairhaimo))
+
 ## 3.31.0 (2019-03-13)
 
 #### :rocket: New Feature
