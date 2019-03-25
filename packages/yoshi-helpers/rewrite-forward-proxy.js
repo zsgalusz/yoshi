@@ -23,6 +23,8 @@ module.exports = async function startRewriteForwardProxy({
     return (req, res) => {
       let target =
         protocol + '://' + req.headers.host + url.parse(req.url).path;
+      const originalTarget = target;
+
       if (target.startsWith(search)) {
         target = target.replace(search, rewrite);
       }
@@ -30,6 +32,11 @@ module.exports = async function startRewriteForwardProxy({
       regularProxy.web(req, res, { target }, err => {
         if (err) {
           res.statusCode = 500;
+          res.write(
+            `Proxy failed to get ${target}: ${
+              err.message
+            }\n\nYou need to start Yoshi CDN to serve ${originalTarget}? See the docs: https://wix.github.io/yoshi/docs/api/cli#start`
+          );
           res.end();
         }
       });
