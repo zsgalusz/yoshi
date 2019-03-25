@@ -6,10 +6,6 @@ const globs = require('yoshi-config/globs');
 
 const modulePathIgnorePatterns = ['<rootDir>/dist/', '<rootDir>/target/'];
 module.exports = {
-  globalSetup: require.resolve('jest-environment-yoshi-puppeteer/globalSetup'),
-  globalTeardown: require.resolve(
-    'jest-environment-yoshi-puppeteer/globalTeardown',
-  ),
   watchPlugins: [
     require.resolve('jest-watch-typeahead/filename'),
     require.resolve('jest-watch-typeahead/testname'),
@@ -27,12 +23,13 @@ module.exports = {
         displayName: 'e2e',
         testEnvironment: require.resolve('jest-environment-yoshi-puppeteer'),
         testMatch: [`<rootDir>/${globs.e2eTests}`],
-        setupFiles: [
-          require.resolve(
-            'jest-environment-yoshi-bootstrap/environment-setup.js',
-          ),
-          require.resolve('regenerator-runtime/runtime'),
-        ],
+        setupFiles: [require.resolve('regenerator-runtime/runtime')],
+        globalSetup: require.resolve(
+          'jest-environment-yoshi-puppeteer/globalSetup',
+        ),
+        globalTeardown: require.resolve(
+          'jest-environment-yoshi-puppeteer/globalTeardown',
+        ),
       },
     ]
       .filter(({ displayName }) => {
