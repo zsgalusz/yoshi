@@ -23,7 +23,12 @@ module.exports = {
         displayName: 'e2e',
         testEnvironment: require.resolve('jest-environment-yoshi-puppeteer'),
         testMatch: [`<rootDir>/${globs.e2eTests}`],
-        setupFiles: [require.resolve('regenerator-runtime/runtime')],
+        setupFiles: [
+          require.resolve(
+            'jest-environment-yoshi-bootstrap/environment-setup.js',
+          ),
+          require.resolve('regenerator-runtime/runtime'),
+        ],
         globalSetup: require.resolve(
           'jest-environment-yoshi-puppeteer/globalSetup',
         ),
