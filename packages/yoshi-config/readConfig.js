@@ -1,7 +1,7 @@
 const chalk = require('chalk');
-const schema = require('./schema/yoshi-config-schema');
-const validateConfig = require('./validateConfig');
 const { PACKAGE_JSON } = require('./constants');
+const schema = require('./schema/yoshi-config-schema');
+const validateConfig = require('./utils/validate-config');
 const YoshiOptionsValidationError = require('./utils/YoshiOptionsValidationError');
 
 module.exports = function readConfig({ configPath, validate }) {
