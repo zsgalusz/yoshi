@@ -40,6 +40,7 @@ const {
   getProjectArtifactId,
   createBabelConfig,
 } = require('yoshi-helpers/utils');
+const unprocessedModules = require('yoshi-helpers/unprocessed-modules');
 const { addEntry, overrideRules } = require('../src/webpack-utils');
 
 const reScript = /\.js?$/;
@@ -354,7 +355,7 @@ function createCommonWebpackConfig({
               {
                 test: reScript,
                 loader: 'yoshi-angular-dependencies/ng-annotate-loader',
-                include: project.unprocessedModules,
+                include: unprocessedModules,
               },
             ]
           : []),
@@ -410,7 +411,7 @@ function createCommonWebpackConfig({
         // Rules for JS
         {
           test: reScript,
-          include: project.unprocessedModules,
+          include: unprocessedModules,
           use: [
             {
               loader: 'thread-loader',

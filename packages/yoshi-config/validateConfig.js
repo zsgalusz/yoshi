@@ -1,6 +1,6 @@
 const Ajv = require('ajv');
-const YoshiOptionsValidationError = require('./YoshiOptionsValidationError');
 const ajvKeywords = require('ajv-keywords');
+const YoshiOptionsValidationError = require('./utils/YoshiOptionsValidationError');
 
 module.exports = (config, schema) => {
   const ajv = new Ajv({ jsonPointers: true, verbose: true, allErrors: true });
