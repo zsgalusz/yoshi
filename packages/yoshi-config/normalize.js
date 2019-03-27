@@ -30,6 +30,19 @@ function hasDependency(packageName, packageJson) {
   return dependencies[packageName] || peerDependencies[packageName];
 }
 
+function renameKeys(result, options) {
+  for (const key in options) {
+    const to = key;
+    const from = options[key];
+
+    // Map to new key
+    result[to] = result[from];
+
+    // Delete old key
+    delete result[from];
+  }
+}
+
 module.exports = function normalize({ configObject, rootDir }) {
   const packageJson = require(path.resolve(rootDir, PACKAGE_JSON));
 
@@ -41,8 +54,11 @@ module.exports = function normalize({ configObject, rootDir }) {
   result.isReactProject = hasDependency('react', packageJson);
 
   result.jestConfig = packageJson.jest;
-  result.petriSpecsConfig = configObject.petriSpecs;
-  result.performanceBudget = configObject.performance;
+
+  renameKeys(result, {
+    petriSpecsConfig: 'petriSpecs',
+    performanceBudget: 'performance',
+  });
 
   if (!result.servers.cdn.url) {
     result.servers.cdn.url = normalizeCdnUrl(result);
