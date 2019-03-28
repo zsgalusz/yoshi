@@ -1,0 +1,105 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Yoshi 4: Slick and polished · Yoshi</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="We&#x27;re happy to announce the next major version of Yoshi (4). It&#x27;s been almost 9 months since the last release and a lot have changed. We hope this release has helpful features for everyone. We tried to polish Yoshi as much as we can in this version to deliver better developer experience."/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Yoshi 4: Slick and polished · Yoshi"/><meta property="og:type" content="website"/><meta property="og:url" content="https://wix.github.io/yoshi/blog/2019/03/12/yoshi-4"/><meta property="og:description" content="We&#x27;re happy to announce the next major version of Yoshi (4). It&#x27;s been almost 9 months since the last release and a lot have changed. We hope this release has helpful features for everyone. We tried to polish Yoshi as much as we can in this version to deliver better developer experience."/><meta property="og:image" content="https://wix.github.io/yoshi/img/yoshi.webp"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://wix.github.io/yoshi/img/yoshi.webp"/><link rel="shortcut icon" href="/yoshi/img/favicon.ico"/><link rel="stylesheet" href="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.css"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css"/><link rel="alternate" type="application/atom+xml" href="https://wix.github.io/yoshi/blog/atom.xml" title="Yoshi Blog ATOM Feed"/><link rel="alternate" type="application/rss+xml" href="https://wix.github.io/yoshi/blog/feed.xml" title="Yoshi Blog RSS Feed"/><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><link rel="stylesheet" href="/yoshi/css/main.css"/><script src="/yoshi/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/yoshi/"><img class="logo" src="/yoshi/img/yoshi.webp" alt="Yoshi"/><h2 class="headerTitleWithLogo">Yoshi</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class=""><a href="/yoshi/docs/getting-started/create-app" target="_self">Getting Started</a></li><li class=""><a href="/yoshi/docs/api/configuration" target="_self">API</a></li><li class="siteNavGroupActive"><a href="/yoshi/blog/" target="_self">Blog</a></li><li class="navSearchWrapper reactNavSearchWrapper"><input type="text" id="search_input_react" placeholder="Search" title="Search"/></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="container docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><i></i></div><h2><i>›</i><span>Recent Posts</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Recent Posts</h3><ul class=""><li class="navListItem navListItemActive"><a class="navItem" href="/yoshi/blog/2019/03/12/yoshi-4">Yoshi 4: Slick and polished</a></li><li class="navListItem"><a class="navItem" href="/yoshi/blog/2018/06/3/yoshi-3">Yoshi 3.0</a></li><li class="navListItem"><a class="navItem" href="/yoshi/blog/2018/03/15/yoshi-2">Yoshi 2.0</a></li><li class="navListItem"><a class="navItem" href="/yoshi/blog/2018/03/14/yoshi-is-not-dead">Yoshi Is Not Dead</a></li><li class="navListItem"><a class="navItem" href="/yoshi/blog/2018/03/14/semantic-versioning">Moving To Semantic Versioning</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              const headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                if (event.target.tagName === 'A') {
+                  document.body.classList.remove('tocActive');
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer postContainer blogContainer"><div class="wrapper"><div class="lonePost"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle"><a href="/yoshi/blog/2019/03/12/yoshi-4">Yoshi 4: Slick and polished</a></h1><p class="post-meta">March 12, 2019</p><div class="authorBlock"><p class="post-authorName"><a target="_blank" rel="noreferrer noopener">Ran Yitzhaki, Ronen Amiel, Yair Haimovitch, Yaniv Efraim, Netanel Gilad, Artem Yavorsky</a></p></div></header><div><span><p>We're happy to announce the next major version of Yoshi (4). It's been almost 9 months since the last release and a lot have changed. We hope this release has helpful features for everyone. We tried to polish Yoshi as much as we can in this version to deliver better developer experience.</p>
+<p>The highlights of the version are listed below. For the migration guide, follow <a href="https://github.com/wix/yoshi/blob/version_4.x/docs/migration/version-4.md">this link</a>.</p>
+<h2><a class="anchor" aria-hidden="true" id="highlights"></a><a href="#highlights" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Highlights</h2>
+<p>Not all of the changes introduced in Yoshi 4 are listed here. For a full list of all changes see the <a href="https://github.com/wix/yoshi/blob/version_4.x/CHANGELOG.md">changelog</a>.</p>
+<h3><a class="anchor" aria-hidden="true" id="underlying-tools-version-bumps"></a><a href="#underlying-tools-version-bumps" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Underlying tools version bumps</h3>
+<p>We've upgraded the version of <a href="https://babeljs.io/blog/2018/08/27/7.0.0">Babel to 7</a>, <a href="https://jestjs.io/blog/2019/01/25/jest-24-refreshing-polished-typescript-friendly">Jest's version to 24</a> and <a href="https://eslint.org/blog/2018/06/eslint-v5.0.0-released">ESLint's version to 5</a>. We've also upgraded many versions of smaller dependencies.</p>
+<p>Some of these changes improve build times and reduce bundle sizes.</p>
+<p>Watch <a href="https://drive.google.com/file/d/1u05-l27kSY1l6YaSqScXNe2_Hp0V7gkh/view?t=38m13s">Yaniv's talk</a> to learn how it can help you.</p>
+<h3><a class="anchor" aria-hidden="true" id="svgs-as-react-components"></a><a href="#svgs-as-react-components" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>SVGs as React components</h3>
+<p>We've added a handy way of working with SVGs: Instead of running <a href="https://github.com/wix/svg2react-icon">svg2react-icon</a> as a pre-build step, you can now import SVGs directly as React components:</p>
+<pre><code class="hljs css language-js"><span class="hljs-keyword">import</span> { ReactComponent <span class="hljs-keyword">as</span> Logo } <span class="hljs-keyword">from</span> <span class="hljs-string">"./logo.svg"</span>;
+
+<span class="hljs-keyword">const</span> App = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> (
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+    {/* Logo is an actual React component */}
+    <span class="hljs-tag">&lt;<span class="hljs-name">Logo</span> /&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+);
+</code></pre>
+<p>Watch <a href="https://drive.google.com/file/d/1u05-l27kSY1l6YaSqScXNe2_Hp0V7gkh/view?t=0m0s">Ran's talk</a> to learn more about it.</p>
+<h3><a class="anchor" aria-hidden="true" id="app-flow"></a><a href="#app-flow" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>App flow</h3>
+<p>We want to deliver awesome developer experience, one that's specific to the type of application that you build.</p>
+<p>App flow is an improved developer experience that is specific to apps. Internally, instead of running many different tools (babel/typescript, sass/less) on various glob patterns, it creates a dedicated Webpack bundle, specifically for the server.</p>
+<p>This has a few advantages:</p>
+<ul>
+<li><strong>Clean output, clear errors:</strong> If your build fails or your server throws you should know about it immediately and clearly. Forget of long stack traces or errors that show multiple times; See your server's output in your terminal.</li>
+<li><strong>Faster build times:</strong> Now that Yoshi knows it targets apps, it can only run relevant build operations which can result in a significant speed boost.</li>
+<li><strong>Faster server reload:</strong> When you're working in watch mode and you change a file, Yoshi knows whether to reload your server, client or both. With the addition of <strong>server-side HMR</strong>, Yoshi will be able to reload your <code>wix-bootstrap-ng</code> server almost instantly.</li>
+</ul>
+<p>In the future, we plan on providing many features specifically for apps. We want to encourage applications to use the new flow.</p>
+<p>Watch <a href="https://drive.google.com/file/d/1u05-l27kSY1l6YaSqScXNe2_Hp0V7gkh/view?t=17m58s">Ronen's talk</a> to see how it is to work with it.</p>
+<p><img src="/yoshi/blog/assets/24-app-flow.png" alt="A terminal showing the new app flow"></p>
+<h2><a class="anchor" aria-hidden="true" id="the-future"></a><a href="#the-future" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>The future</h2>
+<p>One of our goals is to create a community around Yoshi. That other developers in the company will take an active part in its development. We work hard to create issues for problems and explain how we think they can be solved. We also try to maintain a <a href="https://github.com/wix/yoshi/blob/version_4.x/CONTRIBUTING.md">good place to start</a> if you want to contribute.</p>
+<p>We want to thank <a href="https://github.com/saarkuriel">@saarkuriel</a> and <a href="https://github.com/matveyok">@matveyok</a> on their amazing work on Yoshi v4. Thank you.</p>
+<p>We are already making plans for Yoshi v5 but more than anything, we want to hear your feedback. Please tell us what is slowing you down and what isn't working too well and we will invest time to make it better.</p>
+</span></div></div><div class="blogSocialSection"></div></div><div class="blog-recent"><a class="button" href="/yoshi/blog">Recent Posts</a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#highlights">Highlights</a><ul class="toc-headings"><li><a href="#underlying-tools-version-bumps">Underlying tools version bumps</a></li><li><a href="#svgs-as-react-components">SVGs as React components</a></li><li><a href="#app-flow">App flow</a></li></ul></li><li><a href="#the-future">The future</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/yoshi/" class="nav-home"><img src="/yoshi/img/yoshi.webp" alt="Yoshi" width="66" height="58"/></a><div><h5>Docs</h5><a href="/yoshi/docs/getting-started/create-app.html">Getting Started</a><a href="/yoshi/docs/api/configuration.html">API Reference</a></div><div><h5>More</h5><a href="/yoshi/blog">Blog</a><a href="https://github.com/wix/yoshi">GitHub</a><a class="github-button" href="https://github.com/wix/yoshi" data-icon="octicon-star" data-count-href="https://github.com/wix/yoshi/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">Stars</a></div></section><section class="copyright">Copyright © 2019 Wix.com</section></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
+                document.addEventListener('keyup', function(e) {
+                  if (e.target !== document.body) {
+                    return;
+                  }
+                  // keyCode for '/' (slash)
+                  if (e.keyCode === 191) {
+                    const search = document.getElementById('search_input_react');
+                    search && search.focus();
+                  }
+                });
+              </script><script>
+              var search = docsearch({
+                
+                apiKey: '5807169f7e8a322a659ac4145a3e5d8a',
+                indexName: 'wix_yoshi',
+                inputSelector: '#search_input_react'
+              });
+            </script></body></html>
