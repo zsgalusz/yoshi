@@ -67,29 +67,6 @@ module.exports = async () => {
 
   await fs.outputFile(WS_ENDPOINT_PATH, global.BROWSER.wsEndpoint());
 
-  const webpackDevServerProcess = await getProcessOnPort(
-    servers.cdn.port,
-    false,
-  );
-
-  if (!webpackDevServerProcess) {
-    throw new Error(
-      `Running E2E tests requires a server to serve static files. Could not find any dev server on port ${chalk.cyan(
-        servers.cdn.port,
-      )}. Please run 'npm start' from a different terminal window.`,
-    );
-  }
-
-  if (webpackDevServerProcess.cwd !== process.cwd()) {
-    throw new Error(
-      `A different process (${chalk.cyan(
-        webpackDevServerProcess.cwd,
-      )}) is already running on port '${chalk.cyan(
-        servers.cdn.port,
-      )}', aborting.`,
-    );
-  }
-
   if (jestYoshiConfig.server) {
     const serverProcess = await getProcessOnPort(
       jestYoshiConfig.server.port,
