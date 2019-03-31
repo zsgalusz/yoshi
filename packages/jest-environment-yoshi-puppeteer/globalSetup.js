@@ -17,7 +17,6 @@ const { getProcessOnPort } = require('yoshi-helpers/utils');
 const { setupRequireHooks } = require('yoshi-helpers/require-hooks');
 const cdnProxy = require('./cdnProxy');
 
-
 // the user's config is loaded outside of a jest runtime and should be transpiled
 // with babel/typescript, this may be run separately for every worker
 setupRequireHooks();

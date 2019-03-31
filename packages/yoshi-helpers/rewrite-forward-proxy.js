@@ -35,7 +35,7 @@ module.exports = async function startRewriteForwardProxy({
           res.write(
             `Proxy failed to get ${target}: ${
               err.message
-            }\n\nYou need to start Yoshi CDN to serve ${originalTarget}? See the docs: https://wix.github.io/yoshi/docs/api/cli#start`
+            }\n\nYou need to start Yoshi CDN to serve ${originalTarget}? See the docs: https://wix.github.io/yoshi/docs/api/cli#start`,
           );
           res.end();
         }
