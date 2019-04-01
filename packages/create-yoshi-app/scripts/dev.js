@@ -20,12 +20,12 @@ const cache = require('./cache');
 const Answers = require('../src/Answers');
 const { appCacheKey } = require('../src/constants');
 
-async function shouldContinueOldSession(projectType) {
+async function shouldContinueOldSession(templateTitle) {
   const response = await prompts({
     type: 'confirm',
     name: 'value',
     message: `we've found an old session when you worked on a ${chalk.magenta(
-      projectType,
+      templateTitle,
     )} template.\n\n Answer ${chalk.cyan(
       'Yes',
     )} if you would like to continue working on it, or ${chalk.cyan(
@@ -51,7 +51,7 @@ async function createApp({ cacheData, useCache }) {
 
   const workingDir = useCache
     ? cacheData.workingDir
-    : path.join(tempy.directory(), `generated-${answers.fullProjectType}`);
+    : path.join(tempy.directory(), `generated-${answers.templateTitle}`);
 
   fs.ensureDirSync(workingDir);
 
@@ -142,7 +142,7 @@ async function init() {
     cacheData = cache.get(appCacheKey);
     cacheData.answers = new Answers(cacheData.answers);
 
-    if (await shouldContinueOldSession(cacheData.answers.fullProjectType)) {
+    if (await shouldContinueOldSession(cacheData.answers.templateTitle)) {
       useCache = true;
     }
   }

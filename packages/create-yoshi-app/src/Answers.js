@@ -3,29 +3,27 @@ const path = require('path');
 module.exports = class Answers {
   constructor({
     projectName,
-    projectType,
+    templateDefinition,
     authorName,
     authorEmail,
     organization,
     transpiler,
   }) {
-    this.projectType = projectType;
+    this.templateDefinition = templateDefinition;
     this.projectName = projectName;
     this.authorName = authorName;
     this.authorEmail = authorEmail;
     this.organization = organization;
     this.transpiler = transpiler;
+    this.lang = this.transpiler === 'typescript' ? 'typescript' : 'javascript';
   }
 
   get templatePath() {
-    return path.join(__dirname, '../templates', this.fullProjectType);
+    return path.join(this.templateDefinition.path, this.lang);
   }
 
-  get fullProjectType() {
-    const typescriptSuffix =
-      this.transpiler === 'typescript' ? '-typescript' : '';
-
-    return this.projectType + typescriptSuffix;
+  get templateTitle() {
+    return `${this.templateDefinition.name}-${this.lang}`;
   }
 
   toJSON() {

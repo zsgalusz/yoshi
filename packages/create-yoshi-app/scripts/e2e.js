@@ -1,10 +1,12 @@
 const tempy = require('tempy');
 const execa = require('execa');
 const chalk = require('chalk');
-const Answers = require('../src/Answers');
-const { createApp, verifyRegistry, projects } = require('../src/index');
-const prompts = require('prompts');
 const expect = require('expect');
+const flatMap = require('lodash/flatMap');
+const prompts = require('prompts');
+
+const { createApp, verifyRegistry, templates } = require('../src/index');
+const Answers = require('../src/Answers');
 const { publishMonorepo } = require('../../../scripts/utils/publishMonorepo');
 const { testRegistry } = require('../../../scripts/utils/constants');
 
@@ -20,11 +22,19 @@ const stdio = verbose ? 'inherit' : 'pipe';
 
 verifyRegistry();
 
-const filteredProjects = projects.filter(projectType =>
-  !focusProjects ? true : focusProjects.split(',').includes(projectType),
+// add `${template}-typescript` to support legacy filter by title
+const templatesWithTitles = flatMap(templates, templateDefinition => {
+  return [
+    { title: name, templateDefinition },
+    { title: `${name}-typescript`, templateDefinition },
+  ];
+});
+
+const filteredTemplates = templatesWithTitles.filter(({ title }) =>
+  !focusProjects ? true : focusProjects.split(',').includes(title),
 );
 
-if (filteredProjects.length === 0) {
+if (filteredTemplates.length === 0) {
   console.log(
     chalk.red('Could not find any project for the specified projects:'),
   );
@@ -33,16 +43,18 @@ if (filteredProjects.length === 0) {
   console.log();
   console.log('try to use one for the following:');
   console.log();
-  console.log(projects.map(p => `> ${chalk.magenta(p)}`).join('\n'));
+  console.log(
+    templatesWithTitles.map(p => `> ${chalk.magenta(p.title)}`).join('\n'),
+  );
   console.log();
   process.exit(1);
 }
 
-console.log('Running e2e tests for the following projects:\n');
-filteredProjects.forEach(type => console.log(`> ${chalk.cyan(type)}`));
+console.log('Running e2e tests for the following templates:\n');
+filteredTemplates.forEach(({ title }) => console.log(`> ${chalk.cyan(title)}`));
 
 const testTemplate = mockedAnswers => {
-  describe(mockedAnswers.fullProjectType, () => {
+  describe(mockedAnswers.templateTitle, () => {
     const tempDir = tempy.directory();
 
     // Important Notice: this test case sets up the environment
@@ -91,16 +103,16 @@ describe('create-yoshi-app + yoshi e2e tests', () => {
 
   after(() => cleanup());
 
-  filteredProjects
+  filteredTemplates
     .map(
-      projectType =>
+      templateDefinition =>
         new Answers({
-          projectName: `test-${projectType}`,
+          projectName: `test-${templateDefinition.title}`,
           authorName: 'rany',
           authorEmail: 'rany@wix.com',
           organization: 'wix',
-          projectType: projectType.replace('-typescript', ''),
-          transpiler: projectType.endsWith('-typescript')
+          templateDefinition,
+          transpiler: templateDefinition.title.endsWith('-typescript')
             ? 'typescript'
             : 'babel',
         }),
