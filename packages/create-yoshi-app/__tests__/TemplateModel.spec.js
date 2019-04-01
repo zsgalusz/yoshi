@@ -1,9 +1,9 @@
 const path = require('path');
-const Answers = require('../src/Answers');
+const TemplateModel = require('../src/TemplateModel');
 
-describe('Answers', () => {
+describe('TemplateModel', () => {
   describe('transpiler is babel', () => {
-    const answers = new Answers({
+    const model = new TemplateModel({
       templateDefinition: {
         name: 'client',
         path: path.join(__dirname, '../templates/client'),
@@ -11,15 +11,15 @@ describe('Answers', () => {
       transpiler: 'babel',
     });
 
-    it('should compute the templatePath according to the projectType and the transpiler', () => {
-      expect(answers.templatePath).toBe(
+    it('should compute the template path according to the template defintion and the transpiler', () => {
+      expect(model.getPath()).toBe(
         path.join(__dirname, '../templates/client/javascript'),
       );
     });
   });
 
   describe('transpiler is typescript', () => {
-    const answers = new Answers({
+    const model = new TemplateModel({
       templateDefinition: {
         name: 'client',
         path: path.join(__dirname, '../templates/client'),
@@ -27,8 +27,8 @@ describe('Answers', () => {
       transpiler: 'typescript',
     });
 
-    it('should compute the proper templatePath according to the projectType and the transpiler', () => {
-      expect(answers.templatePath).toBe(
+    it('should compute the template path according to the template defintion and the transpiler', () => {
+      expect(model.getPath()).toBe(
         path.join(__dirname, '../templates/client/typescript'),
       );
     });

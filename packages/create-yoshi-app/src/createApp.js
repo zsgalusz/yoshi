@@ -13,7 +13,7 @@ const verifyRegistry = require('./verifyRegistry');
 const verifyMinimumNodeVersion = require('yoshi-helpers/verifyMinimumNodeVersion');
 const { minimumNodeVersion } = require('./constants');
 const fs = require('fs-extra');
-const Answers = require('./Answers');
+const TemplateModel = require('./TemplateModel');
 
 module.exports = async (workingDir, projectDirName, answersFile) => {
   verifyWorkingDirectory(workingDir);
@@ -79,5 +79,5 @@ module.exports = async (workingDir, projectDirName, answersFile) => {
 };
 
 function readAnswersFile(answersFilePath) {
-  return Answers.fromJSON(fs.readJSONSync(answersFilePath));
+  return TemplateModel.fromJSON(fs.readJSONSync(answersFilePath));
 }
