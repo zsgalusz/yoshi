@@ -19,6 +19,23 @@ module.exports = async function startRewriteForwardProxy({
     cert: fs.readFileSync(path.join(__dirname, './server.cert')),
   };
 
+  // If we get a bad response, status codes 4xx or 5xx, something's wrong with CDN
+  // we should inform the user about it.
+  regularProxy.on('proxyRes', function(proxyRes, req, res) {
+    const fullUrl = `${req.connection.encrypted ? 'https' : 'http'}://${
+      req.headers.host
+    }${req.url}`;
+    if (proxyRes.statusCode >= 400 && fullUrl.indexOf(search) > -1) {
+      res.statusCode = proxyRes.statusCode;
+      res.headers = proxyRes.headers;
+      res.write(
+        `Proxy got ${proxyRes.statusCode} status code on ${fullUrl}!\n` +
+          `You got the wrong path or something other than Yoshi CDN is running on ${rewrite}?\n` +
+          'See the docs: https://wix.github.io/yoshi/docs/api/cli#start',
+      );
+    }
+  });
+
   function proxyRequest(protocol) {
     return (req, res) => {
       let target =
@@ -30,13 +47,17 @@ module.exports = async function startRewriteForwardProxy({
       }
 
       regularProxy.web(req, res, { target }, err => {
+        const expectingAnswerFromCDN = originalTarget !== target;
+
         if (err) {
           res.statusCode = 500;
-          res.write(
-            `Proxy failed to get ${target}: ${
-              err.message
-            }\n\nYou need to start Yoshi CDN to serve ${originalTarget}? See the docs: https://wix.github.io/yoshi/docs/api/cli#start`,
-          );
+          if (expectingAnswerFromCDN) {
+            res.write(
+              `Proxy failed to get ${target}: ${err.message}\n` +
+                `You need to start Yoshi CDN to serve ${originalTarget}?\n` +
+                'See the docs: https://wix.github.io/yoshi/docs/api/cli#start',
+            );
+          }
           res.end();
         }
       });
