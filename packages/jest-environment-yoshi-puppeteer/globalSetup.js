@@ -10,7 +10,6 @@ const chalk = require('chalk');
 const puppeteer = require('puppeteer');
 const child_process = require('child_process');
 const waitPort = require('wait-port');
-const { servers } = require('yoshi-config');
 const { WS_ENDPOINT_PATH } = require('./constants');
 const { shouldDeployToCDN } = require('yoshi-helpers/queries');
 const { getProcessOnPort } = require('yoshi-helpers/utils');
