@@ -27,17 +27,17 @@ module.exports = async ({ workingDir, projectDirName, answersFile }) => {
     ' ' + chalk.underline('Please answer the following questions:\n'),
   );
 
-  const results = answersFile
+  const templateModel = answersFile
     ? readAnswersFile(answersFile)
     : await runPrompt(workingDir);
 
   console.log(
     `\nCreating a new ${chalk.cyan(
-      results.projectType,
+      templateModel.projectType,
     )} project in ${chalk.green(workingDir)}\n`,
   );
 
-  generateProject(results, workingDir);
+  generateProject(templateModel, workingDir);
 
   if (!isInsideGitRepo(workingDir)) {
     gitInit(workingDir);
@@ -49,7 +49,7 @@ module.exports = async ({ workingDir, projectDirName, answersFile }) => {
 
   console.log(
     `\nSuccess! 🙌  Created ${chalk.magenta(
-      results.projectName,
+      templateModel.projectName,
     )} at ${chalk.green(workingDir)}`,
   );
 

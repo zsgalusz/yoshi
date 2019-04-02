@@ -1,7 +1,9 @@
 const getGitConfig = require('parse-git-config');
-const templates = require('./templates');
+const loadTemplate = require('./loadTemplate');
+const templatesLocations = require('./templatesLocations');
 
 module.exports = () => {
+  const templates = templatesLocations.map(loadTemplate);
   const gitConfig = getGitConfig.sync({ include: true, type: 'global' });
 
   const gitUser = gitConfig.user || {};

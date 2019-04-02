@@ -7,3 +7,5 @@ module.exports.appCacheKey = 'dev';
 module.exports.appCacheDirname = 'create-yoshi-app';
 
 module.exports.minimumNodeVersion = '8.7.0';
+
+module.exports.templateConfigName = 'template-config.js';

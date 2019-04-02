@@ -5,10 +5,14 @@ const expect = require('expect');
 const flatMap = require('lodash/flatMap');
 const prompts = require('prompts');
 
-const { createApp, verifyRegistry, templates } = require('../src/index');
+const { createApp, verifyRegistry } = require('../src');
 const TemplateModel = require('../src/TemplateModel');
 const { publishMonorepo } = require('../../../scripts/utils/publishMonorepo');
 const { testRegistry } = require('../../../scripts/utils/constants');
+const loadTemplate = require('../src/loadTemplate');
+const templatesLocations = require('../src/templatesLocations');
+
+const templates = templatesLocations.map(loadTemplate);
 
 // verbose logs and output
 const verbose = process.env.VERBOSE_TESTS;

@@ -24,3 +24,25 @@ test('verify generation works as expected', () => {
 
   expect(files).toMatchSnapshot();
 });
+
+test('verify generation works as expected with extended template', () => {
+  const tempDir = tempy.directory();
+  const templateModel = new TemplateModel({
+    projectName: `test-project`,
+    authorName: 'rany',
+    authorEmail: 'rany@wix.com',
+    organization: 'wix',
+    transpiler: 'babel',
+    templateDefinition: {
+      name: 'extended-template',
+      path: path.join(__dirname, './__fixtures__/extended-template/'),
+      extends: path.join(__dirname, './__fixtures__/base-template/'),
+    },
+  });
+
+  generateProject(templateModel, tempDir);
+
+  const files = getFilesInDir(tempDir);
+
+  expect(files).toMatchSnapshot();
+});

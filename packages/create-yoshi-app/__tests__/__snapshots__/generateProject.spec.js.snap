@@ -19,3 +19,12 @@ WIX
 ",
 }
 `;
+
+exports[`verify generation works as expected with extended template 1`] = `
+Object {
+  "bar.js": "console.log('bar');
+",
+  "foo.js": "console.log('foo');
+",
+}
+`;
