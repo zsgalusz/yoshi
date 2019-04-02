@@ -6,5 +6,5 @@ module.exports = [
   '../templates/client',
   '../templates/business-manager-module',
   '../templates/server',
-  '../templates-extended/out-of-iframe',
+  // '../templates-extended/out-of-iframe',
 ].map(relativePath => path.join(__dirname, relativePath));
