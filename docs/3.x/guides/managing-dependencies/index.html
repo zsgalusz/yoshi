@@ -1,0 +1,100 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Managing Dependencies · Yoshi</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="&lt;p&gt;NPM uses a file called &lt;a href=&quot;https://docs.npmjs.com/files/package-lock.json&quot;&gt;&lt;code&gt;package-lock.json&lt;/code&gt;&lt;/a&gt; as a &amp;quot;lockfile&amp;quot;.&lt;/p&gt;
+"/><meta name="docsearch:version" content="3.x"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Managing Dependencies · Yoshi"/><meta property="og:type" content="website"/><meta property="og:url" content="https://wix.github.io/yoshi/"/><meta property="og:description" content="&lt;p&gt;NPM uses a file called &lt;a href=&quot;https://docs.npmjs.com/files/package-lock.json&quot;&gt;&lt;code&gt;package-lock.json&lt;/code&gt;&lt;/a&gt; as a &amp;quot;lockfile&amp;quot;.&lt;/p&gt;
+"/><meta property="og:image" content="https://wix.github.io/yoshi/img/yoshi.webp"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://wix.github.io/yoshi/img/yoshi.webp"/><link rel="shortcut icon" href="/yoshi/img/favicon.ico"/><link rel="stylesheet" href="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.css"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css"/><link rel="alternate" type="application/atom+xml" href="https://wix.github.io/yoshi/blog/atom.xml" title="Yoshi Blog ATOM Feed"/><link rel="alternate" type="application/rss+xml" href="https://wix.github.io/yoshi/blog/feed.xml" title="Yoshi Blog RSS Feed"/><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><link rel="stylesheet" href="/yoshi/css/main.css"/><script src="/yoshi/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/yoshi/"><img class="logo" src="/yoshi/img/yoshi.webp" alt="Yoshi"/><h2 class="headerTitleWithLogo">Yoshi</h2></a><a href="/yoshi/versions"><h3>3.x</h3></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/yoshi/docs/3.x/getting-started/create-app" target="_self">Getting Started</a></li><li class="siteNavGroupActive"><a href="/yoshi/docs/3.x/api/configuration" target="_self">API</a></li><li class=""><a href="/yoshi/blog/" target="_self">Blog</a></li><li class="navSearchWrapper reactNavSearchWrapper"><input type="text" id="search_input_react" placeholder="Search" title="Search"/></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="container docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><i></i></div><h2><i>›</i><span>Guides</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Getting Started</h3><ul class=""><li class="navListItem"><a class="navItem" href="/yoshi/docs/3.x/getting-started/create-app">Create App</a></li><li class="navListItem"><a class="navItem" href="/yoshi/docs/3.x/getting-started/usage">Usage</a></li><li class="navListItem"><a class="navItem" href="/yoshi/docs/3.x/getting-started/project-types">Project Types</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">API</h3><ul class=""><li class="navListItem"><a class="navItem" href="/yoshi/docs/3.x/api/configuration">Configuration</a></li><li class="navListItem"><a class="navItem" href="/yoshi/docs/3.x/api/cli">CLI Options</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Guides</h3><ul class=""><li class="navListItem"><a class="navItem" href="/yoshi/docs/3.x/guides/ab-translate">AB Translate</a></li><li class="navListItem"><a class="navItem" href="/yoshi/docs/3.x/guides/assets">Assets</a></li><li class="navListItem"><a class="navItem" href="/yoshi/docs/3.x/guides/bundle-analyze">Analyze Your Bundle</a></li><li class="navListItem"><a class="navItem" href="/yoshi/docs/3.x/guides/debugging">Debugging</a></li><li class="navListItem"><a class="navItem" href="/yoshi/docs/3.x/guides/disable-css-modules">Disable CSS Modules</a></li><li class="navListItem"><a class="navItem" href="/yoshi/docs/3.x/guides/enzyme-support">Testing With Enzyme</a></li><li class="navListItem"><a class="navItem" href="/yoshi/docs/3.x/guides/jest-setup">Jest Setup</a></li><li class="navListItem"><a class="navItem" href="/yoshi/docs/3.x/guides/babel-setup">Babel Setup</a></li><li class="navListItem"><a class="navItem" href="/yoshi/docs/3.x/guides/export-es-modules">Export ES Modules</a></li><li class="navListItem"><a class="navItem" href="/yoshi/docs/3.x/guides/hmr">HMR</a></li><li class="navListItem"><a class="navItem" href="/yoshi/docs/3.x/guides/momentjs-optimization">Moment.js optimization</a></li><li class="navListItem"><a class="navItem" href="/yoshi/docs/3.x/guides/split-chunks">Split Chunks</a></li><li class="navListItem"><a class="navItem" href="/yoshi/docs/3.x/guides/svg">How to use SVG?</a></li><li class="navListItem navListItemActive"><a class="navItem" href="/yoshi/docs/3.x/guides/managing-dependencies">Managing Dependencies</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              const headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                if (event.target.tagName === 'A') {
+                  document.body.classList.remove('tocActive');
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><a class="edit-page-link button" href="https://github.com/wix/yoshi/edit/master/docs/guides/managing-dependencies.md" target="_blank" rel="noreferrer noopener">Edit</a><h1 class="postHeaderTitle">Managing Dependencies</h1></header><article><div><span><p>NPM uses a file called <a href="https://docs.npmjs.com/files/package-lock.json"><code>package-lock.json</code></a> as a &quot;lockfile&quot;.<br>
+A lockfile lists the exact dependency versions that are expected to be downloaded and installed when <code>npm install</code> is executed.</p>
+<p>Generally there are two approaches to working with dependencies in the NPM ecosystem:</p>
+<ol>
+<li><strong>Using a lockfile</strong> - if a <code>package-lock.json</code> is present, the exact dependency versions defined in that lockfile will be downloaded when you <code>npm install</code>.<br>
+The <code>package-lock.json</code> will be committed to source-control and will affect all developers working on the project and the CI builds.</li>
+<li><strong>Not using a lockfile</strong> - if <code>package-lock.json</code> is not present, whenever you do a fresh <code>npm install</code> the latest versions of your dependencies will be downloaded from the npm registry (based on semantic versioning as detailed <a href="https://docs.npmjs.com/about-semantic-versioning#using-semantic-versioning-to-specify-update-types-your-package-can-accept">here</a>).</li>
+</ol>
+<p>This is a high-level explanation. For more details you can read up on the <a href="https://docs.npmjs.com/files/package-locks">NPM documentation</a></p>
+<h2><a class="anchor" aria-hidden="true" id="what-are-the-advantages-disadvantages-of-each-approach"></a><a href="#what-are-the-advantages-disadvantages-of-each-approach" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>What are the advantages\disadvantages of each approach?</h2>
+<p>Advantages of using a lockfile:</p>
+<ul>
+<li>By locking the entire dependency tree, changes in 3rd party libraries are only applied when you choose to initiate an upgrade.<br>
+This reduces the likelihood of introducing bugs related to these changes without you knowing.</li>
+<li>Having a lockfile helps assure reproducible deterministic builds- meaning if the <code>install</code> step passed successfully when the lockfile was created\changed, then each subsequent build that only reads the existing lockfile should also pass and the exact same content will be installed.</li>
+<li>Having a lockfile results in significantly faster installations.</li>
+</ul>
+<p>Disadvantages of using a lockfile:</p>
+<ul>
+<li>Having a lockfile means needing to remember to update the lockfile and reason about the changes, and deal with lockfile conflicts.<br>
+This is especially problematic when your dependencies change often (as in the case internally in Wix where your package version is auto-incremented on every commit).</li>
+</ul>
+<h2><a class="anchor" aria-hidden="true" id="what-is-the-default-preferred-approach"></a><a href="#what-is-the-default-preferred-approach" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>What is the default\preferred approach?</h2>
+<p>Because of the advantages mentioned above, the default NPM behavior is to use a lockfile, and one is generated automatically when you run <code>npm install</code> for the first time.<br>
+However for projects generated by <code>create-yoshi-app</code> a <code>package-lock.json</code> will not be generated.<br>
+This is because in Wix it's common to depend on other Wix packages that update often (on every commit), therefore you would need to update your <code>package-lock.json</code> very often and conflicts are likely.</p>
+<h2><a class="anchor" aria-hidden="true" id="how-to-start-using-a-lockfile"></a><a href="#how-to-start-using-a-lockfile" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>How to start using a lockfile?</h2>
+<p>By default, projects generated by <code>create-yoshi-app</code> do not use a lockfile. To use a lockfile, edit the <code>.npmrc</code> file (NPM configuration file) in the root folder and set <code>package-lock=true</code>.<br>
+The next time you run <code>npm install</code> a lockfile will be created and you should commit it.</p>
+</span></div></article></div><div class="docLastUpdate"><em>Last updated on 3/19/2019</em></div><div class="docs-prevnext"><a class="docs-prev button" href="/yoshi/docs/3.x/guides/svg"><span class="arrow-prev">← </span><span>How to use SVG?</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#what-are-the-advantages-disadvantages-of-each-approach">What are the advantages\disadvantages of each approach?</a></li><li><a href="#what-is-the-default-preferred-approach">What is the default\preferred approach?</a></li><li><a href="#how-to-start-using-a-lockfile">How to start using a lockfile?</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/yoshi/" class="nav-home"><img src="/yoshi/img/yoshi.webp" alt="Yoshi" width="66" height="58"/></a><div><h5>Docs</h5><a href="/yoshi/docs/getting-started/create-app.html">Getting Started</a><a href="/yoshi/docs/api/configuration.html">API Reference</a></div><div><h5>More</h5><a href="/yoshi/blog">Blog</a><a href="https://github.com/wix/yoshi">GitHub</a><a class="github-button" href="https://github.com/wix/yoshi" data-icon="octicon-star" data-count-href="https://github.com/wix/yoshi/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">Stars</a></div></section><section class="copyright">Copyright © 2019 Wix.com</section></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
+                document.addEventListener('keyup', function(e) {
+                  if (e.target !== document.body) {
+                    return;
+                  }
+                  // keyCode for '/' (slash)
+                  if (e.keyCode === 191) {
+                    const search = document.getElementById('search_input_react');
+                    search && search.focus();
+                  }
+                });
+              </script><script>
+              var search = docsearch({
+                
+                apiKey: '5807169f7e8a322a659ac4145a3e5d8a',
+                indexName: 'wix_yoshi',
+                inputSelector: '#search_input_react'
+              });
+            </script></body></html>
