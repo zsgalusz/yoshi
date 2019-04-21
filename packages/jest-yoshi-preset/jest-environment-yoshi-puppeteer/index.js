@@ -10,7 +10,7 @@ setupRequireHooks();
 const jestYoshiConfig = require('yoshi-config/jest');
 
 const ParentEnvironment = jestYoshiConfig.bootstrap
-  ? require('jest-environment-yoshi-bootstrap')
+  ? require('../jest-environment-yoshi-bootstrap')
   : require('jest-environment-node');
 
 module.exports = class PuppeteerEnvironment extends ParentEnvironment {
