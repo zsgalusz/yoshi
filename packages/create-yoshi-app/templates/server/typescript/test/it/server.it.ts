@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import axios from 'axios';
 import { beforeAndAfter, app } from '../environment';
 
@@ -9,7 +8,7 @@ describe('API', () => {
     const url = app.getUrl('/');
     const response = await axios.get(url);
 
-    expect(response.data).to.deep.include({
+    expect(response.data).toEqual({
       success: true,
       payload: 'Hello world!',
     });

@@ -11,7 +11,7 @@
     "start": "yoshi start --entry-point=./test/fake-server.js",
     "precommit": "lint-staged",
     "pretest": "yoshi build",
-    "test": "yoshi test --jest",
+    "test": "yoshi test",
     "test:ssr": "jest --config jest-ssr.config.js",
     "posttest": "yoshi lint",
     "release": "yoshi release"
@@ -80,7 +80,7 @@
       "cdn": {
         "ssl": true
       }
-    },    
+    },
     "exports": "[name]",
     "umdNamedDefine": false,
     "enhancedTpaStyle": true

@@ -23,14 +23,13 @@
     "release": "yoshi release"
   },
   "devDependencies": {
-    "chai": "~4.1.0",
     "husky": "~0.14.0",
     "lint-staged": "^7.2.2",
     "yoshi": "^3.0.0",
+    "jest-yoshi-preset": "^4.1.0",
     "typescript": "~3.0.1",
     "@types/node": "^8.0.0",
-    "@types/chai": "~4.0.0",
-    "@types/mocha": "~2.2.0"
+    "@types/jest": "~24.0.11"
   },
   "lint-staged": {
     "linters": {
