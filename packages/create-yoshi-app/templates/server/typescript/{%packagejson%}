@@ -10,7 +10,7 @@
   "scripts": {
     "start": "yoshi start",
     "pretest": "yoshi build",
-    "test": "yoshi test",
+    "test": "yoshi test --jest",
     "posttest": "yoshi lint",
     "release": "yoshi release"
   },

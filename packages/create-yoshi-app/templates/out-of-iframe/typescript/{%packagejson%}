@@ -11,7 +11,7 @@
     "start": "yoshi start --entry-point=./test/fake-server.js",
     "precommit": "lint-staged",
     "pretest": "yoshi build",
-    "test": "yoshi test",
+    "test": "yoshi test --jest",
     "posttest": "yoshi lint",
     "release": "yoshi release"
   },
