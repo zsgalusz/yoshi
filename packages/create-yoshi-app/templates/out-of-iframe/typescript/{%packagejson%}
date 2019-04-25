@@ -11,7 +11,7 @@
     "start": "yoshi start --entry-point=./test/fake-server.js",
     "precommit": "lint-staged",
     "pretest": "yoshi build",
-    "test": "yoshi test --jest",
+    "test": "yoshi test",
     "posttest": "yoshi lint",
     "release": "yoshi release"
   },
@@ -29,7 +29,7 @@
     "react-test-renderer": "~15.6.0",
     "velocity": "~0.7.0",
     "wix-ui-core": "^2.0.29",
-    "yoshi": "^3.0.0",
+    "yoshi": "^4.3.0",
     "typescript": "^3.2.2",
     "yoshi-style-dependencies": "^3.0.0",
     "@wix/wix-http-testkit": "^1.0.997"
