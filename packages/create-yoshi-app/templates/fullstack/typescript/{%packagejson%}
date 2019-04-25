@@ -43,7 +43,7 @@
     "lint-staged": "^8.1.5",
     "puppeteer": "^1.1.0",
     "react-testing-library": "^6.0.2",
-    "yoshi": "^4.3.0",
+    "yoshi": "^4.1.0",
     "yoshi-style-dependencies": "^4.1.0",
     "typescript": "~3.0.1",
     "@types/node": "^8.0.0",

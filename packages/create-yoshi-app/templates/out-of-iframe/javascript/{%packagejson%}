@@ -28,7 +28,7 @@
     "react-test-renderer": "~15.6.0",
     "velocity": "~0.7.0",
     "wix-ui-core": "^2.0.29",
-    "yoshi": "^4.3.0",
+    "yoshi": "^4.1.0",
     "yoshi-style-dependencies": "^3.0.0",
     "@wix/wix-http-testkit": "^1.0.997",
     "@wix/santa-site-renderer-testkit": "^1.59.0"
