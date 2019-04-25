@@ -6,7 +6,7 @@ import * as configEmitter from '@wix/wix-config-emitter';
 export const app = bootstrapServer();
 
 export function beforeAndAfter() {
-  before(() => emitConfigs());
+  beforeEach(() => emitConfigs());
   app.beforeAndAfter();
 }
 
