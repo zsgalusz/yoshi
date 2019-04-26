@@ -5,7 +5,7 @@ module.exports = merge(jestConfig, {
   globalSetup: './test/jest-setup-ssr.js',
   globals: {
     'babel-jest': {
-      enableTsDiagnostics: '/test/e2e-ssr/.*\\.e2e\\.js$',
+      enableTsDiagnostics: '/test/e2e-ssr/.*\\.e2e-ssr\\.js$',
     },
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'json'],
