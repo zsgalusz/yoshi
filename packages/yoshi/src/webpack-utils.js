@@ -27,74 +27,20 @@ function createCompiler(config, { https }) {
 
   compiler.hooks.invalid.tap('recompile-log', () => {
     if (isInteractive) {
-      clearConsole();
+      // clearConsole();
     }
     console.log('Compiling...');
   });
 
   compiler.hooks.done.tap('finished-log', stats => {
     if (isInteractive) {
-      clearConsole();
+      // clearConsole();
     }
 
     const messages = formatWebpackMessages(stats.toJson({}, true));
     const isSuccessful = !messages.errors.length && !messages.warnings.length;
 
     if (isSuccessful) {
-      console.log(chalk.green('Compiled successfully!'));
-
-      if (isInteractive) {
-        const serverUrls = prepareUrls('http', '0.0.0.0', PORT);
-        const devServerUrls = prepareUrls(
-          https ? 'https' : 'http',
-          '0.0.0.0',
-          project.servers.cdn.port,
-        );
-
-        console.log();
-        console.log(
-          `Your server is starting and should be accessible from your browser.`,
-        );
-        console.log();
-
-        console.log(
-          `  ${chalk.bold('Local:')}            ${
-            serverUrls.localUrlForTerminal
-          }`,
-        );
-        console.log(
-          `  ${chalk.bold('On Your Network:')}  ${
-            serverUrls.lanUrlForTerminal
-          }`,
-        );
-
-        console.log();
-        console.log(
-          `Your bundles and other static assets are served from your ${chalk.bold(
-            'dev-server',
-          )}.`,
-        );
-        console.log();
-
-        console.log(
-          `  ${chalk.bold('Local:')}            ${
-            devServerUrls.localUrlForTerminal
-          }`,
-        );
-        console.log(
-          `  ${chalk.bold('On Your Network:')}  ${
-            devServerUrls.lanUrlForTerminal
-          }`,
-        );
-
-        console.log();
-        console.log('Note that the development build is not optimized.');
-        console.log(
-          `To create a production build, use ` +
-            `${chalk.cyan('npm run build')}.`,
-        );
-        console.log();
-      }
     }
 
     // If errors exist, only show errors.

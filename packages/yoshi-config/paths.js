@@ -1,35 +1,39 @@
 const path = require('path');
 
-const ROOT_DIR = process.cwd();
+function getPaths(ROOT_DIR = process.cwd()) {
+  const resolvePath = (...args) => path.resolve(ROOT_DIR, ...args);
 
-const resolvePath = (...args) => path.resolve(ROOT_DIR, ...args);
+  const SRC_DIR = resolvePath('src');
+  const BUILD_DIR = resolvePath('dist');
+  const TARGET_DIR = resolvePath('target');
+  const PUBLIC_DIR = path.join(SRC_DIR, 'assets');
+  const STATICS_DIR = path.join(BUILD_DIR, 'statics');
+  const ASSETS_DIR = path.join(STATICS_DIR, 'assets');
 
-const SRC_DIR = resolvePath('src');
-const BUILD_DIR = resolvePath('dist');
-const TARGET_DIR = resolvePath('target');
-const PUBLIC_DIR = path.join(SRC_DIR, 'assets');
-const STATICS_DIR = path.join(BUILD_DIR, 'statics');
-const ASSETS_DIR = path.join(STATICS_DIR, 'assets');
+  const NODE_PLATFORM_DEFAULT_CONFIGS_DIR = resolvePath('test/configs');
 
-const NODE_PLATFORM_DEFAULT_CONFIGS_DIR = resolvePath('test/configs');
+  const POM_FILE = resolvePath('pom.xml');
+  const STATS_FILE = resolvePath(TARGET_DIR, 'webpack-stats.json');
+  const TSCONFIG_FILE = resolvePath('tsconfig.json');
+  const SERVER_LOG_FILE = resolvePath(TARGET_DIR, 'server.log');
 
-const POM_FILE = resolvePath('pom.xml');
-const STATS_FILE = resolvePath(TARGET_DIR, 'webpack-stats.json');
-const TSCONFIG_FILE = resolvePath('tsconfig.json');
-const SERVER_LOG_FILE = resolvePath(TARGET_DIR, 'server.log');
+  return {
+    ROOT_DIR,
+    SRC_DIR,
+    BUILD_DIR,
+    TARGET_DIR,
+    PUBLIC_DIR,
+    STATICS_DIR,
+    ASSETS_DIR,
+    POM_FILE,
+    STATS_FILE,
+    TSCONFIG_FILE,
+    SERVER_LOG_FILE,
 
-module.exports = {
-  ROOT_DIR,
-  SRC_DIR,
-  BUILD_DIR,
-  TARGET_DIR,
-  PUBLIC_DIR,
-  STATICS_DIR,
-  ASSETS_DIR,
-  POM_FILE,
-  STATS_FILE,
-  TSCONFIG_FILE,
-  SERVER_LOG_FILE,
+    NODE_PLATFORM_DEFAULT_CONFIGS_DIR,
+  };
+}
 
-  NODE_PLATFORM_DEFAULT_CONFIGS_DIR,
-};
+module.exports = getPaths();
+
+module.exports.getPaths = getPaths;

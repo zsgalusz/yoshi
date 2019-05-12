@@ -77,7 +77,7 @@ if (config.projectType === 'app') {
     .option('--stats', 'Generate dist/webpack-stats.json file')
     .option('--no-min', 'Do not output minified bundle')
     .option('--source-map', 'Explicitly emit bundle source maps')
-    .action(() => runCLI('build'));
+    .action(() => runCLI('build-monorepo'));
 
   prog
     .command('start')
@@ -97,7 +97,7 @@ if (config.projectType === 'app') {
       "Allow app-server debugging, process won't start until debugger will be attached",
     )
     .option('--ssl', 'Serve the app bundle on https')
-    .action(() => runCLI('start'));
+    .action(() => runCLI('start-monorepo'));
 }
 
 prog

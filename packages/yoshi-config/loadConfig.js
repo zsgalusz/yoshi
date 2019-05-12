@@ -92,6 +92,7 @@ const loadConfig = ({ validate, useCache } = { validate: false }) => {
     keepFunctionNames: getConfig('keepFunctionNames', false),
     umdNamedDefine: getConfig('umdNamedDefine', true),
     experimentalBuildHtml: getConfig('experimentalBuildHtml'),
+    experimentalMonorepo: getConfig('experimentalMonorepo'),
     projectType: getConfig('projectType', null),
     unprocessedModules: p => {
       const allSourcesButExternalModules = function(filePath) {

@@ -21,13 +21,7 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const HtmlPolyfillPlugin = require('./html-polyfill-plugin');
 const { localIdentName } = require('../src/constants');
 const EnvirnmentMarkPlugin = require('../src/webpack-plugins/environment-mark-plugin');
-const {
-  ROOT_DIR,
-  SRC_DIR,
-  BUILD_DIR,
-  STATICS_DIR,
-  TSCONFIG_FILE,
-} = require('yoshi-config/paths');
+const { getPaths } = require('yoshi-config/paths');
 const project = require('yoshi-config');
 const {
   shouldDeployToCDN,
@@ -87,13 +81,9 @@ if (shouldDeployToCDN()) {
   publicPath = getProjectCDNBasePath();
 }
 
-function exists(entry) {
-  return (
-    globby.sync(`${entry}(${extensions.join('|')})`, {
-      cwd: SRC_DIR,
-    }).length > 0
-  );
-}
+const exists = cwd => entry => {
+  return globby.sync(`${entry}(${extensions.join('|')})`, { cwd }).length > 0;
+};
 
 function addHashToAssetName(name, hash = 'contenthash:8') {
   if (project.experimentalBuildHtml && isProduction) {
@@ -283,7 +273,10 @@ function createCommonWebpackConfig({
   isDebug = true,
   isHmr = false,
   withLocalSourceMaps,
+  paths = getPaths(),
 } = {}) {
+  const { SRC_DIR, STATICS_DIR, ROOT_DIR, TSCONFIG_FILE } = paths;
+
   const config = {
     context: SRC_DIR,
 
@@ -556,11 +549,15 @@ function createClientWebpackConfig({
   isDebug = true,
   isHmr,
   withLocalSourceMaps,
+  paths = getPaths(),
 } = {}) {
+  const { SRC_DIR } = paths;
+
   const config = createCommonWebpackConfig({
     isDebug,
     isHmr,
     withLocalSourceMaps,
+    paths,
   });
 
   const styleLoaders = getStyleLoaders({ embedCss: true, isHmr, isDebug });
@@ -778,8 +775,14 @@ function createClientWebpackConfig({
 //
 // Configuration for the server-side bundle (server.js)
 // -----------------------------------------------------------------------------
-function createServerWebpackConfig({ isDebug = true, isHmr = false } = {}) {
-  const config = createCommonWebpackConfig({ isDebug, isHmr });
+function createServerWebpackConfig({
+  isDebug = true,
+  isHmr = false,
+  paths = getPaths(),
+} = {}) {
+  const { BUILD_DIR, SRC_DIR } = paths;
+
+  const config = createCommonWebpackConfig({ isDebug, isHmr, paths });
 
   const styleLoaders = getStyleLoaders({
     embedCss: false,
@@ -795,7 +798,8 @@ function createServerWebpackConfig({ isDebug = true, isHmr = false } = {}) {
     target: 'node',
 
     entry: {
-      server: possibleServerEntries.find(exists) || possibleServerEntries[0],
+      server:
+        possibleServerEntries.find(exists(SRC_DIR)) || possibleServerEntries[0],
     },
 
     output: {
