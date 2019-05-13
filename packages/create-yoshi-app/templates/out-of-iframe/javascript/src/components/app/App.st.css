@@ -1,0 +1,29 @@
+:import {
+  -st-from: 'wix-ui-tpa/dist/src/components/Button/Button.st.css';
+  -st-default: Button;
+}
+
+.root {
+  --backgroundColor: "color(color-2)";
+  --fontSize: "font(Body-M)";
+  text-align: center;
+}
+
+.header {
+  background-color: "color(--backgroundColor)";
+  font: "font(--fontSize)";
+  padding: 10px;
+  color: white;
+}
+
+.mainButton {
+  -st-extends: Button;
+  -st-mixin: Button(
+    MainBackgroundColor '"--buttonBackgroundColor"'
+  );
+  padding: 0 20px;
+  height: 30px;
+  margin-top: 20px;
+  border-radius: 10px;
+  color: white;
+}

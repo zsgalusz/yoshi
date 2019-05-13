@@ -70,7 +70,7 @@ const computedSeparateCss =
 
 const artifactVersion = process.env.ARTIFACT_VERSION;
 
-const staticAssetName = addHashToAssetName('media/[name].[ext]');
+const staticAssetName = addHashToAssetName('media/[name].[ext]', 'hash:8');
 
 // default public path
 let publicPath = '/';
@@ -95,12 +95,16 @@ function exists(entry) {
   );
 }
 
-function addHashToAssetName(name) {
+function addHashToAssetName(name, hash = 'contenthash:8') {
   if (project.experimentalBuildHtml && isProduction) {
-    return name.replace('[name]', '[name].[contenthash:8]');
+    return name.replace('[name]', `[name].[${hash}]`);
   }
 
   return name;
+}
+
+function prependNameWith(filename, prefix) {
+  return filename.replace(/\.[0-9a-z]+$/i, match => `.${prefix}${match}`);
 }
 
 // NOTE ABOUT PUBLIC PATH USING UNPKG SERVICE
@@ -130,10 +134,10 @@ const possibleServerEntries = ['./server', '../dev/server'];
 const getStyleLoaders = ({
   embedCss,
   isDebug,
+  isHmr,
 
   // Allow overriding defaults
   separateCss = computedSeparateCss,
-  hmr = project.hmr,
   tpaStyle = project.tpaStyle,
 }) => {
   const cssLoaderOptions = {
@@ -157,7 +161,7 @@ const getStyleLoaders = ({
         ...(embedCss
           ? [
               // https://github.com/shepherdwind/css-hot-loader
-              ...(hmr
+              ...(isHmr
                 ? [{ loader: 'yoshi-style-dependencies/css-hot-loader' }]
                 : []),
 
@@ -550,7 +554,7 @@ function createCommonWebpackConfig({
 function createClientWebpackConfig({
   isAnalyze = false,
   isDebug = true,
-  isHmr = false,
+  isHmr,
   withLocalSourceMaps,
 } = {}) {
   const config = createCommonWebpackConfig({
@@ -559,7 +563,7 @@ function createClientWebpackConfig({
     withLocalSourceMaps,
   });
 
-  const styleLoaders = getStyleLoaders({ embedCss: true, isDebug });
+  const styleLoaders = getStyleLoaders({ embedCss: true, isHmr, isDebug });
 
   const clientConfig = {
     ...config,
@@ -625,18 +629,19 @@ function createClientWebpackConfig({
       ...(project.experimentalBuildHtml
         ? [
             ...globby
-              .sync('**/*.+(ejs|vm)', { cwd: SRC_DIR, absolute: true })
+              .sync('**/*.+(ejs|vm)', {
+                cwd: SRC_DIR,
+                absolute: true,
+                ignore: ['**/assets/**'],
+              })
               .map(templatePath => {
                 const basename = path.basename(templatePath);
 
                 return new HtmlWebpackPlugin({
                   // Generate a `filename.debug.ejs` for non-minified compilation
                   filename: isDebug
-                    ? basename.replace(
-                        /\.[0-9a-z]+$/i,
-                        match => `.debug${match}`,
-                      )
-                    : basename,
+                    ? prependNameWith(basename, 'debug')
+                    : prependNameWith(basename, 'prod'),
                   // Only use chunks from the entry with the same name as the template
                   // file
                   chunks: [basename.replace(/\.[0-9a-z]+$/i, '')],
@@ -776,7 +781,11 @@ function createClientWebpackConfig({
 function createServerWebpackConfig({ isDebug = true, isHmr = false } = {}) {
   const config = createCommonWebpackConfig({ isDebug, isHmr });
 
-  const styleLoaders = getStyleLoaders({ embedCss: false, isDebug });
+  const styleLoaders = getStyleLoaders({
+    embedCss: false,
+    isHmr: false,
+    isDebug,
+  });
 
   const serverConfig = {
     ...config,
@@ -834,26 +843,6 @@ function createServerWebpackConfig({ isDebug = true, isHmr = false } = {}) {
               ...rule,
               options: {
                 ...serverBabelConfig,
-              },
-            };
-          }
-
-          if (rule.loader === 'ts-loader') {
-            return {
-              ...rule,
-              options: {
-                ...rule.options,
-
-                compilerOptions: project.isAngularProject
-                  ? {}
-                  : {
-                      ...rule.options.compilerOptions,
-
-                      // allow using Promises, Array.prototype.includes, String.prototype.padStart, etc.
-                      lib: ['es2017'],
-                      // use async/await instead of embedding polyfills
-                      target: 'es2017',
-                    },
               },
             };
           }

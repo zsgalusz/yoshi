@@ -8,10 +8,10 @@
     "email": "{%authorEmail%}"
   },
   "scripts": {
-    "start": "yoshi start --entry-point=./test/fake-server.js",
+    "start": "yoshi start --entry-point=./test/fake-server.js --no-test",
     "precommit": "lint-staged",
     "pretest": "yoshi build",
-    "test": "yoshi test",
+    "test": "yoshi test --jest",
     "test:ssr": "jest --config jest-ssr.config.js",
     "posttest": "yoshi lint",
     "release": "yoshi release"
@@ -21,15 +21,14 @@
     "enzyme-adapter-react-16": "^1.7.1",
     "husky": "~0.14.0",
     "isomorphic-fetch": "^2.2.1",
-    "jest-yoshi-preset": "^4.1.0",
+    "jest-yoshi-preset": "^3.5.0",
     "lint-staged": "^7.2.2",
     "nock": "^10.0.5",
     "puppeteer": "^1.1.0",
     "react-test-renderer": "~15.6.0",
     "velocity": "~0.7.0",
-    "wix-ui-core": "^2.0.29",
-    "yoshi": "^4.1.0",
-    "yoshi-style-dependencies": "^4.1.0",
+    "yoshi": "^3.0.0",
+    "yoshi-style-dependencies": "^3.0.0",
     "@wix/wix-http-testkit": "^1.0.997",
     "@wix/santa-site-renderer-testkit": "^1.59.0"
   },
@@ -45,7 +44,8 @@
     "prop-types": "~15.6.0",
     "react": "~16.6.2",
     "react-dom": "~16.6.2",
-    "react-i18next": "^7.11.0"
+    "react-i18next": "^7.11.0",
+    "wix-ui-tpa": "^1.0.123"
   },
   "lint-staged": {
     "*.{js,scss,less}": "yoshi lint"
@@ -70,10 +70,10 @@
       }
     },
     "entry": {
-      "settingsExampleWidget": "./settingsExampleWidget.entry.js",
-      "editorExampleWidget": "./editorExampleWidget.entry.js",
-      "viewerExampleWidget": "./viewerExampleWidget.entry.js",
-      "viewerScript": "./viewerScript.entry.js",
+      "settingsPanel": "./settingsPanel.js",
+      "editorApp": "./editorApp.js",
+      "viewerApp": "./viewerApp/viewerWidget.js",
+      "viewerScript": "./viewerApp/viewerScript.js",
       "wix-private-mock": "../test/wix-private.mock.js"
     },
     "servers": {

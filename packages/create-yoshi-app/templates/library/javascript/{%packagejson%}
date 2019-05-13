@@ -15,7 +15,6 @@
     "registry": "http://npm.dev.wixpress.com/"
   },
   "scripts": {
-    "start": "yoshi start",
     "precommit": "lint-staged",
     "pretest": "yoshi build",
     "test": "yoshi test",
@@ -31,6 +30,9 @@
   },
   "lint-staged": {
     "*.js": "yoshi lint"
+  },
+  "jest": {
+    "testPathIgnorePatterns": ["<rootDir>/dist/", "<rootDir>/node_modules/"]
   },
   "yoshi": {
     "hmr": "auto"

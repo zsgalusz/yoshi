@@ -1,12 +1,131 @@
 # Changelog
 
+## 4.4.3 (2019-05-08)
+
+#### :rocket: New Feature
+
+- `tslint-config-yoshi-base`, `tslint-config-yoshi`, `yoshi`
+  - [#1278](https://github.com/wix/yoshi/pull/1278) Add React Hooks `ts-lint` rule ([@aarnoldaas](https://github.com/aarnoldaas))
+
+#### :bug: Bug Fix
+
+- `create-yoshi-app`
+  - [#1281](https://github.com/wix/yoshi/pull/1281) Fix OOI template `e2e` tests ([@gileck](https://github.com/gileck))
+
+## 4.4.2 (2019-05-08)
+
+#### :rocket: New Feature
+
+- `eslint-config-yoshi-base`, `eslint-config-yoshi`, `yoshi`
+  - [#1274](https://github.com/wix/yoshi/pull/1274) Add React Hooks `eslint` rules ([@aarnoldaas](https://github.com/aarnoldaas))
+
+#### :bug: Bug Fix
+
+- `create-yoshi-app`
+  - [#1237](https://github.com/wix/yoshi/pull/1237) Remove `@types/axios` from devDeps ([@ipanasenko](https://github.com/ipanasenko))
+- `yoshi`
+  - [#1280](https://github.com/wix/yoshi/pull/1280) Fix hash for assets ([@yanivefraim](https://github.com/yanivefraim))
+
+## 4.4.1 (2019-05-07)
+
+#### :bug: Bug Fix
+
+- `yoshi`
+  - [#1262](https://github.com/wix/yoshi/pull/1262) Add jest-cli as a direct yoshi dependency. ([@yavorsky](https://github.com/yavorsky))
+- `create-yoshi-app`
+  - [#1243](https://github.com/wix/yoshi/pull/1243) Fix issues with lint .js files in typescript environments ([@dmfilipenko](https://github.com/dmfilipenko))
+
+#### :nail_care: Polish
+
+- `yoshi`
+  - [#1275](https://github.com/wix/yoshi/pull/1275) Rename ejs production file for html webpack plugin ([@yanivefraim](https://github.com/yanivefraim))
+
+## 4.4.0 (2019-05-06)
+
+#### :rocket: New Feature
+
+- `yoshi-config`, `yoshi`
+  - [#1206](https://github.com/wix/yoshi/pull/1206) Pipe output to `server.log` in App flow ([@ihork](https://github.com/ihork))
+
+#### :bug: Bug Fix
+
+- [#1271](https://github.com/wix/yoshi/pull/1271) Configure algolia to search according to the version specified ([@ranyitz](https://github.com/ranyitz))
+
+#### :nail_care: Polish
+
+- `yoshi-config`
+  - [#1251](https://github.com/wix/yoshi/pull/1251) Improve error logging in jest setup error handling ([@rokasmik](https://github.com/rokasmik))
+- `yoshi-helpers`, `yoshi`
+  - [#1270](https://github.com/wix/yoshi/pull/1270) Remove migrate to scoped packages task ([@aarnoldaas](https://github.com/aarnoldaas))
+- `create-yoshi-app`
+  - [#1267](https://github.com/wix/yoshi/pull/1267) Add `spec-setup` with `react-testing-library/clean-after-each` ([@aarnoldaas](https://github.com/aarnoldaas))
+- `jest-yoshi-preset`
+  - [#1208](https://github.com/wix/yoshi/pull/1208) Throw an error in case `MATCH_ENV` was not used properly ([@orimwix](https://github.com/orimwix))
+
+#### :house: Internal
+
+- `create-yoshi-app`
+  - [#1269](https://github.com/wix/yoshi/pull/1269) Add another `100,000ms` timeout to verify there is no timeout problem in template tests ([@ranyitz](https://github.com/ranyitz))
+- `yoshi-config`
+  - [#964](https://github.com/wix/yoshi/pull/964) Add basic unit tests for `yoshi-config`'s `validateConfig` ([@cowchimp](https://github.com/cowchimp))
+
+## 4.3.3 (2019-05-02)
+
+#### :rocket: New Feature
+
+- `yoshi-helpers`, `yoshi`
+  - [#1224](https://github.com/wix/yoshi/pull/1224) Create manifest JSON file with mapping to initial assets ([@ronami](https://github.com/ronami))
+- `yoshi`
+  - [#1260](https://github.com/wix/yoshi/pull/1260) Enable `--source-map` option in app flow build ([@ronenst](https://github.com/ronenst))
+
+#### :nail_care: Polish
+
+- `create-yoshi-app`
+  - [#1255](https://github.com/wix/yoshi/pull/1255) OOI generator best practices ([@jonathanadler](https://github.com/jonathanadler))
+
+## 4.3.2 (2019-04-28)
+
+#### :rocket: New Feature
+
+- [#1200](https://github.com/wix/yoshi/pull/1200) Make deploy "website" to surge.sh conditional ([@nktssh](https://github.com/nktssh))
+
+#### :bug: Bug Fix
+
+- `yoshi`
+  - [#1253](https://github.com/wix/yoshi/pull/1253) Remove HMR from production bundle ([@yanivefraim](https://github.com/yanivefraim))
+  - [#1252](https://github.com/wix/yoshi/pull/1252) Remove server `ts-loader` config ([@yairhaimo](https://github.com/yairhaimo))
+  - [#1244](https://github.com/wix/yoshi/pull/1244) Add server bundle on build logs ([@koretskiyav](https://github.com/koretskiyav))
+- `jest-environment-yoshi-puppeteer`
+  - [#1245](https://github.com/wix/yoshi/pull/1245) Make puppeteer ignore ssl errors if user run with flag ssl:true ([@dmfilipenko](https://github.com/dmfilipenko))
+
+#### :nail_care: Polish
+
+- `create-yoshi-app`
+  - [#1249](https://github.com/wix/yoshi/pull/1249) Use major version in nvmrc, and not a specific one ([@jonathanadler](https://github.com/jonathanadler))
+
+#### :house: Internal
+
+- `create-yoshi-app`
+  - [#1197](https://github.com/wix/yoshi/pull/1197) Simplify biz-mgr babel template ([@yurynix](https://github.com/yurynix))
+- Other
+  - [#1247](https://github.com/wix/yoshi/pull/1247) Update docusaurus ([@dmfilipenko](https://github.com/dmfilipenko))
+
+## 4.3.1 (2019-04-22)
+
+#### :nail_care: Polish
+
+- `create-yoshi-app`
+  - [#1230](https://github.com/wix/yoshi/pull/1230) Simplify ooi javascript src directory file structure ([@ranyitz](https://github.com/ranyitz))
+
 ## 4.3.0 (2019-04-22)
 
 #### :house: Internal
+
 - `yoshi`
   - [2cb5ec0](https://github.com/wix/yoshi/commit/2cb5ec044ee9c505e74d0b5517b61fe0f167c55f) Bump `tpa-style-webpack-plugin`
 
 #### :bug: Bug Fix
+
 - `yoshi-angular-dependencies`, `yoshi`
   - [#1226](https://github.com/wix/yoshi/pull/1226) Provide `yoshi-runtime` by default ([@ronami](https://github.com/ronami))
 - `create-yoshi-app`
