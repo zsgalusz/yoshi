@@ -1,4 +1,3 @@
-
 ---
 id: html-plugin
 title: HTML Plugin
