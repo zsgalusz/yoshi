@@ -8,7 +8,15 @@ This feature introduces [html-webpack-plugin](https://github.com/jantimon/html-w
 
 #### Better Static asset caching
 
-Static assets will no longer depend on artifact version. They will have a new hash, as part of the file's name, which will be based on the asset's content. This means that if in a specific GA a static file was not changed, it will remain with the same name, and will still be cached for the user. 
+The problem.
+
+Today, each GA creates a new url (using artifact version as part of the url) for all static assets, no matter which of them was changed. This means that the user will download all static assets again and again, even if only a minor change was done in one of the assets.
+
+The solution
+
+Using [html-webpack-plugin](https://github.com/jantimon/html-webpack-plugin), we can create static file names based on their content. In this way, static assets names will no longer depend on artifact version. 
+This means that if in a specific GA a static file was not changed, it will remain with the same name, and will still be cached for the user. 
+
 For example:
 
 `https://static.parastorage.com/services/wix-api-explorer/1.60.0/app.bundle.min.js` 
