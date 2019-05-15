@@ -15,6 +15,7 @@ Today, each GA creates a new url (using artifact version as part of the url) for
 _Solution_
 
 Using [html-webpack-plugin](https://github.com/jantimon/html-webpack-plugin), we can create static file names based on their content. In this way, static assets names will no longer depend on artifact version. 
+
 This means that if in a specific GA a static file was not changed, it will remain with the same name, and will still be cached for the user. 
 
 For example:
