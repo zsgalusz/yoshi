@@ -6,7 +6,7 @@ sidebar_label: HTML Plugin
 
 This feature introduces [html-webpack-plugin](https://github.com/jantimon/html-webpack-plugin). It will help remove redundant boilerplate from projects and allow us to support features like `initial` split chunks, better static asset caching, automatic externals and more.
 
-#### Better Static asset caching
+#### Better static asset caching
 
 _The problem_
 
@@ -26,7 +26,12 @@ will now become:
 
 `https://static.parastorage.com/services/wix-api-explorer/dist/app.d666fc07.bundle.min.js`
 
+After [html-webpack-plugin](https://github.com/jantimon/html-webpack-plugin) creates the assets, it will inject script and css tags into your `ejs` or `vm` templates. (Meaning you will no longer have to add script/css tags into your template files) 
 
+#### Split Chunks
+
+
+Using 
 ### Migration for Fullstack apps (bootstrap)
 
 
