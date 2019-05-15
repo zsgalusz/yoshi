@@ -42,7 +42,7 @@ describe('webpack', () => {
       ]);
     });
 
-    it('css url() uses relative paths', async () => {
+    it.skip('css url() uses relative paths', async () => {
       await initTest('css-image-url');
 
       await matchCSS('css-image-url', page, [
@@ -251,7 +251,7 @@ describe('webpack', () => {
       expect(imageSource).toMatch(/^data:image\/jpeg;base64.+==$/);
     });
 
-    it('large image inclusion', async () => {
+    it.skip('large image inclusion', async () => {
       await initTest('large-image-inclusion');
 
       const imageSource = await page.$eval(
