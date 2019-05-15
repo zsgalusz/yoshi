@@ -30,8 +30,9 @@ After [html-webpack-plugin](https://github.com/jantimon/html-webpack-plugin) cre
 
 #### Split Chunks
 
+[html-webpack-plugin](https://github.com/jantimon/html-webpack-plugin) will know to create automatic [initial split chunks](), for common code. It will also know to share them with your [async split chunks](). This means that if you have a 3rd party library (for example), in both bundleA and bundleB, and you also use it in your dynamic import chunk, the plugin will smartly know to extract it to one common chunk and use it from all places.
 
-Using 
+ 
 ### Migration for Fullstack apps (bootstrap)
 
 
