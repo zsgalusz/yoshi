@@ -24,7 +24,7 @@ describe('manifest', () => {
     fs.writeFileSync(originalFilePath, originalContent);
   });
 
-  it.skip('generates manifest stat file', async () => {
+  it('generates manifest stat file', async () => {
     await replaceOriginalEntry('src/cases/manifest.js');
 
     await global.scripts.build(ciEnv);
