@@ -1,0 +1,49 @@
+{
+  "name": "kitchensink",
+  "version": "1.0.0",
+  "license": "UNLICENSED",
+  "private": true,
+  "sideEffects": false,
+  "author": {
+    "name": "me",
+    "email": "me@wix.com"
+  },
+  "scripts": {
+    "start": "yoshi start",
+    "precommit": "lint-staged",
+    "pretest": "yoshi build",
+    "test": "yoshi test",
+    "posttest": "yoshi lint",
+    "release": "yoshi release"
+  },
+  "dependencies": {
+    "axios": "^0.16.0",
+    "ejs": "^2.6.1",
+    "express": "^4.15.0",
+    "jest-puppeteer": "^3.4.0",
+    "jest-yoshi-preset": "latest",
+    "puppeteer": "^1.13.0",
+    "react": "15.6.1",
+    "react-dom": "15.6.1",
+    "yoshi": "latest",
+    "yoshi-style-dependencies": "latest"
+  },
+  "jest": {
+    "preset": "jest-yoshi-preset"
+  },
+  "yoshi": {
+    "projectType": "app",
+    "experimentalBuildHtml": true,
+    "externalUnprocessedModules": ["untranspiled-dependency"],
+    "entry": {
+      "app": "./client",
+      "other": "./other"
+    },
+    "externals": {
+      "react": "React",
+      "react-dom": "ReactDOM",
+      "externals": "externals"
+    },
+    "hmr": "auto"
+  }
+}
