@@ -2,7 +2,7 @@ const net = require('net');
 const http = require('http');
 const retry = require('async-retry');
 const waitPort = require('wait-port');
-const { parastorageCdnUrl, localCdnUrl } = require('./constants');
+const { parastorageCdnUrl, parastorageCdnUrl2, localCdnUrl } = require('./constants');
 
 const makeRequest = url => {
   return new Promise(resolve => {
@@ -17,6 +17,10 @@ const makeRequest = url => {
 const request = url => {
   if (url.startsWith(parastorageCdnUrl)) {
     return makeRequest(url.replace(parastorageCdnUrl, localCdnUrl));
+  }
+
+  if (url.startsWith(parastorageCdnUrl2)) {
+    return makeRequest(url.replace(parastorageCdnUrl2, localCdnUrl));
   }
 
   return makeRequest(url);
