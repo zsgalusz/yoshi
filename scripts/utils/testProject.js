@@ -19,9 +19,7 @@ module.exports = async ({
   console.log();
 
   const scripts = new Scripts({ testDirectory });
-  console.log('------------------------------------');
-  console.log(testDirectory);
-  console.log('------------------------------------');
+
   const options = {
     stdio: 'inherit',
     env: {
@@ -114,7 +112,7 @@ module.exports = async ({
   }
 
   // Clean eventually
-  //await fs.remove(rootDirectory);
+  await fs.remove(rootDirectory);
 
   // Fail testing this project if any errors happened
   if (failures.length > 0) {

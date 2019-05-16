@@ -33,7 +33,6 @@
   },
   "yoshi": {
     "projectType": "app",
-    "experimentalBuildHtml": true,
     "externalUnprocessedModules": ["untranspiled-dependency"],
     "entry": {
       "app": "./client",

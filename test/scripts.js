@@ -97,10 +97,9 @@ module.exports = class Scripts {
 
     const appServerProcess = execa('node', ['index.js'], {
       cwd: this.testDirectory,
-      stdio: 'inherit',
+      // stdio: 'inherit',
       env: {
         PORT: this.serverProcessPort,
-        NODE_ENV: 'production',
       },
     });
 
