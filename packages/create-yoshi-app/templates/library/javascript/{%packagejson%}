@@ -25,8 +25,7 @@
     "husky": "~0.14.0",
     "lint-staged": "^7.2.2",
     "yoshi": "^4.1.0",
-    "puppeteer": "^1.1.0",
-    "jest-yoshi-preset": "^4.1.0"
+    "puppeteer": "^1.1.0"
   },
   "lint-staged": {
     "*.js": "yoshi lint"
@@ -36,9 +35,6 @@
   },
   "yoshi": {
     "hmr": "auto"
-  },
-  "jest": {
-    "preset": "jest-yoshi-preset"
   },
   "module": "dist/es/src/index.js",
   "babel": {
