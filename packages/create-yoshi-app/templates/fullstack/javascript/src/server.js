@@ -26,23 +26,17 @@ export default hot(module, (app, context) => {
   // Define a route to render our initial HTML.
   app.get('/', (req, res) => {
     // Extract some data from every incoming request.
-    const renderModel = getRenderModel(req);
-
-    // Send a response back to the client.
-    res.renderView('./index.ejs', renderModel);
-  });
-
-  function getRenderModel(req) {
     const { language, basename, debug } = req.aspects['web-context'];
 
-    return {
+    // Send a response back to the client.
+    res.renderView('./index.ejs', {
       language,
       basename,
       debug: debug || process.env.NODE_ENV === 'development',
       title: 'Wix Full Stack Project Boilerplate',
       staticsDomain: config.clientTopology.staticsDomain,
-    };
-  }
+    });
+  });
 
   return app;
 });
