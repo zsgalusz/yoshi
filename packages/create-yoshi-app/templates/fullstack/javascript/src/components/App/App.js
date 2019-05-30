@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { translate } from 'react-i18next';
+import { withTranslation } from 'react-i18next';
 import s from './App.scss';
 
 /* <-- To remove demo stuff just copy-paste:
@@ -10,7 +10,7 @@ import s from './App.scss';
 
 class App extends React.Component {
   static propTypes = {
-    t: PropTypes.func,
+    t: PropTypes.func
   };
 
   /* <-- Feel free to remove this lifecycle hook */
@@ -38,4 +38,4 @@ class App extends React.Component {
   }
 }
 
-export default translate()(App);
+export default withTranslation()(App);

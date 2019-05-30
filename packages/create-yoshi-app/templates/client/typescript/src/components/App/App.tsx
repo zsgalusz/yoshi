@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { translate, InjectedTranslateProps } from 'react-i18next';
+import { withTranslation, InjectedTranslateProps } from 'react-i18next';
 import * as s from './App.scss';
 
 /* <-- To remove demo stuff just copy-paste:
@@ -13,7 +13,7 @@ class App extends React.Component<AppProps> {
   /* <-- Feel free to remove this lifecycle hook and state */
   /* <-- Please also remove `yoshi-template-intro` from your package.json */
   state = {
-    TemplateIntro: () => null,
+    TemplateIntro: () => null
   };
   async componentDidMount() {
     const { default: TemplateIntro } = await import('yoshi-template-intro');
@@ -36,4 +36,4 @@ class App extends React.Component<AppProps> {
   }
 }
 
-export default translate()(App);
+export default withTranslation()(App);
