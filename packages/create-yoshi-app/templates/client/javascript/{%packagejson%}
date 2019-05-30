@@ -34,11 +34,11 @@
   },
   "dependencies": {
     "axios": "~0.16.0",
-    "i18next": "^11.6.0",
+    "i18next": "^15.1.3",
     "prop-types": "~15.6.0",
     "react": "16.8.0",
     "react-dom": "16.8.0",
-    "react-i18next": "^7.11.0",
+    "react-i18next": "^10.10.0",
     "@wix/wix-axios-config": "latest",
     "yoshi-template-intro": "^4.1.0"
   },
