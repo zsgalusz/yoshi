@@ -22,14 +22,7 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const HtmlPolyfillPlugin = require('./html-polyfill-plugin');
 const { localIdentName } = require('../src/constants');
 const EnvirnmentMarkPlugin = require('../src/webpack-plugins/environment-mark-plugin');
-const {
-  ROOT_DIR,
-  SRC_DIR,
-  BUILD_DIR,
-  STATICS_DIR,
-  TSCONFIG_FILE,
-  MONOREPO_ROOT,
-} = require('yoshi-config/paths');
+const defaultApp = require('yoshi-config/paths');
 const project = require('yoshi-config');
 const {
   shouldDeployToCDN,
@@ -89,13 +82,13 @@ if (shouldDeployToCDN()) {
   publicPath = getProjectCDNBasePath();
 }
 
-function exists(entry) {
+const exists = app => entry => {
   return (
     globby.sync(`${entry}(${extensions.join('|')})`, {
-      cwd: SRC_DIR,
+      cwd: app.SRC_DIR,
     }).length > 0
   );
-}
+};
 
 function addHashToAssetName(name, hash = 'contenthash:8') {
   if (project.experimentalBuildHtml && isProduction) {
@@ -282,17 +275,18 @@ const getStyleLoaders = ({
 // client-side (client.js) and server-side (server.js) bundles
 // -----------------------------------------------------------------------------
 function createCommonWebpackConfig({
+  app = defaultApp,
   isDebug = true,
   isHmr = false,
   withLocalSourceMaps,
 } = {}) {
   const config = {
-    context: SRC_DIR,
+    context: app.SRC_DIR,
 
     mode: isProduction ? 'production' : 'development',
 
     output: {
-      path: STATICS_DIR,
+      path: app.STATICS_DIR,
       publicPath,
       pathinfo: isDebug,
       filename: isDebug
@@ -306,14 +300,14 @@ function createCommonWebpackConfig({
     },
 
     resolve: {
-      modules: ['node_modules', SRC_DIR],
+      modules: ['node_modules', app.SRC_DIR],
 
       extensions,
 
       alias: project.resolveAlias,
 
       // Whether to resolve symlinks to their symlinked location.
-      symlinks: project.experimentalMonorepoSubProcess,
+      symlinks: project.experimentalMonorepo,
     },
 
     // Since Yoshi doesn't depend on every loader it uses directly, we first look
@@ -327,7 +321,7 @@ function createCommonWebpackConfig({
     plugins: [
       // This gives some necessary context to module not found errors, such as
       // the requesting resource
-      new ModuleNotFoundPlugin(ROOT_DIR),
+      new ModuleNotFoundPlugin(app.ROOT_DIR),
       // https://github.com/Urthen/case-sensitive-paths-webpack-plugin
       new CaseSensitivePathsPlugin(),
       // Way of communicating to `babel-preset-yoshi` or `babel-preset-wix` that
@@ -340,7 +334,7 @@ function createCommonWebpackConfig({
             // TypeScript installed when its required, we only require it if
             // this is a TypeScript project
             new (require('fork-ts-checker-webpack-plugin'))({
-              tsconfig: TSCONFIG_FILE,
+              tsconfig: app.TSCONFIG_FILE,
               async: false,
               silent: true,
               checkSyntacticErrors: true,
@@ -563,12 +557,14 @@ function createCommonWebpackConfig({
 // Configuration for the client-side bundle (client.js)
 // -----------------------------------------------------------------------------
 function createClientWebpackConfig({
+  app = defaultApp,
   isAnalyze = false,
   isDebug = true,
   isHmr,
   withLocalSourceMaps,
 } = {}) {
   const config = createCommonWebpackConfig({
+    app,
     isDebug,
     isHmr,
     withLocalSourceMaps,
@@ -641,7 +637,7 @@ function createClientWebpackConfig({
         ? [
             ...globby
               .sync('**/*.+(ejs|vm)', {
-                cwd: SRC_DIR,
+                cwd: app.SRC_DIR,
                 absolute: true,
                 ignore: ['**/assets/**'],
               })
@@ -798,11 +794,12 @@ function createClientWebpackConfig({
 // Configuration for the server-side bundle (server.js)
 // -----------------------------------------------------------------------------
 function createServerWebpackConfig({
+  app = defaultApp,
   isDebug = true,
   isHmr = false,
   hmrPort,
 } = {}) {
-  const config = createCommonWebpackConfig({ isDebug, isHmr });
+  const config = createCommonWebpackConfig({ app, isDebug, isHmr });
 
   const styleLoaders = getStyleLoaders({
     embedCss: false,
@@ -818,12 +815,13 @@ function createServerWebpackConfig({
     target: 'node',
 
     entry: {
-      server: possibleServerEntries.find(exists) || possibleServerEntries[0],
+      server:
+        possibleServerEntries.find(exists(app)) || possibleServerEntries[0],
     },
 
     output: {
       ...config.output,
-      path: BUILD_DIR,
+      path: app.BUILD_DIR,
       filename: '[name].js',
       chunkFilename: 'chunks/[name].js',
       libraryTarget: 'umd',
@@ -890,9 +888,9 @@ function createServerWebpackConfig({
         modulesDir: path.resolve(__dirname, '../node_modules'),
       }),
       // Treat monorepo (hoisted) dependencies as external
-      project.experimentalMonorepoSubProcess &&
+      project.experimentalMonorepo &&
         nodeExternals({
-          modulesDir: path.resolve(MONOREPO_ROOT, 'node_modules'),
+          modulesDir: path.resolve(app.MONOREPO_ROOT, 'node_modules'),
         }),
     ].filter(Boolean),
 
