@@ -11,13 +11,15 @@ const schema = require('./schema/yoshi-config-schema');
 
 let _config;
 
-const loadConfig = ({ validate, useCache } = { validate: false }) => {
+const loadConfig = (
+  { cwd = process.cwd(), validate, useCache } = { validate: false },
+) => {
   let loadedConfig;
 
   if (!useCache) {
-    loadedConfig = lookupConfig();
+    loadedConfig = lookupConfig(cwd);
   } else {
-    loadedConfig = _config || lookupConfig();
+    loadedConfig = _config || lookupConfig(cwd);
     _config = loadedConfig;
   }
 

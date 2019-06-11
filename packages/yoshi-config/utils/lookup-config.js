@@ -6,8 +6,8 @@ const explorer = cosmiconfig('yoshi', {
   sync: true,
 });
 
-module.exports = () => {
-  const projectConfig = get(explorer.load(), 'config', {});
+module.exports = cwd => {
+  const projectConfig = get(explorer.load(cwd), 'config', {});
 
   if (projectConfig.extends) {
     const extendsConfig = require(projectConfig.extends);

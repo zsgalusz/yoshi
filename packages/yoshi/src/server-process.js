@@ -6,7 +6,7 @@ const fs = require('fs-extra');
 const SocketServer = require('./socket-server');
 const { PORT } = require('./constants');
 const { getDevelopmentEnvVars } = require('yoshi-helpers/bootstrap-utils');
-const { SERVER_LOG_FILE } = require('yoshi-config/paths');
+// const { SERVER_LOG_FILE } = require('yoshi-config/paths');
 
 const bootstrapEnvironmentParams = getDevelopmentEnvVars({
   port: PORT,
@@ -24,7 +24,8 @@ function serverLogPrefixer() {
 const inspectArg = process.argv.find(arg => arg.includes('--debug'));
 
 module.exports = class ServerProcess {
-  constructor({ serverFilePath, hmrPort }) {
+  constructor({ app, serverFilePath, hmrPort }) {
+    this.app = app;
     this.socketServer = new SocketServer({ hmrPort });
     this.serverFilePath = serverFilePath;
   }
@@ -45,7 +46,7 @@ module.exports = class ServerProcess {
       },
     });
 
-    const serverLogWriteStream = fs.createWriteStream(SERVER_LOG_FILE);
+    const serverLogWriteStream = fs.createWriteStream(this.app.SERVER_LOG_FILE);
     const serverOutLogStream = this.child.stdout.pipe(serverLogPrefixer());
     serverOutLogStream.pipe(serverLogWriteStream);
     serverOutLogStream.pipe(process.stdout);
