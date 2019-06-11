@@ -20,26 +20,43 @@ prog
   .option('--format', 'Use a specific formatter for eslint/tslint')
   .action(() => runCLI('lint'));
 
-prog
-  .command('test')
-  .description('Run unit tests and e2e tests if exists')
-  .option('--mocha', 'Run unit tests with Mocha')
-  .option('--jasmine', 'Run unit tests with Jasmine')
-  .option('--karma', 'Run unit tests with Karma')
-  .option('--jest', 'Run tests with Jest')
-  .option('--protractor', 'Run e2e tests with Protractor')
-  .option('--debug', 'Allow test debugging')
-  .option('--coverage', 'Collect and output code coverage')
-  .option(
-    '--debug-brk',
-    "Allow test debugging, process won't start until debugger will be attached",
-  )
-  .option(
-    '-w, --watch',
-    'Run tests on watch mode (mocha, jasmine, jest, karma)',
-  )
-  .allowUnknownOption()
-  .action(() => runCLI('test'));
+if (config.experimentalMonorepo) {
+  prog
+    .command('test')
+    .description('Run unit tests and e2e tests if exists')
+    .option('--debug', 'Allow test debugging')
+    .option(
+      '--debug-brk',
+      "Allow test debugging, process won't start until debugger will be attached",
+    )
+    .option(
+      '-w, --watch',
+      'Run tests on watch mode (mocha, jasmine, jest, karma)',
+    )
+    .allowUnknownOption()
+    .action(() => runCLI('test-monorepo'));
+} else {
+  prog
+    .command('test')
+    .description('Run unit tests and e2e tests if exists')
+    .option('--mocha', 'Run unit tests with Mocha')
+    .option('--jasmine', 'Run unit tests with Jasmine')
+    .option('--karma', 'Run unit tests with Karma')
+    .option('--jest', 'Run tests with Jest')
+    .option('--protractor', 'Run e2e tests with Protractor')
+    .option('--debug', 'Allow test debugging')
+    .option('--coverage', 'Collect and output code coverage')
+    .option(
+      '--debug-brk',
+      "Allow test debugging, process won't start until debugger will be attached",
+    )
+    .option(
+      '-w, --watch',
+      'Run tests on watch mode (mocha, jasmine, jest, karma)',
+    )
+    .allowUnknownOption()
+    .action(() => runCLI('test'));
+}
 
 if (config.experimentalMonorepo) {
   prog

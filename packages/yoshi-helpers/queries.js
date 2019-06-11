@@ -66,16 +66,18 @@ module.exports.shouldRunLess = () => {
   return globby.sync(globs.less).length > 0;
 };
 
-module.exports.hasE2ETests = () => {
-  return globby.sync(globs.e2eTests, { gitignore: true }).length > 0;
+module.exports.hasE2ETests = (cwd = process.cwd()) => {
+  return globby.sync(globs.e2eTests, { gitignore: true, cwd }).length > 0;
 };
 
 module.exports.hasProtractorConfigFile = () => {
   return exists(path.resolve('protractor.conf.js'));
 };
 
-module.exports.hasBundleInStaticsDir = () => {
-  return globby.sync(path.resolve(globs.statics, '*.bundle.js')).length > 0;
+module.exports.hasBundleInStaticsDir = (cwd = process.cwd()) => {
+  return (
+    globby.sync(path.join(globs.statics, '*.bundle.js'), { cwd }).length > 0
+  );
 };
 
 module.exports.shouldDeployToCDN = () => {
