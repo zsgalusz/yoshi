@@ -174,8 +174,11 @@ module.exports = async () => {
     });
 
     console.log(chalk.bold.underline(app.name));
+    console.log();
+
     printBuildResult(clientAssets, 'cyan');
     printBuildResult(serverAssets, 'yellow');
+
     console.log();
   });
 

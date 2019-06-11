@@ -19,7 +19,7 @@ const fs = require('fs-extra');
 const chalk = require('chalk');
 const chokidar = require('chokidar');
 const project = require('yoshi-config');
-const { app } = require('yoshi-helpers/monorepo');
+const { apps } = require('yoshi-helpers/monorepo');
 const {
   createClientWebpackConfig,
   createServerWebpackConfig,
@@ -36,6 +36,8 @@ const { PORT } = require('../constants');
 const host = '0.0.0.0';
 
 const https = cliArgs.https || project.servers.cdn.ssl;
+
+const app = apps.find(lernaApp => lernaApp.name === cliArgs._[1]);
 
 function watchPublicFolder() {
   const watcher = chokidar.watch(app.PUBLIC_DIR, {

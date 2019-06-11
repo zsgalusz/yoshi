@@ -22,8 +22,8 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const HtmlPolyfillPlugin = require('./html-polyfill-plugin');
 const { localIdentName } = require('../src/constants');
 const EnvirnmentMarkPlugin = require('../src/webpack-plugins/environment-mark-plugin');
-const defaultApp = require('yoshi-config/paths');
-const project = require('yoshi-config');
+const rootApp = require('yoshi-config/paths');
+const rootProject = require('yoshi-config');
 const {
   shouldDeployToCDN,
   isSingleEntry,
@@ -58,10 +58,8 @@ const isTypescriptProject = checkIsTypescriptProject();
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 
-const computedSeparateCss =
-  project.separateCss === 'prod'
-    ? inTeamCity || isProduction
-    : project.separateCss;
+const computedSeparateCss = app =>
+  app.separateCss === 'prod' ? inTeamCity || isProduction : app.separateCss;
 
 const artifactVersion = process.env.ARTIFACT_VERSION;
 
@@ -73,7 +71,7 @@ let publicPath = '/';
 if (!inTeamCity || isDevelopment) {
   // When on local machine or on dev environment,
   // set the local dev-server url as the public path
-  publicPath = project.servers.cdn.url;
+  publicPath = rootProject.servers.cdn.url;
 }
 
 // In case we are running in CI and there is a pom.xml file, change the public path according to the path on the cdn
@@ -91,7 +89,7 @@ const exists = app => entry => {
 };
 
 function addHashToAssetName(name, hash = 'contenthash:8') {
-  if (project.experimentalBuildHtml && isProduction) {
+  if (rootProject.experimentalBuildHtml && isProduction) {
     return name.replace('[name]', `[name].[${hash}]`);
   }
 
@@ -107,7 +105,7 @@ function prependNameWith(filename, prefix) {
 // These projects determine their version on the "release" step, which means they will have a wrong public path
 // We currently can't support static public path of packages that deploy to unpkg
 
-const stylableSeparateCss = project.enhancedTpaStyle;
+const stylableSeparateCss = rootProject.enhancedTpaStyle;
 
 const defaultSplitChunksConfig = {
   chunks: 'all',
@@ -115,34 +113,33 @@ const defaultSplitChunksConfig = {
   minChunks: 2,
 };
 
-const useSplitChunks = project.splitChunks;
+const useSplitChunks = rootProject.splitChunks;
 
 const splitChunksConfig = isObject(useSplitChunks)
   ? useSplitChunks
   : defaultSplitChunksConfig;
 
-const entry = project.entry || project.defaultEntry;
-
 const possibleServerEntries = ['./server', '../dev/server'];
 
 // Common function to get style loaders
 const getStyleLoaders = ({
+  app,
   embedCss,
   isDebug,
   isHmr,
 
   // Allow overriding defaults
-  separateCss = computedSeparateCss,
-  tpaStyle = project.tpaStyle,
+  separateCss = computedSeparateCss(app),
+  tpaStyle = app.tpaStyle,
 }) => {
   const cssLoaderOptions = {
     camelCase: true,
     sourceMap: !!separateCss,
     localIdentName: isProduction ? localIdentName.short : localIdentName.long,
     // Make sure every package has unique class names
-    hashPrefix: project.name,
+    hashPrefix: app.name,
     // https://github.com/css-modules/css-modules
-    modules: project.cssModules,
+    modules: app.cssModules,
     // PostCSS, less-loader, sass-loader and resolve-url-loader, so
     // composition will work with import
     importLoaders: 4 + Number(tpaStyle),
@@ -275,7 +272,7 @@ const getStyleLoaders = ({
 // client-side (client.js) and server-side (server.js) bundles
 // -----------------------------------------------------------------------------
 function createCommonWebpackConfig({
-  app = defaultApp,
+  app = rootApp,
   isDebug = true,
   isHmr = false,
   withLocalSourceMaps,
@@ -304,10 +301,10 @@ function createCommonWebpackConfig({
 
       extensions,
 
-      alias: project.resolveAlias,
+      alias: app.resolveAlias,
 
       // Whether to resolve symlinks to their symlinked location.
-      symlinks: project.experimentalMonorepo,
+      symlinks: rootProject.experimentalMonorepo,
     },
 
     // Since Yoshi doesn't depend on every loader it uses directly, we first look
@@ -328,13 +325,13 @@ function createCommonWebpackConfig({
       // it should optimize for Webpack
       new EnvirnmentMarkPlugin(),
       // https://github.com/Realytics/fork-ts-checker-webpack-plugin
-      ...(isTypescriptProject && project.projectType === 'app' && isDebug
+      ...(isTypescriptProject && app.projectType === 'app' && isDebug
         ? [
             // Since `fork-ts-checker-webpack-plugin` requires you to have
             // TypeScript installed when its required, we only require it if
             // this is a TypeScript project
             new (require('fork-ts-checker-webpack-plugin'))({
-              tsconfig: app.TSCONFIG_FILE,
+              tsconfig: rootApp.TSCONFIG_FILE,
               async: false,
               silent: true,
               checkSyntacticErrors: true,
@@ -351,7 +348,7 @@ function createCommonWebpackConfig({
 
       rules: [
         // https://github.com/wix/externalize-relative-module-loader
-        ...(project.features.externalizeRelativeLodash
+        ...(app.features.externalizeRelativeLodash
           ? [
               {
                 test: /[\\/]node_modules[\\/]lodash/,
@@ -361,12 +358,12 @@ function createCommonWebpackConfig({
           : []),
 
         // https://github.com/huston007/ng-annotate-loader
-        ...(project.isAngularProject
+        ...(app.isAngularProject
           ? [
               {
                 test: reScript,
                 loader: 'yoshi-angular-dependencies/ng-annotate-loader',
-                include: project.unprocessedModules,
+                include: app.unprocessedModules,
               },
             ]
           : []),
@@ -374,7 +371,7 @@ function createCommonWebpackConfig({
         // Rules for TS / TSX
         {
           test: /\.(ts|tsx)$/,
-          include: project.unprocessedModules,
+          include: app.unprocessedModules,
           use: [
             {
               loader: 'thread-loader',
@@ -384,7 +381,7 @@ function createCommonWebpackConfig({
             },
 
             // https://github.com/huston007/ng-annotate-loader
-            ...(project.isAngularProject
+            ...(app.isAngularProject
               ? [{ loader: 'yoshi-angular-dependencies/ng-annotate-loader' }]
               : []),
 
@@ -393,7 +390,7 @@ function createCommonWebpackConfig({
               options: {
                 // This implicitly sets `transpileOnly` to `true`
                 happyPackMode: true,
-                compilerOptions: project.isAngularProject
+                compilerOptions: app.isAngularProject
                   ? {}
                   : {
                       // force es modules for tree shaking
@@ -418,7 +415,7 @@ function createCommonWebpackConfig({
         // Rules for JS
         {
           test: reScript,
-          include: project.unprocessedModules,
+          include: app.unprocessedModules,
           use: [
             {
               loader: 'thread-loader',
@@ -557,7 +554,7 @@ function createCommonWebpackConfig({
 // Configuration for the client-side bundle (client.js)
 // -----------------------------------------------------------------------------
 function createClientWebpackConfig({
-  app = defaultApp,
+  app = rootApp,
   isAnalyze = false,
   isDebug = true,
   isHmr,
@@ -570,7 +567,9 @@ function createClientWebpackConfig({
     withLocalSourceMaps,
   });
 
-  const styleLoaders = getStyleLoaders({ embedCss: true, isHmr, isDebug });
+  const styleLoaders = getStyleLoaders({ app, embedCss: true, isHmr, isDebug });
+
+  const entry = app.entry || app.defaultEntry;
 
   const clientConfig = {
     ...config,
@@ -598,7 +597,7 @@ function createClientWebpackConfig({
               // support emojis
               ascii_only: true,
             },
-            keep_fnames: project.keepFunctionNames,
+            keep_fnames: app.keepFunctionNames,
           },
         }),
 
@@ -614,26 +613,26 @@ function createClientWebpackConfig({
       ...config.output,
 
       // https://github.com/wix/yoshi/pull/497
-      jsonpFunction: `webpackJsonp_${toIdentifier(project.name)}`,
+      jsonpFunction: `webpackJsonp_${toIdentifier(app.name)}`,
 
       // Bundle as UMD format if the user configured that this is a library
-      ...(project.exports
+      ...(app.exports
         ? {
-            library: project.exports,
+            library: app.exports,
             libraryTarget: 'umd',
             globalObject: "(typeof self !== 'undefined' ? self : this)",
           }
         : {}),
 
       // https://webpack.js.org/configuration/output/#output-umdnameddefine
-      umdNamedDefine: project.umdNamedDefine,
+      umdNamedDefine: app.umdNamedDefine,
     },
 
     plugins: [
       ...config.plugins,
 
       // https://github.com/jantimon/html-webpack-plugin
-      ...(project.experimentalBuildHtml
+      ...(app.experimentalBuildHtml
         ? [
             ...globby
               .sync('**/*.+(ejs|vm)', {
@@ -690,7 +689,7 @@ function createClientWebpackConfig({
         minimize: !isDebug,
       }),
 
-      ...(computedSeparateCss
+      ...(computedSeparateCss(app)
         ? [
             // https://github.com/webpack-contrib/mini-css-extract-plugin
             new MiniCssExtractPlugin({
@@ -702,9 +701,9 @@ function createClientWebpackConfig({
                 : addHashToAssetName('[name].chunk.min.css'),
             }),
             // https://github.com/wix-incubator/tpa-style-webpack-plugin
-            ...(project.enhancedTpaStyle ? [new TpaStyleWebpackPlugin()] : []),
+            ...(app.enhancedTpaStyle ? [new TpaStyleWebpackPlugin()] : []),
             // https://github.com/wix/rtlcss-webpack-plugin
-            ...(!project.experimentalBuildHtml
+            ...(!app.experimentalBuildHtml
               ? [
                   new RtlCssPlugin(
                     isDebug ? '[name].rtl.css' : '[name].rtl.min.css',
@@ -740,7 +739,7 @@ function createClientWebpackConfig({
         generate: {
           runtimeStylesheetId: 'namespace',
         },
-        resolveNamespace: resolveNamespaceFactory(project.name),
+        resolveNamespace: resolveNamespaceFactory(app.name),
       }),
 
       // https://github.com/th0r/webpack-bundle-analyzer
@@ -764,12 +763,12 @@ function createClientWebpackConfig({
       ],
     },
 
-    externals: project.externals,
+    externals: app.externals,
 
     // https://webpack.js.org/configuration/performance
     performance: {
       ...(isProduction
-        ? project.performanceBudget || { hints: false }
+        ? app.performanceBudget || { hints: false }
         : {
             hints: false,
           }),
@@ -782,7 +781,7 @@ function createClientWebpackConfig({
       // Adding the query param with the CDN URL allows HMR when working with a production site
       // because the bundle is requested from "parastorage" we need to specify to open the socket to localhost
       `${require.resolve('webpack-dev-server/client')}?${
-        project.servers.cdn.url
+        rootProject.servers.cdn.url
       }`,
     ]);
   }
@@ -794,7 +793,7 @@ function createClientWebpackConfig({
 // Configuration for the server-side bundle (server.js)
 // -----------------------------------------------------------------------------
 function createServerWebpackConfig({
-  app = defaultApp,
+  app = rootApp,
   isDebug = true,
   isHmr = false,
   hmrPort,
@@ -802,6 +801,7 @@ function createServerWebpackConfig({
   const config = createCommonWebpackConfig({ app, isDebug, isHmr });
 
   const styleLoaders = getStyleLoaders({
+    app,
     embedCss: false,
     isHmr: false,
     isDebug,
@@ -888,7 +888,7 @@ function createServerWebpackConfig({
         modulesDir: path.resolve(__dirname, '../node_modules'),
       }),
       // Treat monorepo (hoisted) dependencies as external
-      project.experimentalMonorepo &&
+      rootProject.experimentalMonorepo &&
         nodeExternals({
           modulesDir: path.resolve(app.MONOREPO_ROOT, 'node_modules'),
         }),
