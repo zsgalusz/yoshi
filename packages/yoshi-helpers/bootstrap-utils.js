@@ -1,5 +1,5 @@
 const fs = require('fs');
-const rootApp = require('yoshi-config/paths');
+const rootApp = require('./root-app');
 
 const getEnvVars = ({ port, appConfDir, appLogDir, appPersistentDir }) => {
   const PORT = Number(port) || 3000;

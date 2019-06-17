@@ -22,8 +22,7 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const HtmlPolyfillPlugin = require('./html-polyfill-plugin');
 const { localIdentName } = require('../src/constants');
 const EnvirnmentMarkPlugin = require('../src/webpack-plugins/environment-mark-plugin');
-const rootApp = require('yoshi-config/paths');
-const rootProject = require('yoshi-config');
+const rootApp = require('yoshi-helpers/root-app');
 const {
   shouldDeployToCDN,
   isSingleEntry,
@@ -71,7 +70,7 @@ let publicPath = '/';
 if (!inTeamCity || isDevelopment) {
   // When on local machine or on dev environment,
   // set the local dev-server url as the public path
-  publicPath = rootProject.servers.cdn.url;
+  publicPath = rootApp.servers.cdn.url;
 }
 
 // In case we are running in CI and there is a pom.xml file, change the public path according to the path on the cdn
@@ -89,7 +88,7 @@ const exists = app => entry => {
 };
 
 function addHashToAssetName(name, hash = 'contenthash:8') {
-  if (rootProject.experimentalBuildHtml && isProduction) {
+  if (rootApp.experimentalBuildHtml && isProduction) {
     return name.replace('[name]', `[name].[${hash}]`);
   }
 
@@ -105,7 +104,7 @@ function prependNameWith(filename, prefix) {
 // These projects determine their version on the "release" step, which means they will have a wrong public path
 // We currently can't support static public path of packages that deploy to unpkg
 
-const stylableSeparateCss = rootProject.enhancedTpaStyle;
+const stylableSeparateCss = rootApp.enhancedTpaStyle;
 
 const defaultSplitChunksConfig = {
   chunks: 'all',
@@ -113,7 +112,7 @@ const defaultSplitChunksConfig = {
   minChunks: 2,
 };
 
-const useSplitChunks = rootProject.splitChunks;
+const useSplitChunks = rootApp.splitChunks;
 
 const splitChunksConfig = isObject(useSplitChunks)
   ? useSplitChunks
@@ -123,7 +122,7 @@ const possibleServerEntries = ['./server', '../dev/server'];
 
 // Common function to get style loaders
 const getStyleLoaders = ({
-  app,
+  app = rootApp,
   embedCss,
   isDebug,
   isHmr,
@@ -304,7 +303,7 @@ function createCommonWebpackConfig({
       alias: app.resolveAlias,
 
       // Whether to resolve symlinks to their symlinked location.
-      symlinks: rootProject.experimentalMonorepo,
+      symlinks: rootApp.experimentalMonorepo,
     },
 
     // Since Yoshi doesn't depend on every loader it uses directly, we first look
@@ -632,7 +631,7 @@ function createClientWebpackConfig({
       ...config.plugins,
 
       // https://github.com/jantimon/html-webpack-plugin
-      ...(rootProject.experimentalBuildHtml
+      ...(rootApp.experimentalBuildHtml
         ? [
             ...globby
               .sync('**/*.+(ejs|vm)', {
@@ -703,7 +702,7 @@ function createClientWebpackConfig({
             // https://github.com/wix-incubator/tpa-style-webpack-plugin
             ...(app.enhancedTpaStyle ? [new TpaStyleWebpackPlugin()] : []),
             // https://github.com/wix/rtlcss-webpack-plugin
-            ...(!rootProject.experimentalBuildHtml
+            ...(!rootApp.experimentalBuildHtml
               ? [
                   new RtlCssPlugin(
                     isDebug ? '[name].rtl.css' : '[name].rtl.min.css',
@@ -781,7 +780,7 @@ function createClientWebpackConfig({
       // Adding the query param with the CDN URL allows HMR when working with a production site
       // because the bundle is requested from "parastorage" we need to specify to open the socket to localhost
       `${require.resolve('webpack-dev-server/client')}?${
-        rootProject.servers.cdn.url
+        rootApp.servers.cdn.url
       }`,
     ]);
   }
@@ -888,7 +887,7 @@ function createServerWebpackConfig({
         modulesDir: path.resolve(__dirname, '../node_modules'),
       }),
       // Treat monorepo (hoisted) dependencies as external
-      rootProject.experimentalMonorepo &&
+      rootApp.experimentalMonorepo &&
         nodeExternals({
           modulesDir: path.resolve(app.MONOREPO_ROOT, 'node_modules'),
         }),

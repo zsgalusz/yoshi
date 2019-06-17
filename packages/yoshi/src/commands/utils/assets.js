@@ -6,7 +6,7 @@ const filesize = require('filesize');
 const { groupBy } = require('lodash');
 const { sync: gzipSize } = require('gzip-size');
 const { getProjectArtifactVersion } = require('yoshi-helpers/utils');
-const rootApp = require('yoshi-config/paths');
+const rootApp = require('yoshi-helpers/root-app');
 
 function prepareAssets(optimizedStats, assetsDir, app = rootApp) {
   return optimizedStats
