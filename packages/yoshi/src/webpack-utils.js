@@ -5,7 +5,7 @@ const clearConsole = require('react-dev-utils/clearConsole');
 const { prepareUrls } = require('react-dev-utils/WebpackDevServerUtils');
 const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 const project = require('yoshi-config');
-const { STATICS_DIR } = require('yoshi-config/paths');
+const rootApp = require('yoshi-config/paths');
 const { PORT } = require('./constants');
 const { redirectMiddleware } = require('../src/tasks/cdn/server-api');
 const WebpackDevServer = require('webpack-dev-server');
@@ -151,12 +151,15 @@ function overrideRules(rules, patch) {
   });
 }
 
-function createDevServer(clientCompiler, { publicPath, https, host }) {
+function createDevServer(
+  clientCompiler,
+  { publicPath, https, host, app = rootApp },
+) {
   const devServer = new WebpackDevServer(clientCompiler, {
     // Enable gzip compression for everything served
     compress: true,
     clientLogLevel: 'error',
-    contentBase: STATICS_DIR,
+    contentBase: app.STATICS_DIR,
     watchContentBase: true,
     hot: true,
     publicPath,

@@ -3,13 +3,10 @@ const stream = require('stream');
 const waitPort = require('wait-port');
 const child_process = require('child_process');
 const fs = require('fs-extra');
+const rootApp = require('yoshi-config/paths');
 const SocketServer = require('./socket-server');
 const { PORT } = require('./constants');
 const { getDevelopmentEnvVars } = require('yoshi-helpers/bootstrap-utils');
-
-const bootstrapEnvironmentParams = getDevelopmentEnvVars({
-  port: PORT,
-});
 
 function serverLogPrefixer() {
   return new stream.Transform({
@@ -23,7 +20,7 @@ function serverLogPrefixer() {
 const inspectArg = process.argv.find(arg => arg.includes('--debug'));
 
 module.exports = class ServerProcess {
-  constructor({ app, serverFilePath, hmrPort }) {
+  constructor({ app = rootApp, serverFilePath, hmrPort }) {
     this.app = app;
     this.socketServer = new SocketServer({ hmrPort });
     this.serverFilePath = serverFilePath;
@@ -31,6 +28,11 @@ module.exports = class ServerProcess {
 
   async initialize() {
     await this.socketServer.initialize();
+
+    const bootstrapEnvironmentParams = getDevelopmentEnvVars({
+      app: this.app,
+      port: PORT,
+    });
 
     this.child = child_process.fork(this.serverFilePath, {
       stdio: 'pipe',
