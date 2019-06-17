@@ -7,6 +7,30 @@ const { groupBy } = require('lodash');
 const { sync: gzipSize } = require('gzip-size');
 const { getProjectArtifactVersion } = require('yoshi-helpers/utils');
 const rootApp = require('yoshi-helpers/root-app');
+const chokidar = require('chokidar');
+
+function watchPublicFolder(app = rootApp) {
+  const watcher = chokidar.watch(app.PUBLIC_DIR, {
+    persistent: true,
+    ignoreInitial: false,
+    cwd: app.PUBLIC_DIR,
+  });
+
+  const copyFile = relativePath => {
+    return fs.copy(
+      path.join(app.PUBLIC_DIR, relativePath),
+      path.join(app.ASSETS_DIR, relativePath),
+    );
+  };
+
+  const removeFile = relativePath => {
+    return fs.remove(path.join(app.ASSETS_DIR, relativePath));
+  };
+
+  watcher.on('change', copyFile);
+  watcher.on('add', copyFile);
+  watcher.on('unlink', removeFile);
+}
 
 function prepareAssets(optimizedStats, assetsDir, app = rootApp) {
   return optimizedStats
@@ -91,4 +115,5 @@ module.exports = {
   prepareAssets,
   printBuildResult,
   writeManifest,
+  watchPublicFolder,
 };
