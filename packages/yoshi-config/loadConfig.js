@@ -3,7 +3,6 @@ const _ = require('lodash');
 const chalk = require('chalk');
 const globs = require('./globs');
 const { MONOREPO_ROOT } = require('./paths');
-// const packagejson = require('./utils/get-project-pkg');
 const lookupConfig = require('./utils/lookup-config');
 const validateConfig = require('./utils/validate-config');
 const YoshiOptionsValidationError = require('./utils/YoshiOptionsValidationError');
