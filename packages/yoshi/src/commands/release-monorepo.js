@@ -3,7 +3,7 @@ const path = require('path');
 const execa = require('execa');
 const wnpm = require('wnpm-ci');
 const parseArgs = require('minimist');
-const { splitPackagesPromise } = require('./utils');
+const { libs } = require('yoshi-helpers/monorepo');
 const {
   inTeamCity: checkInTeamCity,
   inPRTeamCity: checkInPRTeamCity,
@@ -17,8 +17,6 @@ const inPRTeamCity = checkInPRTeamCity();
 
 module.exports = async () => {
   if (inTeamCity && !inPRTeamCity) {
-    const [, libs] = await splitPackagesPromise;
-
     // Patch libraries' `package.json` main field to point to `dist`
     await Promise.all(
       libs.map(async lib => {
