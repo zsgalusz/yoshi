@@ -6,7 +6,6 @@ const fs = require('fs-extra');
 const SocketServer = require('./socket-server');
 const { PORT } = require('./constants');
 const { getDevelopmentEnvVars } = require('yoshi-helpers/bootstrap-utils');
-// const { SERVER_LOG_FILE } = require('yoshi-config/paths');
 
 const bootstrapEnvironmentParams = getDevelopmentEnvVars({
   port: PORT,

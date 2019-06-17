@@ -2,7 +2,6 @@ const path = require('path');
 const _ = require('lodash');
 const chalk = require('chalk');
 const globs = require('./globs');
-const { MONOREPO_ROOT } = require('./paths');
 const lookupConfig = require('./utils/lookup-config');
 const validateConfig = require('./utils/validate-config');
 const YoshiOptionsValidationError = require('./utils/YoshiOptionsValidationError');
@@ -103,13 +102,6 @@ const loadConfig = (
     unprocessedModules: p => {
       const allSourcesButExternalModules = function(filePath) {
         filePath = path.normalize(filePath);
-
-        if (projectConfig.experimentalMonorepo) {
-          return (
-            filePath.startsWith(MONOREPO_ROOT) &&
-            !filePath.includes('node_modules')
-          );
-        }
 
         return (
           filePath.startsWith(process.cwd()) &&
