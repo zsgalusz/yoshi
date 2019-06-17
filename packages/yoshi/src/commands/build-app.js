@@ -77,7 +77,9 @@ module.exports = async () => {
     await writeManifest(clientOptimizedConfig, clientOptimizedStats);
   }
 
-  printBuildResult({ webpackStats: webpackStats.stats });
+  const stats = [webpackStats.stats[1], webpackStats.stats[2]];
+
+  printBuildResult({ webpackStats: stats });
   printBundleSizeSuggestion();
 
   if (cliArgs.stats) {
