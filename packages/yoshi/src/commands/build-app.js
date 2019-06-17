@@ -5,25 +5,19 @@ const parseArgs = require('minimist');
 
 const cliArgs = parseArgs(process.argv.slice(2));
 
-const url = require('url');
 const bfj = require('bfj');
 const path = require('path');
 const fs = require('fs-extra');
 const chalk = require('chalk');
 const globby = require('globby');
 const webpack = require('webpack');
-const filesize = require('filesize');
-const { groupBy } = require('lodash');
-const { sync: gzipSize } = require('gzip-size');
 const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 const {
   createClientWebpackConfig,
   createServerWebpackConfig,
 } = require('../../config/webpack.config');
 const { inTeamCity: checkInTeamCity } = require('yoshi-helpers/queries');
-const { getProjectArtifactVersion } = require('yoshi-helpers/utils');
 const {
-  ROOT_DIR,
   SRC_DIR,
   BUILD_DIR,
   TARGET_DIR,
@@ -37,6 +31,11 @@ const {
   clientProjectName,
   clientFilesPath,
 } = require('yoshi-config');
+const {
+  prepareAssets,
+  printBuildResult,
+  writeManifest,
+} = require('./utils/assets');
 const wixDepCheck = require('../tasks/dep-check');
 
 const inTeamCity = checkInTeamCity();
@@ -50,39 +49,6 @@ const copyTemplates = async () => {
     }),
   );
 };
-
-const prepareAssets = (optimizedStats, assetsDir) =>
-  optimizedStats
-    .toJson({ all: false, assets: true })
-    .assets.filter(asset => !asset.name.endsWith('.map'))
-    .map(asset => {
-      const fileContents = fs.readFileSync(path.join(assetsDir, asset.name));
-
-      return {
-        folder: path.join(
-          path.relative(ROOT_DIR, assetsDir),
-          path.dirname(asset.name),
-        ),
-        name: path.basename(asset.name),
-        gzipSize: gzipSize(fileContents),
-        size: asset.size,
-      };
-    })
-    .sort((a, b) => b.gzipSize - a.gzipSize);
-
-const printBuildResult = (assets, assetNameColor) =>
-  assets.forEach(asset => {
-    console.log(
-      '  ' +
-        filesize(asset.size) +
-        '  ' +
-        `(${filesize(asset.gzipSize)} GZIP)` +
-        '  ' +
-        `${chalk.dim(asset.folder + path.sep)}${chalk[assetNameColor](
-          asset.name,
-        )}`,
-    );
-  });
 
 module.exports = async () => {
   // Clean tmp folders
@@ -170,52 +136,7 @@ module.exports = async () => {
 
   // Generate `manifest.[version].json` from optimized webpack bundle
   if (inTeamCity) {
-    const assetsJson = clientOptimizedStats.compilation.chunkGroups.reduce(
-      (acc, chunk) => {
-        acc[chunk.name] = [
-          // If a chunk shows more than once, append to existing files
-          ...(acc[chunk.name] || []),
-          // Add files to the list
-          ...chunk.chunks.reduce(
-            (files, child) => [
-              ...files,
-              ...child.files
-                // Remove map files
-                .filter(file => !file.endsWith('.map'))
-                // Remove rtl.min.css files
-                .filter(file => !file.endsWith('.rtl.min.css'))
-                // Resolve into an absolute path, relatively to publicPath
-                .map(file =>
-                  url.resolve(clientOptimizedConfig.output.publicPath, file),
-                ),
-            ],
-            [],
-          ),
-        ];
-        return acc;
-      },
-      {},
-    );
-
-    // Group extensions together
-    Object.keys(assetsJson).forEach(entryName => {
-      assetsJson[entryName] = groupBy(assetsJson[entryName], fileUrl => {
-        const { pathname } = url.parse(fileUrl);
-        const extension = path.extname(pathname);
-
-        return extension ? extension.slice(1) : '';
-      });
-    });
-
-    // Artifact version on CI
-    const artifactVersion = getProjectArtifactVersion();
-
-    // Write file to disc
-    await fs.writeJSON(
-      path.resolve(STATICS_DIR, `manifest.${artifactVersion}.json`),
-      assetsJson,
-      { spaces: 2 },
-    );
+    await writeManifest(clientOptimizedConfig, clientOptimizedStats);
   }
 
   // Calculate assets sizes

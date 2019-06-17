@@ -7,47 +7,13 @@ const chalk = require('chalk');
 const execa = require('execa');
 const globby = require('globby');
 const webpack = require('webpack');
-const filesize = require('filesize');
-const { sync: gzipSize } = require('gzip-size');
 const { apps, libs } = require('yoshi-helpers/monorepo');
 const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 const {
   createClientWebpackConfig,
   createServerWebpackConfig,
 } = require('../../config/webpack.config');
-
-const prepareAssets = ({ stats, app, assetsDir }) =>
-  stats
-    .toJson({ all: false, assets: true })
-    .assets.filter(asset => !asset.name.endsWith('.map'))
-    .map(asset => {
-      const fileContents = fs.readFileSync(path.join(assetsDir, asset.name));
-
-      return {
-        folder: path.join(
-          path.relative(app.ROOT_DIR, assetsDir),
-          path.dirname(asset.name),
-        ),
-        name: path.basename(asset.name),
-        gzipSize: gzipSize(fileContents),
-        size: asset.size,
-      };
-    })
-    .sort((a, b) => b.gzipSize - a.gzipSize);
-
-const printBuildResult = (assets, assetNameColor) =>
-  assets.forEach(asset => {
-    console.log(
-      '  ' +
-        filesize(asset.size) +
-        '  ' +
-        `(${filesize(asset.gzipSize)} GZIP)` +
-        '  ' +
-        `${chalk.dim(asset.folder + path.sep)}${chalk[assetNameColor](
-          asset.name,
-        )}`,
-    );
-  });
+const { prepareAssets, printBuildResult } = require('./utils/assets');
 
 module.exports = async () => {
   // Clean tmp folders
@@ -162,16 +128,16 @@ module.exports = async () => {
 
   // Calculate assets sizes
   apps.forEach((app, index) => {
-    const clientAssets = prepareAssets({
+    const clientAssets = prepareAssets(
+      webpackStats.stats[index * 3 + 1],
+      app.STATICS_DIR,
       app,
-      stats: webpackStats.stats[index * 3 + 1],
-      assetsDir: app.STATICS_DIR,
-    });
-    const serverAssets = prepareAssets({
+    );
+    const serverAssets = prepareAssets(
+      webpackStats.stats[index * 3 + 2],
+      app.BUILD_DIR,
       app,
-      stats: webpackStats.stats[index * 3 + 2],
-      assetsDir: app.BUILD_DIR,
-    });
+    );
 
     console.log(chalk.bold.underline(app.name));
     console.log();
