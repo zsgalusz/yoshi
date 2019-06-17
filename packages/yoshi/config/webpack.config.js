@@ -632,7 +632,7 @@ function createClientWebpackConfig({
       ...config.plugins,
 
       // https://github.com/jantimon/html-webpack-plugin
-      ...(app.experimentalBuildHtml
+      ...(rootProject.experimentalBuildHtml
         ? [
             ...globby
               .sync('**/*.+(ejs|vm)', {
@@ -703,7 +703,7 @@ function createClientWebpackConfig({
             // https://github.com/wix-incubator/tpa-style-webpack-plugin
             ...(app.enhancedTpaStyle ? [new TpaStyleWebpackPlugin()] : []),
             // https://github.com/wix/rtlcss-webpack-plugin
-            ...(!app.experimentalBuildHtml
+            ...(!rootProject.experimentalBuildHtml
               ? [
                   new RtlCssPlugin(
                     isDebug ? '[name].rtl.css' : '[name].rtl.min.css',
