@@ -5,7 +5,7 @@ const loadConfig = require('yoshi-config/loadConfig');
 
 const { stdout } = execa.shellSync('npx lerna list --all --json');
 
-const packages = JSON.parse(stdout).map(pkg => {
+const pkgs = JSON.parse(stdout).map(pkg => {
   const paths = getPaths(pkg.location);
   const config = loadConfig({ cwd: pkg.location });
 
@@ -16,10 +16,10 @@ const packages = JSON.parse(stdout).map(pkg => {
   };
 });
 
-const [apps, libs] = partition(packages, pkg => pkg.private);
+const [apps, libs] = partition(pkgs, pkg => pkg.private);
 
 module.exports = {
-  app: apps[0],
   apps,
   libs,
+  pkgs,
 };

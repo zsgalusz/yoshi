@@ -1,29 +1,27 @@
 process.env.BABEL_ENV = 'production';
 process.env.NODE_ENV = 'production';
 
-const path = require('path');
+const parseArgs = require('minimist');
+
+const cliArgs = parseArgs(process.argv.slice(2));
+
 const fs = require('fs-extra');
 const chalk = require('chalk');
 const execa = require('execa');
-const globby = require('globby');
-const webpack = require('webpack');
-const { apps, libs } = require('yoshi-helpers/monorepo');
-const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
+const { apps, libs, pkgs } = require('yoshi-helpers/monorepo');
 const {
-  createClientWebpackConfig,
-  createServerWebpackConfig,
-} = require('../../config/webpack.config');
-const { prepareAssets, printBuildResult } = require('./utils/assets');
+  runWebpack,
+  printBundleSizeSuggestion,
+  printBuildResult,
+  copyLibraryAssets,
+  createAppWebpackConfigs,
+} = require('./utils/assets');
 
 module.exports = async () => {
   // Clean tmp folders
-  apps.forEach(app => {
-    fs.emptyDirSync(app.BUILD_DIR);
-    fs.emptyDirSync(app.TARGET_DIR);
-  });
-
-  libs.forEach(lib => {
-    fs.emptyDirSync(lib.BUILD_DIR);
+  pkgs.forEach(pkg => {
+    fs.emptyDirSync(pkg.BUILD_DIR);
+    fs.emptyDirSync(pkg.TARGET_DIR);
   });
 
   // Copy public to statics dir
@@ -33,19 +31,7 @@ module.exports = async () => {
     }
   });
 
-  libs.forEach(lib => {
-    const assets = globby.sync('src/**/*', {
-      cwd: lib.ROOT_DIR,
-      ignore: ['**/*.js', '**/*.ts', '**/*.tsx', '**/*.json'],
-    });
-
-    assets.forEach(assetPath => {
-      const dirname = path.join(lib.BUILD_DIR, assetPath);
-
-      fs.ensureDirSync(path.dirname(dirname));
-      fs.copyFileSync(path.join(lib.ROOT_DIR, assetPath), dirname);
-    });
-  });
+  libs.forEach(copyLibraryAssets);
 
   // Build libraries
   const scopeFlags = libs.map(lib => `--scope=${lib.name}`);
@@ -61,103 +47,35 @@ module.exports = async () => {
     process.exit(1);
   }
 
-  libs.forEach(lib => {
-    const assets = globby.sync('src/**/*', {
-      cwd: lib.ROOT_DIR,
-      ignore: ['**/*.js', '**/*.ts', '**/*.tsx', '**/*.json'],
-    });
-
-    assets.forEach(assetPath => {
-      fs.copyFileSync(
-        path.join(lib.ROOT_DIR, assetPath),
-        path.join(lib.BUILD_DIR, assetPath),
-      );
-    });
-  });
-
   // Build apps
   const webpackConfigs = apps.reduce((acc, app) => {
-    const clientDebugConfig = createClientWebpackConfig({
-      app,
-      isDebug: true,
-      isAnalyze: false,
-      isHmr: false,
-    });
-
-    const clientOptimizedConfig = createClientWebpackConfig({
-      app,
-      isDebug: false,
-      isHmr: false,
-    });
-
-    const serverConfig = createServerWebpackConfig({
-      app,
-      isDebug: true,
-    });
+    const [
+      clientDebugConfig,
+      clientOptimizedConfig,
+      serverConfig,
+    ] = createAppWebpackConfigs({ app, cliArgs });
 
     return [...acc, clientDebugConfig, clientOptimizedConfig, serverConfig];
   }, []);
 
-  const compiler = webpack(webpackConfigs);
-
-  const webpackStats = await new Promise((resolve, reject) => {
-    compiler.run((err, stats) => (err ? reject(err) : resolve(stats)));
-  });
-
-  const messages = formatWebpackMessages(webpackStats.toJson({}, true));
-
-  if (messages.errors.length) {
-    // Only keep the first error. Others are often indicative
-    // of the same problem, but confuse the reader with noise.
-    if (messages.errors.length > 1) {
-      messages.errors.length = 1;
-    }
-
-    console.log(chalk.red('Failed to compile.\n'));
-    console.error(messages.errors.join('\n\n'));
-
-    process.exit(1);
-  }
-
-  if (messages.warnings.length) {
-    console.log(chalk.yellow('Compiled with warnings.\n'));
-    console.log(messages.warnings.join('\n\n'));
-  } else {
-    console.log(chalk.green('Compiled successfully.\n'));
-  }
+  const webpackStats = await runWebpack(webpackConfigs);
 
   // Calculate assets sizes
   apps.forEach((app, index) => {
-    const clientAssets = prepareAssets(
-      webpackStats.stats[index * 3 + 1],
-      app.STATICS_DIR,
-      app,
-    );
-    const serverAssets = prepareAssets(
-      webpackStats.stats[index * 3 + 2],
-      app.BUILD_DIR,
-      app,
-    );
-
     console.log(chalk.bold.underline(app.name));
     console.log();
 
-    printBuildResult(clientAssets, 'cyan');
-    printBuildResult(serverAssets, 'yellow');
+    const stats = [
+      webpackStats.stats[index * 3 + 1],
+      webpackStats.stats[index * 3 + 2],
+    ];
+
+    printBuildResult({ app, webpackStats: stats });
 
     console.log();
   });
 
-  console.log(chalk.dim('    Interested in reducing your bundle size?'));
-  console.log();
-  console.log(
-    chalk.dim('      > Try https://webpack.js.org/guides/code-splitting'),
-  );
-  console.log(
-    chalk.dim(
-      `      > If it's still large, analyze your bundle by running \`npx yoshi build --analyze\``,
-    ),
-  );
+  printBundleSizeSuggestion();
 
   return {
     persistent: false,
