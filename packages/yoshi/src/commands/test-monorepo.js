@@ -9,7 +9,7 @@ const { createRunner } = require('haste-core');
 const LoggerPlugin = require('../plugins/haste-plugin-yoshi-logger');
 const chalk = require('chalk');
 // const projectConfig = require('yoshi-config');
-const { apps, libs } = require('yoshi-helpers/monorepo');
+const { apps } = require('yoshi-helpers/monorepo');
 const {
   watchMode,
   hasE2ETests,
@@ -25,11 +25,11 @@ const runner = createRunner({
 const rawCliArgs = process.argv.slice(2);
 const cliArgs = minimist(rawCliArgs);
 
-const debugPort = cliArgs.debug;
-const debugBrkPort = cliArgs['debug-brk'];
+// const debugPort = cliArgs.debug;
+// const debugBrkPort = cliArgs['debug-brk'];
 const shouldWatch = cliArgs.watch || cliArgs.w || watchMode();
 
-const configPath = require.resolve('../../config/jest.config.js');
+// const configPath = require.resolve('../../config/jest.config.js');
 
 module.exports = runner.command(
   async tasks => {

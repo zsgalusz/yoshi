@@ -10,7 +10,6 @@ const { shouldRunWebpack, logStats, normalizeEntries } = require('./utils');
 const { getListOfEntries, getProcessOnPort } = require('yoshi-helpers/utils');
 
 module.exports = async ({
-  cwd = process.cwd(),
   port = '3000',
   ssl,
   hmr = true,
@@ -30,9 +29,7 @@ module.exports = async ({
 
     if (currentCwd !== processOnPort.cwd) {
       throw new Error(
-        `Unable to run cdn! port ${port} is already in use by another process in another project (pid=${
-          processOnPort.pid
-        }, path=${processOnPort.cwd})`,
+        `Unable to run cdn! port ${port} is already in use by another process in another project (pid=${processOnPort.pid}, path=${processOnPort.cwd})`,
       );
     } else {
       console.log(`\tcdn is already running on ${port}, skipping...`);

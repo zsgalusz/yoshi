@@ -171,11 +171,11 @@ function createDevServer(
     overlay: true,
     // https://github.com/wix/yoshi/pull/1191
     allowedHosts: ['.wix.com', '.wixsite.com'],
-    before(app) {
+    before(server) {
       // Send cross origin headers
-      app.use(cors());
+      server.use(cors());
       // Redirect `.min.(js|css)` to `.(js|css)`
-      app.use(redirectMiddleware(host, project.servers.cdn.port));
+      server.use(redirectMiddleware(host, project.servers.cdn.port));
     },
   });
 
