@@ -36,7 +36,7 @@ const {
 const ServerProcess = require('../server-process');
 const detect = require('detect-port');
 const { watchPublicFolder } = require('./utils/assets');
-const rootApp = require('yoshi-helpers/root-app');
+const rootApp = require('yoshi-config/root-app');
 
 const host = '0.0.0.0';
 

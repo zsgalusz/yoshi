@@ -22,7 +22,7 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const HtmlPolyfillPlugin = require('./html-polyfill-plugin');
 const { localIdentName } = require('../src/constants');
 const EnvirnmentMarkPlugin = require('../src/webpack-plugins/environment-mark-plugin');
-const rootApp = require('yoshi-helpers/root-app');
+const rootApp = require('yoshi-config/root-app');
 const {
   shouldDeployToCDN,
   isSingleEntry,

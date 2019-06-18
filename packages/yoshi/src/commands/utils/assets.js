@@ -9,7 +9,7 @@ const { groupBy } = require('lodash');
 const { sync: gzipSize } = require('gzip-size');
 const { getProjectArtifactVersion } = require('yoshi-helpers/utils');
 const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
-const rootApp = require('yoshi-helpers/root-app');
+const rootApp = require('yoshi-config/root-app');
 const chokidar = require('chokidar');
 const {
   createClientWebpackConfig,
