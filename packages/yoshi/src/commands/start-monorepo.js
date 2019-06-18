@@ -6,5 +6,5 @@ const [, appName] = process.argv.slice(2);
 const app = apps.find(lernaApp => lernaApp.name === appName);
 
 module.exports = async () => {
-  return startApp(app);
+  return startApp({ app });
 };

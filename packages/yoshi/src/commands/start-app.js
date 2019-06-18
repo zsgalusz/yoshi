@@ -42,7 +42,7 @@ const host = '0.0.0.0';
 
 const https = cliArgs.https || project.servers.cdn.ssl;
 
-module.exports = async (app = rootApp) => {
+module.exports = async ({ app = rootApp }) => {
   // Clean tmp folders
   await Promise.all([fs.emptyDir(app.BUILD_DIR), fs.emptyDir(app.TARGET_DIR)]);
 
