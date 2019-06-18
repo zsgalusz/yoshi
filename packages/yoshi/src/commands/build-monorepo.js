@@ -63,12 +63,13 @@ module.exports = async () => {
     console.log(chalk.bold.underline(app.name));
     console.log();
 
-    const stats = [
-      webpackStats.stats[index * 3 + 1],
-      webpackStats.stats[index * 3 + 2],
-    ];
+    const clientOptimizedStats = webpackStats.stats[index * 3 + 1];
+    const serverStats = webpackStats.stats[index * 3 + 2];
 
-    printBuildResult({ app, webpackStats: stats });
+    printBuildResult({
+      app,
+      webpackStats: [clientOptimizedStats, serverStats],
+    });
 
     console.log();
   });

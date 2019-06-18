@@ -70,16 +70,14 @@ module.exports = async () => {
     serverConfig,
   ]);
 
-  const clientOptimizedStats = webpackStats.stats[1];
+  const [, clientOptimizedStats, serverStats] = webpackStats.stats;
 
   // Generate `manifest.[version].json` from optimized webpack bundle
   if (inTeamCity) {
     await writeManifest(clientOptimizedConfig, clientOptimizedStats);
   }
 
-  const stats = [webpackStats.stats[1], webpackStats.stats[2]];
-
-  printBuildResult({ webpackStats: stats });
+  printBuildResult({ webpackStats: [clientOptimizedStats, serverStats] });
   printBundleSizeSuggestion();
 
   if (cliArgs.stats) {
