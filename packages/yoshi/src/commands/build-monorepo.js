@@ -8,7 +8,7 @@ const cliArgs = parseArgs(process.argv.slice(2));
 const fs = require('fs-extra');
 const chalk = require('chalk');
 const execa = require('execa');
-const { apps, libs, pkgs } = require('yoshi-helpers/monorepo');
+const { apps, libs, pkgs } = require('yoshi-config/monorepo');
 const {
   runWebpack,
   printBundleSizeSuggestion,

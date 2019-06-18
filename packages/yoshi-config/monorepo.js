@@ -1,7 +1,7 @@
 const execa = require('execa');
 const { partition } = require('lodash');
-const { getPaths } = require('yoshi-config/paths');
-const loadConfig = require('yoshi-config/loadConfig');
+const { getPaths } = require('./paths');
+const loadConfig = require('./loadConfig');
 
 const { stdout } = execa.shellSync('npx lerna list --all --json');
 
