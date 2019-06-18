@@ -3,17 +3,16 @@ const path = require('path');
 const fs = require('fs-extra');
 const { chunk } = require('lodash');
 const { inTeamCity: checkInTeamCity } = require('yoshi-helpers/queries');
+const { writeManifest, copyTemplates, runWebpack } = require('./assets');
 const {
-  writeManifest,
-  copyTemplates,
-  createAppWebpackConfigs,
-  runWebpack,
-} = require('./assets');
+  createClientWebpackConfig,
+  createServerWebpackConfig,
+} = require('../../../config/webpack.config');
 const wixDepCheck = require('../../tasks/dep-check');
 
 const inTeamCity = checkInTeamCity();
 
-async function buildApps({ apps, cliArgs }) {
+async function buildApps(apps, options) {
   // Clean tmp folders
   await Promise.all(
     apps.reduce((acc, app) => {
@@ -60,11 +59,26 @@ async function buildApps({ apps, cliArgs }) {
 
   // Build apps
   const webpackConfigs = apps.reduce((acc, app) => {
-    const [
-      clientDebugConfig,
-      clientOptimizedConfig,
-      serverConfig,
-    ] = createAppWebpackConfigs({ app, cliArgs });
+    const clientDebugConfig = createClientWebpackConfig({
+      app,
+      isDebug: true,
+      isAnalyze: false,
+      isHmr: false,
+      withLocalSourceMaps: options['source-map'],
+    });
+
+    const clientOptimizedConfig = createClientWebpackConfig({
+      app,
+      isDebug: false,
+      isAnalyze: options.analyze,
+      isHmr: false,
+      withLocalSourceMaps: options['source-map'],
+    });
+
+    const serverConfig = createServerWebpackConfig({
+      app,
+      isDebug: true,
+    });
 
     return [...acc, clientDebugConfig, clientOptimizedConfig, serverConfig];
   }, []);
@@ -90,7 +104,7 @@ async function buildApps({ apps, cliArgs }) {
   }
 
   // Write a Webpack stats file
-  if (cliArgs.stats) {
+  if (options.stats) {
     await Promise.all(
       apps.map(async (app, index) => {
         const [, clientOptimizedStats] = webpackObj.stats[index];

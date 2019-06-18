@@ -11,10 +11,6 @@ const { getProjectArtifactVersion } = require('yoshi-helpers/utils');
 const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 const rootApp = require('yoshi-config/root-app');
 const chokidar = require('chokidar');
-const {
-  createClientWebpackConfig,
-  createServerWebpackConfig,
-} = require('../../../config/webpack.config');
 
 function printBundleSizeSuggestion() {
   console.log(chalk.dim('    Interested in reducing your bundle size?'));
@@ -37,31 +33,6 @@ function printBuildResult({ app = rootApp, webpackStats }) {
 
   printStatsResult(clientAssets, 'cyan');
   printStatsResult(serverAssets, 'yellow');
-}
-
-function createAppWebpackConfigs({ app = rootApp, cliArgs }) {
-  const clientDebugConfig = createClientWebpackConfig({
-    app,
-    isDebug: true,
-    isAnalyze: false,
-    isHmr: false,
-    withLocalSourceMaps: cliArgs['source-map'],
-  });
-
-  const clientOptimizedConfig = createClientWebpackConfig({
-    app,
-    isDebug: false,
-    isAnalyze: cliArgs.analyze,
-    isHmr: false,
-    withLocalSourceMaps: cliArgs['source-map'],
-  });
-
-  const serverConfig = createServerWebpackConfig({
-    app,
-    isDebug: true,
-  });
-
-  return [clientDebugConfig, clientOptimizedConfig, serverConfig];
 }
 
 async function copyTemplates(app = rootApp) {
@@ -221,6 +192,5 @@ module.exports = {
   writeManifest,
   watchPublicFolder,
   copyTemplates,
-  createAppWebpackConfigs,
   printBundleSizeSuggestion,
 };

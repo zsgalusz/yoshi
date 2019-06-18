@@ -16,10 +16,10 @@ const buildLibs = require('./utils/build-libs');
 
 module.exports = async () => {
   // Build all libs
-  await buildLibs({ libs });
+  await buildLibs(libs);
 
   // Build all apps;
-  const { webpackObj } = await buildApps({ apps, cliArgs });
+  const { webpackObj } = await buildApps(apps, cliArgs);
 
   // Print a nice output
   apps.forEach((app, index) => {

@@ -4,7 +4,7 @@ const execa = require('execa');
 const chalk = require('chalk');
 const globby = require('globby');
 
-async function buildLibs({ libs }) {
+async function buildLibs(libs) {
   // Clean tmp folders
   await Promise.all(
     libs.map(app => {
