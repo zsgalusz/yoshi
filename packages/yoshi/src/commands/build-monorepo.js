@@ -37,9 +37,7 @@ module.exports = async () => {
   const scopeFlags = libs.map(lib => `--scope=${lib.name}`);
 
   try {
-    await execa.shell(`npx lerna exec ${scopeFlags.join(' ')} -- npx tsc`, {
-      stdio: 'inherit',
-    });
+    await execa.shell(`npx lerna exec ${scopeFlags.join(' ')} -- npx tsc`);
   } catch (error) {
     console.log(chalk.red('Failed to compile.\n'));
     console.error(error.stack);
