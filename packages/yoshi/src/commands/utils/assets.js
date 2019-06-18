@@ -51,6 +51,7 @@ function createAppWebpackConfigs({ app = rootApp, cliArgs }) {
   const clientOptimizedConfig = createClientWebpackConfig({
     app,
     isDebug: false,
+    isAnalyze: cliArgs.analyze,
     isHmr: false,
     withLocalSourceMaps: cliArgs['source-map'],
   });
