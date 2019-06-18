@@ -12,7 +12,6 @@ function getPaths(ROOT_DIR) {
   const ASSETS_DIR = path.join(STATICS_DIR, 'assets');
 
   const LERNA_JSON = findUp.sync('lerna.json');
-  const MONOREPO_ROOT = LERNA_JSON && path.dirname(LERNA_JSON);
 
   const NODE_PLATFORM_DEFAULT_CONFIGS_DIR = resolvePath('test/configs');
 
@@ -35,7 +34,6 @@ function getPaths(ROOT_DIR) {
     SERVER_LOG_FILE,
 
     LERNA_JSON,
-    MONOREPO_ROOT,
 
     NODE_PLATFORM_DEFAULT_CONFIGS_DIR,
   };

@@ -889,7 +889,7 @@ function createServerWebpackConfig({
       // Treat monorepo (hoisted) dependencies as external
       rootApp.experimentalMonorepo &&
         nodeExternals({
-          modulesDir: path.resolve(app.MONOREPO_ROOT, 'node_modules'),
+          modulesDir: path.resolve(app.ROOT_DIR, 'node_modules'),
         }),
     ].filter(Boolean),
 
