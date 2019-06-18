@@ -179,20 +179,6 @@ async function writeManifest(config, stats, app = rootApp) {
   );
 }
 
-function copyLibraryAssets(lib) {
-  const assets = globby.sync('src/**/*', {
-    cwd: lib.ROOT_DIR,
-    ignore: ['**/*.js', '**/*.ts', '**/*.tsx', '**/*.json'],
-  });
-
-  assets.forEach(assetPath => {
-    const dirname = path.join(lib.BUILD_DIR, assetPath);
-
-    fs.ensureDirSync(path.dirname(dirname));
-    fs.copyFileSync(path.join(lib.ROOT_DIR, assetPath), dirname);
-  });
-}
-
 async function runWebpack(configs) {
   try {
     const compiler = webpack(configs);
@@ -235,7 +221,6 @@ module.exports = {
   writeManifest,
   watchPublicFolder,
   copyTemplates,
-  copyLibraryAssets,
   createAppWebpackConfigs,
   printBundleSizeSuggestion,
 };

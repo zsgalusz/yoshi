@@ -21,5 +21,4 @@ const [apps, libs] = partition(pkgs, pkg => pkg.private);
 module.exports = {
   apps,
   libs,
-  pkgs,
 };
