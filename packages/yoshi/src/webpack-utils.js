@@ -4,7 +4,6 @@ const webpack = require('webpack');
 const clearConsole = require('react-dev-utils/clearConsole');
 const { prepareUrls } = require('react-dev-utils/WebpackDevServerUtils');
 const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
-const project = require('yoshi-config');
 const rootApp = require('yoshi-config/root-app');
 const { PORT } = require('./constants');
 const { redirectMiddleware } = require('../src/tasks/cdn/server-api');
@@ -48,7 +47,7 @@ function createCompiler(config, { https }) {
         const devServerUrls = prepareUrls(
           https ? 'https' : 'http',
           '0.0.0.0',
-          project.servers.cdn.port,
+          rootApp.servers.cdn.port,
         );
 
         console.log();
@@ -171,11 +170,11 @@ function createDevServer(
     overlay: true,
     // https://github.com/wix/yoshi/pull/1191
     allowedHosts: ['.wix.com', '.wixsite.com'],
-    before(server) {
+    before(expressApp) {
       // Send cross origin headers
-      server.use(cors());
+      expressApp.use(cors());
       // Redirect `.min.(js|css)` to `.(js|css)`
-      server.use(redirectMiddleware(host, project.servers.cdn.port));
+      expressApp.use(redirectMiddleware(host, rootApp.servers.cdn.port));
     },
   });
 
