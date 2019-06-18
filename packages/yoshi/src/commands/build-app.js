@@ -13,7 +13,7 @@ const {
 } = require('./utils/assets');
 
 module.exports = async () => {
-  const { webpackObj } = await buildApps({ apps: [rootApp] });
+  const { webpackObj } = await buildApps({ apps: [rootApp], cliArgs });
 
   const [, clientOptimizedStats, serverStats] = webpackObj.stats;
 
