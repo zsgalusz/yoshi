@@ -11,6 +11,42 @@ const WebpackDevServer = require('webpack-dev-server');
 
 const isInteractive = process.stdout.isTTY;
 
+async function runWebpack(configs) {
+  try {
+    const compiler = webpack(configs);
+
+    const webpackStats = await new Promise((resolve, reject) => {
+      compiler.run((err, stats) => (err ? reject(err) : resolve(stats)));
+    });
+
+    const messages = formatWebpackMessages(webpackStats.toJson({}, true));
+
+    if (messages.errors.length) {
+      // Only keep the first error. Others are often indicative
+      // of the same problem, but confuse the reader with noise.
+      if (messages.errors.length > 1) {
+        messages.errors.length = 1;
+      }
+
+      throw new Error(messages.errors.join('\n\n'));
+    }
+
+    if (messages.warnings.length) {
+      console.log(chalk.yellow('Compiled with warnings.\n'));
+      console.log(messages.warnings.join('\n\n'));
+    } else {
+      console.log(chalk.green('Compiled successfully.\n'));
+    }
+
+    return webpackStats;
+  } catch (error) {
+    console.log(chalk.red('Failed to compile.\n'));
+    console.error(error.message || error);
+
+    process.exit(1);
+  }
+}
+
 function createCompiler(config, { https }) {
   let compiler;
 
@@ -196,6 +232,7 @@ function waitForCompilation(compiler) {
 }
 
 module.exports = {
+  runWebpack,
   createDevServer,
   createCompiler,
   waitForCompilation,

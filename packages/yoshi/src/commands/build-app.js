@@ -10,7 +10,7 @@ const buildApps = require('./utils/build-apps');
 const {
   printBundleSizeSuggestion,
   printBuildResult,
-} = require('./utils/assets');
+} = require('./utils/print-build-results');
 
 module.exports = async () => {
   const { webpackObj } = await buildApps([rootApp], cliArgs);

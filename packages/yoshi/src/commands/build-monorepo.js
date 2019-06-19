@@ -10,7 +10,7 @@ const { apps, libs } = require('yoshi-config/monorepo');
 const {
   printBundleSizeSuggestion,
   printBuildResult,
-} = require('./utils/assets');
+} = require('./utils/print-build-results');
 const buildApps = require('./utils/build-apps');
 const buildLibs = require('./utils/build-libs');
 

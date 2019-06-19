@@ -3,7 +3,9 @@ const path = require('path');
 const fs = require('fs-extra');
 const { chunk } = require('lodash');
 const { inTeamCity: checkInTeamCity } = require('yoshi-helpers/queries');
-const { writeManifest, copyTemplates, runWebpack } = require('./assets');
+const { copyTemplates } = require('./copy-assets');
+const writeManifest = require('./write-manifest');
+const { runWebpack } = require('../../webpack-utils');
 const {
   createClientWebpackConfig,
   createServerWebpackConfig,
@@ -12,7 +14,7 @@ const wixDepCheck = require('../../tasks/dep-check');
 
 const inTeamCity = checkInTeamCity();
 
-async function buildApps(apps, options) {
+module.exports = async function buildApps(apps, options) {
   // Clean tmp folders
   await Promise.all(
     apps.reduce((acc, app) => {
@@ -118,6 +120,4 @@ async function buildApps(apps, options) {
   return {
     webpackObj,
   };
-}
-
-module.exports = buildApps;
+};
