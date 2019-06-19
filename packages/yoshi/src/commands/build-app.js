@@ -15,7 +15,7 @@ const {
 module.exports = async () => {
   const { webpackObj } = await buildApps([rootApp], cliArgs);
 
-  const [, clientOptimizedStats, serverStats] = webpackObj.stats;
+  const [, clientOptimizedStats, serverStats] = webpackObj.stats[0];
 
   printBuildResult({ webpackStats: [clientOptimizedStats, serverStats] });
   printBundleSizeSuggestion();
