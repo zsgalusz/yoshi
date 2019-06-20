@@ -34,7 +34,7 @@ const {
   TARGET_DIR,
   ROOT_DIR,
 } = require('yoshi-config/paths');
-const { PORT } = require('../constants');
+const { PORT, isInteractive } = require('../constants');
 const {
   createClientWebpackConfig,
   createServerWebpackConfig,
@@ -212,14 +212,16 @@ module.exports = async () => {
 };
 
 function onKeyPress(key, cb) {
-  readline.emitKeypressEvents(process.stdin);
-  process.stdin.setRawMode(true);
-  process.stdin.on('keypress', char => {
-    // ctrl-c
-    if (char === '\u0003') {
-      process.kill(process.pid);
-    } else if (char.toLowerCase() === key.toLowerCase()) {
-      cb();
-    }
-  });
+  if (isInteractive) {
+    readline.emitKeypressEvents(process.stdin);
+    process.stdin.setRawMode(true);
+    process.stdin.on('keypress', char => {
+      // ctrl-c
+      if (char === '\u0003') {
+        process.kill(process.pid);
+      } else if (char.toLowerCase() === key.toLowerCase()) {
+        cb();
+      }
+    });
+  }
 }

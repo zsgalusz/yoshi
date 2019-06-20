@@ -6,11 +6,9 @@ const { prepareUrls } = require('react-dev-utils/WebpackDevServerUtils');
 const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 const project = require('yoshi-config');
 const { STATICS_DIR } = require('yoshi-config/paths');
-const { PORT } = require('./constants');
+const { PORT, isInteractive } = require('./constants');
 const { redirectMiddleware } = require('../src/tasks/cdn/server-api');
 const WebpackDevServer = require('webpack-dev-server');
-
-const isInteractive = process.stdout.isTTY;
 
 function createCompiler(config, { https }) {
   let compiler;
