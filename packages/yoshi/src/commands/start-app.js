@@ -25,6 +25,8 @@ const chalk = require('chalk');
 const openBrowser = require('./utils/open-browser');
 const chokidar = require('chokidar');
 const project = require('yoshi-config');
+const launchEditor = require('react-dev-utils/launchEditor');
+const readline = require('readline');
 const {
   BUILD_DIR,
   PUBLIC_DIR,
@@ -172,6 +174,9 @@ module.exports = async () => {
     process.exit(1);
   }
 
+  console.log(chalk.white.bold(`To open this project in your code editor press ${chalk.cyan('E')}\n`));
+  onKeyPress('e', () => launchEditor(process.cwd(), 1, 1));
+
   ['SIGINT', 'SIGTERM'].forEach(sig => {
     process.on(sig, () => {
       serverProcess.end();
@@ -205,3 +210,17 @@ module.exports = async () => {
     persistent: true,
   };
 };
+
+
+function onKeyPress(key, cb) {
+  readline.emitKeypressEvents(process.stdin);
+  process.stdin.setRawMode(true);
+  process.stdin.on('keypress', char => {
+    // ctrl-c
+    if (char === '\u0003') {
+      process.kill(process.pid);
+    } else if (char.toLowerCase() === key.toLowerCase()) {
+      cb();
+    }
+  });
+}
