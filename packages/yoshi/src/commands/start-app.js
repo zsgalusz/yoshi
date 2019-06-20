@@ -32,6 +32,7 @@ const {
   PUBLIC_DIR,
   ASSETS_DIR,
   TARGET_DIR,
+  ROOT_DIR,
 } = require('yoshi-config/paths');
 const { PORT } = require('../constants');
 const {
@@ -174,8 +175,7 @@ module.exports = async () => {
     process.exit(1);
   }
 
-  console.log(chalk.white.bold(`To open this project in your code editor press ${chalk.cyan('E')}\n`));
-  onKeyPress('e', () => launchEditor(process.cwd(), 1, 1));
+  onKeyPress('e', () => launchEditor(ROOT_DIR, 1 /* row */, 1 /* col */));
 
   ['SIGINT', 'SIGTERM'].forEach(sig => {
     process.on(sig, () => {
