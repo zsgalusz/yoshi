@@ -19,13 +19,16 @@ if (cliArgs.production) {
   process.env.NODE_ENV = 'production';
 }
 
-const { apps } = require('yoshi-config/monorepo');
+const loadPackages = require('yoshi-config/load-packages');
 const startSingleApp = require('./utils/start-single-app');
 
 const [, appName] = process.argv.slice(2);
-const app = apps.find(lernaApp => lernaApp.name === appName);
 
 module.exports = async () => {
+  const { apps } = await loadPackages();
+
+  const app = apps.find(lernaApp => lernaApp.name === appName);
+
   await startSingleApp(app, cliArgs);
 
   return {

@@ -6,7 +6,7 @@ const parseArgs = require('minimist');
 const cliArgs = parseArgs(process.argv.slice(2));
 
 const chalk = require('chalk');
-const { apps, libs } = require('yoshi-config/monorepo');
+const loadPackages = require('yoshi-config/load-packages');
 const {
   printBundleSizeSuggestion,
   printBuildResult,
@@ -15,6 +15,8 @@ const buildApps = require('./utils/build-apps');
 const buildLibs = require('./utils/build-libs');
 
 module.exports = async () => {
+  const { apps, libs } = await loadPackages();
+
   // Build all libs
   await buildLibs(libs);
 
