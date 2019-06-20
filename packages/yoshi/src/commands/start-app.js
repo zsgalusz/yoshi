@@ -211,7 +211,6 @@ module.exports = async () => {
   };
 };
 
-
 function onKeyPress(key, cb) {
   readline.emitKeypressEvents(process.stdin);
   process.stdin.setRawMode(true);

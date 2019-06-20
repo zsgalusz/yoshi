@@ -95,7 +95,11 @@ function createCompiler(config, { https }) {
         );
         console.log();
 
-        console.log(chalk.white.bold(`To open this project in your code editor press ${chalk.cyan('E')}`));
+        console.log(
+          chalk.white.bold(
+            `To open this project in your code editor press ${chalk.cyan('E')}`
+          )
+        );
         console.log();
       }
     }
