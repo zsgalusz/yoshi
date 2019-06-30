@@ -1,6 +1,6 @@
 {
   "name": "yoshi",
-  "version": "2.16.6",
+  "version": "2.16.7",
   "main": "./src/index.js",
   "bin": {
     "yoshi": "./bin/yoshi.js"
@@ -106,13 +106,13 @@
     "style-loader": "~0.18.2",
     "svg-inline-loader": "~0.8.0",
     "terminal-link": "^1.1.0",
+    "terser-webpack-plugin": "1.2.4",
     "thread-loader": "^1.1.4",
     "ts-loader": "^4.1.0",
     "ts-node": "~3.3.0",
     "tslint-config-wix": "^1.0.30",
     "url-loader": "~0.5.9",
     "webpack": "^4.1.1",
-    "terser-webpack-plugin": "1.2.4",
     "webpack-bundle-analyzer": "~2.8.3",
     "webpack-dev-middleware": "~2.0.5",
     "webpack-hot-client": "^3.0.0",
