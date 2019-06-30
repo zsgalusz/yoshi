@@ -112,6 +112,7 @@
     "tslint-config-wix": "^1.0.30",
     "url-loader": "~0.5.9",
     "webpack": "^4.1.1",
+    "terser-webpack-plugin": "1.2.4",
     "webpack-bundle-analyzer": "~2.8.3",
     "webpack-dev-middleware": "~2.0.5",
     "webpack-hot-client": "^3.0.0",
