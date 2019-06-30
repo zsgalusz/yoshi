@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.16.7 (2019-06-30)
+
+#### :bug: Bug
+
+- `yoshi`
+  - [#1418](https://github.com/wix/yoshi/pull/1418) Lock `terser-webpack-plugin` ([@ronami](https://github.com/ronami))
+
 ## 2.16.6 (Feb 24, 2019)
 
 #### :bug: Bug
