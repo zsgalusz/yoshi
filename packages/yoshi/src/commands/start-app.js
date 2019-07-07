@@ -124,7 +124,8 @@ module.exports = async () => {
 
   // Start up server process
   const serverProcess = new ServerProcess({
-    serverFilePath: cliArgs.server,
+    // serverFilePath: cliArgs.server,
+    serverFilePath: require.resolve('yoshi-server/build/indexDev'),
     hmrPort,
   });
 

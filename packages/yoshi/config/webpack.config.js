@@ -29,6 +29,9 @@ const {
   STATICS_DIR,
   TSCONFIG_FILE,
   MONOREPO_ROOT,
+  API_DIR,
+  TEMPLATES_DIR,
+  TEMPLATES_BUILD_DIR,
 } = require('yoshi-config/paths');
 const project = require('yoshi-config');
 const {
@@ -89,14 +92,6 @@ if (!inTeamCity || isDevelopment) {
 // The path is created using artifactName from pom.xml and artifact version from an environment param.
 if (shouldDeployToCDN()) {
   publicPath = getProjectCDNBasePath();
-}
-
-function exists(entry) {
-  return (
-    globby.sync(`${entry}(${extensions.join('|')})`, {
-      cwd: SRC_DIR,
-    }).length > 0
-  );
 }
 
 function addHashToAssetName(name, hash = 'contenthash:8') {
@@ -165,8 +160,6 @@ const splitChunksConfig = isObject(useSplitChunks)
 const entry = project.entry || defaultEntry;
 
 const webWorkerEntry = project.webWorkerEntry;
-
-const possibleServerEntries = ['./server', '../dev/server'];
 
 // Common function to get style loaders
 const getStyleLoaders = ({
@@ -665,18 +658,18 @@ function createClientWebpackConfig({
         ? [
             ...globby
               .sync('**/*.+(ejs|vm)', {
-                cwd: SRC_DIR,
+                cwd: TEMPLATES_DIR,
                 absolute: true,
-                ignore: ['**/assets/**'],
               })
               .map(templatePath => {
                 const basename = path.basename(templatePath);
+                const filename = path.resolve(TEMPLATES_BUILD_DIR, basename);
 
                 return new HtmlWebpackPlugin({
                   // Generate a `filename.debug.ejs` for non-minified compilation
                   filename: isDebug
-                    ? prependNameWith(basename, 'debug')
-                    : prependNameWith(basename, 'prod'),
+                    ? prependNameWith(filename, 'debug')
+                    : prependNameWith(filename, 'prod'),
                   // Only use chunks from the entry with the same name as the template
                   // file
                   chunks: [basename.replace(/\.[0-9a-z]+$/i, '')],
@@ -829,9 +822,14 @@ function createServerWebpackConfig({
 
     target: 'node',
 
-    entry: {
-      server: possibleServerEntries.find(exists) || possibleServerEntries[0],
-    },
+    entry: globby
+      .sync('**/*.(js|ts)', { cwd: API_DIR, absolute: true })
+      .reduce((acc, filepath) => {
+        return {
+          ...acc,
+          [path.relative(SRC_DIR, filepath).replace(/\.[^/.]+$/, '')]: filepath,
+        };
+      }, {}),
 
     output: {
       ...config.output,
@@ -946,9 +944,9 @@ function createServerWebpackConfig({
     devtool: 'cheap-module-inline-source-map',
   };
 
-  if (isHmr) {
-    addEntry(serverConfig, [`${require.resolve('./hot')}?${hmrPort}`]);
-  }
+  // if (isHmr) {
+  //   addEntry(serverConfig, [`${require.resolve('./hot')}?${hmrPort}`]);
+  // }
 
   return serverConfig;
 }
