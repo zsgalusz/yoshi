@@ -2,10 +2,10 @@ const fs = require('fs');
 const pick = require('lodash/pick');
 const chalk = require('chalk');
 const globby = require('globby');
-const { envs, supportedEnvs, withLatestJSDom } = require('./constants');
 const { setupRequireHooks } = require('yoshi-helpers/require-hooks');
 const globs = require('yoshi-config/globs');
 const loadJestYoshiConfig = require('yoshi-config/jest');
+const { envs, supportedEnvs, withLatestJSDom } = require('./constants');
 
 // the user's config is loaded outside of a jest runtime and should be transpiled
 // with babel/typescript, this may be run separately for every worker

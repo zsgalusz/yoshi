@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { LaunchOptions } from 'puppeteer';
 
-type BootstrapSetupOptions = {
+export type BootstrapSetupOptions = {
   globalObject: any;
   getPort: () => number;
   staticsUrl: string;
@@ -10,7 +10,7 @@ type BootstrapSetupOptions = {
   appPersistentDir: string;
 };
 
-type BootstrapTeardownOptions = {
+export type BootstrapTeardownOptions = {
   globalObject: any;
 };
 

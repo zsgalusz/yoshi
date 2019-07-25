@@ -1,8 +1,8 @@
-const fs = require('fs-extra');
-const puppeteer = require('puppeteer');
-const { WS_ENDPOINT_PATH } = require('./constants');
-const { setupRequireHooks } = require('yoshi-helpers/require-hooks');
-const loadJestYoshiConfig = require('yoshi-config/jest');
+import fs from 'fs-extra';
+import puppeteer from 'puppeteer';
+import {setupRequireHooks} from 'yoshi-helpers/require-hooks';
+import loadJestYoshiConfig from 'yoshi-config/jest';
+import {WS_ENDPOINT_PATH} from './constants';
 
 // the user's config is loaded outside of a jest runtime and should be transpiled
 // with babel/typescript, this may be run separately for every worker
@@ -10,11 +10,11 @@ setupRequireHooks();
 
 const jestYoshiConfig = loadJestYoshiConfig();
 
-const ParentEnvironment = jestYoshiConfig.bootstrap
-  ? require('../jest-environment-yoshi-bootstrap')
-  : require('jest-environment-node');
+const ParentEnvironment = !jestYoshiConfig.bootstrap
+  ? require('jest-environment-node')
+  : require('../jest-environment-yoshi-bootstrap');
 
-module.exports = class PuppeteerEnvironment extends ParentEnvironment {
+export default class PuppeteerEnvironment extends ParentEnvironment {
   async setup() {
     await super.setup();
 
@@ -34,7 +34,7 @@ module.exports = class PuppeteerEnvironment extends ParentEnvironment {
 
     this.global.page.setDefaultNavigationTimeout(5000);
 
-    this.global.page.on('pageerror', error => {
+    this.global.page.on('pageerror', (error: any) => {
       console.warn(`Puppeteer page error: ${error.message}`);
       console.warn(error.stack);
     });

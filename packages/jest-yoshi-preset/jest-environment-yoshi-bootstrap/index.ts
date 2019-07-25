@@ -1,14 +1,9 @@
-const NodeEnvironment = require('jest-environment-node');
-const {
-  getPort,
-  appConfDir,
-  appLogDir,
-  appPersistentDir,
-} = require('./constants');
-const projectConfig = require('yoshi-config');
-const { getEnvVars } = require('yoshi-helpers/bootstrap-utils');
+import NodeEnvironment from 'jest-environment-node';
+import projectConfig from 'yoshi-config';
+import {getEnvVars} from 'yoshi-helpers/bootstrap-utils';
+import {getPort, appConfDir, appLogDir, appPersistentDir} from './constants';
 
-module.exports = class BootstrapEnvironment extends NodeEnvironment {
+export default class BootstrapEnvironment extends NodeEnvironment {
   async setup() {
     await super.setup();
 
