@@ -3,7 +3,7 @@ import projectConfig from 'yoshi-config';
 import { getEnvVars } from 'yoshi-helpers/bootstrap-utils';
 import { getPort, appConfDir, appLogDir, appPersistentDir } from './constants';
 
-export default class BootstrapEnvironment extends NodeEnvironment {
+class BootstrapEnvironment extends NodeEnvironment {
   async setup() {
     await super.setup();
 
@@ -55,3 +55,5 @@ export default class BootstrapEnvironment extends NodeEnvironment {
     }
   }
 }
+
+export = BootstrapEnvironment;

@@ -1,5 +1,5 @@
 import globby from 'globby';
-import globs from 'yoshi-config/globs';
+import * as globs from 'yoshi-config/globs';
 
 const { MATCH_ENV } = process.env;
 

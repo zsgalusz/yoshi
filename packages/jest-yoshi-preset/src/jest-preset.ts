@@ -1,9 +1,10 @@
+import * as globs from 'yoshi-config/globs';
+
 const fs = require('fs');
 const pick = require('lodash/pick');
 const chalk = require('chalk');
 const globby = require('globby');
 const { setupRequireHooks } = require('yoshi-helpers/require-hooks');
-const globs = require('yoshi-config/globs');
 const loadJestYoshiConfig = require('yoshi-config/jest');
 const { envs, supportedEnvs, withLatestJSDom } = require('./constants');
 
@@ -39,7 +40,7 @@ const supportedGlobalOverrideKeys = [
 
 const globalValidOverrides = pick(jestYoshiConfig, supportedGlobalOverrideKeys);
 
-const config = {
+export = {
   globalSetup: require.resolve(
     './jest-environment-yoshi-puppeteer/globalSetup',
   ),
@@ -167,5 +168,3 @@ const config = {
     },
   ],
 };
-
-module.exports = config;

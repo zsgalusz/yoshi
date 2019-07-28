@@ -14,7 +14,7 @@ const ParentEnvironment = !jestYoshiConfig.bootstrap
   ? require('jest-environment-node')
   : require('../jest-environment-yoshi-bootstrap');
 
-export default class PuppeteerEnvironment extends ParentEnvironment {
+class PuppeteerEnvironment extends ParentEnvironment {
   async setup() {
     await super.setup();
 
@@ -45,3 +45,4 @@ export default class PuppeteerEnvironment extends ParentEnvironment {
     await super.teardown();
   }
 }
+export = PuppeteerEnvironment;
