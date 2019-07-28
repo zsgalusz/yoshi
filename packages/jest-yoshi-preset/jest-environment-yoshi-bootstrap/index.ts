@@ -1,7 +1,7 @@
 import NodeEnvironment from 'jest-environment-node';
 import projectConfig from 'yoshi-config';
-import {getEnvVars} from 'yoshi-helpers/bootstrap-utils';
-import {getPort, appConfDir, appLogDir, appPersistentDir} from './constants';
+import { getEnvVars } from 'yoshi-helpers/bootstrap-utils';
+import { getPort, appConfDir, appLogDir, appPersistentDir } from './constants';
 
 export default class BootstrapEnvironment extends NodeEnvironment {
   async setup() {
@@ -54,4 +54,4 @@ export default class BootstrapEnvironment extends NodeEnvironment {
       throw error;
     }
   }
-};
+}

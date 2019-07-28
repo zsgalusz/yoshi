@@ -11,13 +11,13 @@ import chalk from 'chalk';
 import puppeteer from 'puppeteer';
 import waitPort from 'wait-port';
 import config from 'yoshi-config';
-import {shouldDeployToCDN} from 'yoshi-helpers/queries';
-import {getProcessOnPort} from 'yoshi-helpers/utils';
-import {setupRequireHooks} from 'yoshi-helpers/require-hooks';
+import { shouldDeployToCDN } from 'yoshi-helpers/queries';
+import { getProcessOnPort } from 'yoshi-helpers/utils';
+import { setupRequireHooks } from 'yoshi-helpers/require-hooks';
 import loadJestYoshiConfig from 'yoshi-config/jest';
-import {WS_ENDPOINT_PATH} from './constants';
+import { WS_ENDPOINT_PATH } from './constants';
 import * as cdnProxy from './cdnProxy';
-import {shouldRunE2Es} from './utils';
+import { shouldRunE2Es } from './utils';
 
 // the user's config is loaded outside of a jest runtime and should be transpiled
 // with babel/typescript, this may be run separately for every worker

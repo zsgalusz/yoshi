@@ -1,5 +1,5 @@
 import startRewriteForwardProxy from 'yoshi-helpers/rewrite-forward-proxy';
-import {getProjectCDNBasePath} from 'yoshi-helpers/utils';
+import { getProjectCDNBasePath } from 'yoshi-helpers/utils';
 import config from 'yoshi-config';
 
 let closeProxy: () => Promise<void>;

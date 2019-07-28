@@ -7,10 +7,14 @@ declare global {
   const page: Page;
   namespace NodeJS {
     interface Global {
-       BROWSER: Browser;
-       SERVER: any;
-       __setup__: undefined | ((setupObject: BootstrapSetupOptions) => Promise<void>);
-       __teardown__: undefined | ((teardownObject: BootstrapTeardownOptions) => Promise<void>);
+      BROWSER: Browser;
+      SERVER: any;
+      __setup__:
+        | undefined
+        | ((setupObject: BootstrapSetupOptions) => Promise<void>);
+      __teardown__:
+        | undefined
+        | ((teardownObject: BootstrapTeardownOptions) => Promise<void>);
     }
   }
 }

@@ -1,8 +1,8 @@
 import fs from 'fs-extra';
-import {killSpawnProcessAndHisChildren} from 'yoshi-helpers/utils';
-import {shouldRunE2Es} from './utils';
+import { killSpawnProcessAndHisChildren } from 'yoshi-helpers/utils';
+import { shouldRunE2Es } from './utils';
 import * as cdnProxy from './cdnProxy';
-import {WS_ENDPOINT_PATH} from './constants';
+import { WS_ENDPOINT_PATH } from './constants';
 
 export default async () => {
   if (await shouldRunE2Es()) {

@@ -1,8 +1,8 @@
 import fs from 'fs-extra';
 import puppeteer from 'puppeteer';
-import {setupRequireHooks} from 'yoshi-helpers/require-hooks';
+import { setupRequireHooks } from 'yoshi-helpers/require-hooks';
 import loadJestYoshiConfig from 'yoshi-config/jest';
-import {WS_ENDPOINT_PATH} from './constants';
+import { WS_ENDPOINT_PATH } from './constants';
 
 // the user's config is loaded outside of a jest runtime and should be transpiled
 // with babel/typescript, this may be run separately for every worker
@@ -44,4 +44,4 @@ export default class PuppeteerEnvironment extends ParentEnvironment {
     await this.global.page.close();
     await super.teardown();
   }
-};
+}
