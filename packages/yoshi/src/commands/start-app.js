@@ -226,9 +226,9 @@ function openEditorByKeyPress() {
     console.log(
       chalk.white.bold(`Choose the editor you wish to open the project in:`),
     );
-    console.log(`1. Visual Studio Code`);
-    console.log(`2. Webstorm`);
-    console.log(`3. Vim`);
+    console.log(`${chalk.cyan(`1`)}. Visual Studio Code`);
+    console.log(`${chalk.cyan(`2`)}. Webstorm`);
+    console.log(`${chalk.cyan(`3`)}. Vim`);
     console.log();
     onKeyPress({
       1: () => openEditor('code'),
