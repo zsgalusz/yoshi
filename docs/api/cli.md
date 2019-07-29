@@ -32,7 +32,15 @@ This will run the specified (server) `entryPoint` file and mount a CDN server.
 
 Entry point for the app.
 
-Default: `./dist/index.js`
+Default: `index.js`
+
+#### `--server`
+
+> An alias for `entry-point` configuration option.
+
+Entry point for the app server. Supported only by [app flow](../guides/app-flow.md).
+
+Default: `index.js`
 
 #### `--manual-restart`
 
@@ -53,6 +61,14 @@ Do not spawn the app server
 Default: `false`
 
 #### `--ssl`
+
+Serve the app bundle on https
+
+Default: `false`
+
+#### `--https`
+
+> An alias for `ssl` configuration option.
 
 Serve the app bundle on https
 
@@ -92,7 +108,7 @@ The following are the default values for the CDN server's port, mount directory 
 
 #### `--url`
 
-> Similar to the `startUrl` configuration option. If both are specificied `--url` will be used.
+> Similar to the `startUrl` configuration option. If both are specified `--url` will be used.
 
 Opens the browser on a supplied url, also supports multiple urls separated by comma.
 
@@ -112,7 +128,7 @@ output webpack stats file to `dist/webpack-stats.json` (see also [bundle analysi
 
 #### `--source-map`
 
-Explictly emit bundle source maps.
+Explicitly emit bundle source maps.
 
 This task will perform the following:
 

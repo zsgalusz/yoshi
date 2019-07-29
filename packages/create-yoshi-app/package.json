@@ -1,6 +1,6 @@
 {
   "name": "create-yoshi-app",
-  "version": "4.9.2",
+  "version": "4.10.4",
   "description": "create yoshi powered apps",
   "keywords": [
     "create",
@@ -15,7 +15,7 @@
   },
   "scripts": {
     "test": "jest",
-    "templates": "DISABLE_SENTRY=1 node scripts/runE2E.js",
+    "templates": "node scripts/runE2E.js",
     "client": "npm run templates -- client client-typescript",
     "fullstack": "npm run templates -- fullstack fullstack-typescript",
     "server": "npm run templates -- server server-typescript",
@@ -45,8 +45,8 @@
     "parse-git-config": "^2.0.2",
     "pascal-case": "^2.0.1",
     "prompts": "^1.1.1",
-    "validate-npm-package-name": "^3.0.0",
-    "yoshi-helpers": "4.9.2"
+    "semver": "^6.1.3",
+    "validate-npm-package-name": "^3.0.0"
   },
   "devDependencies": {
     "chokidar": "^2.0.4",

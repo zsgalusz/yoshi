@@ -5,8 +5,9 @@
     "url": "git+https://github.com/wix/yoshi.git"
   },
   "scripts": {
-    "bootstrap": "lerna bootstrap",
-    "build": ":",
+    "bootstrap": "lerna bootstrap --no-ci",
+    "build": "node scripts/build.js",
+    "watch": "node scripts/build.js --watch",
     "bumpDocs": "npm run version --prefix './website' --",
     "createVersion": "node scripts/createVersion",
     "create-yoshi-app:dev": "npm run dev --prefix ./packages/create-yoshi-app",
@@ -14,16 +15,20 @@
     "changelog": "lerna-changelog",
     "postinstall": "npm run bootstrap",
     "test": ":",
-    "lint": "eslint . --max-warnings 0",
+    "lint": "eslint . --ext js,ts --max-warnings 0",
     "test:unit": "npx jest --config='./jest.unit.config.js'",
-    "test:app-flow": "node scripts/runKitchensink.js",
-    "test:integration": "npm test --prefix ./packages/yoshi",
+    "test:app-flow:js": "FILTER_PROJECT=javascript node scripts/runKitchensink.js",
+    "test:app-flow:ts": "FILTER_PROJECT=typescript node scripts/runKitchensink.js",
     "test:client": "npm run client --prefix ./packages/create-yoshi-app",
     "test:fullstack": "npm run fullstack --prefix ./packages/create-yoshi-app",
     "test:server": "npm run server --prefix ./packages/create-yoshi-app",
     "test:bizmgr": "npm run bizmgr --prefix ./packages/create-yoshi-app",
     "test:library": "npm run library --prefix ./packages/create-yoshi-app",
     "test:ooi": "npm run ooi --prefix ./packages/create-yoshi-app",
+    "test:integration:build": "npm run test:build --prefix ./packages/yoshi",
+    "test:integration:start": "npm run test:start --prefix ./packages/yoshi",
+    "test:integration:test": "npm run test:test --prefix ./packages/yoshi",
+    "test:integration:others": "npm run test:others --prefix ./packages/yoshi",
     "website:dev": "npm start --prefix './website'",
     "test-babel-plugin-transform-hmr-runtime": "npm test --prefix ./packages/babel-plugin-transform-hmr-runtime"
   },
@@ -33,8 +38,8 @@
     }
   },
   "lint-staged": {
-    "*.js": [
-      "eslint"
+    "*.{js,ts}": [
+      "eslint --ext js,ts --max-warnings 0"
     ],
     "*.md": [
       "prettier --write",
@@ -42,15 +47,19 @@
     ]
   },
   "devDependencies": {
+    "@types/jest": "24.0.15",
+    "@typescript-eslint/parser": "^1.10.2",
+    "@typescript-eslint/eslint-plugin": "^1.10.2",
     "async-retry": "^1.2.3",
     "babel-eslint": "^10.0.0",
     "chai": "^4.1.2",
     "chalk": "^2.4.1",
     "cross-spawn": "^6.0.5",
     "eslint": "^5.8.0",
+    "eslint-import-resolver-typescript": "^1.1.1",
     "eslint-plugin-import": "^2.11.0",
     "eslint-plugin-jest": "^22.0.0",
-    "eslint-plugin-jsx-a11y": "^6.1.1",
+    "eslint-plugin-jsx-a11y": "6.2.1",
     "eslint-plugin-prettier": "^3.0.0",
     "eslint-plugin-react": "^7.11.1",
     "eslint-plugin-react-hooks": "^1.6.0",
@@ -66,7 +75,7 @@
     "jest-environment-puppeteer": "^3.4.0",
     "jest-puppeteer": "^3.4.0",
     "jest-teamcity-reporter": "^0.9.0",
-    "lerna": "^2.11.0",
+    "lerna": "^3.15.0",
     "lerna-changelog": "^0.8.0",
     "lint-staged": "^7.2.0",
     "lodash": "^4.17.10",
@@ -83,14 +92,17 @@
     "semver": "^5.5.0",
     "serve": "^10.0.2",
     "shelljs": "^0.8.2",
+    "string-length": "^3.1.0",
     "strip-ansi": "^4.0.0",
     "tempy": "^0.2.1",
     "terminate": "^2.1.0",
+    "ts-jest": "^24.0.2",
     "tslint": "^5.16.0",
     "tslint-plugin-wix-style-react": "^1.0.6",
     "tslint-react-hooks": "^2.1.0",
     "typescript": "^3.0.0",
-    "verdaccio": "^3.8.3",
+    "verdaccio": "^4.0.4",
+    "wait-for-expect": "^1.2.0",
     "wait-port": "^0.2.2"
   },
   "publishConfig": {

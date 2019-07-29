@@ -1,1 +1,1 @@
-module.exports.staticsDomain = 'https://static.parastorage.com/services';
+module.exports = require('./build/constants');

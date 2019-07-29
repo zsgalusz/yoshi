@@ -1,9 +1,10 @@
+require('source-map-support/register');
+
 const prog = require('commander');
 const runCLI = require('../src/cli');
 const { version } = require('../package');
 const infoCommand = require('../src/commands/info');
 const config = require('yoshi-config');
-const { configureSentry, handleError } = require('../src/sentry');
 const chalk = require('chalk');
 const { inTeamCity } = require('yoshi-helpers/queries');
 
@@ -109,13 +110,14 @@ if (config.experimentalMonorepo) {
       "Allow app-server debugging, process won't start until debugger will be attached",
     )
     .option('--ssl', 'Serve the app bundle on https')
+    .option('--https', 'Serve the app bundle on https')
     .action(() => runCLI('start'));
 }
 
 if (config.experimentalMonorepo) {
   prog
     .command('release')
-    .description('Exprimental way to publish a Lerna monorepo in CI')
+    .description('Experimental way to publish a Lerna monorepo in CI')
     .option('--minor', 'bump a minor version instead of a patch')
     .action(() => runCLI('release-monorepo'));
 } else {
@@ -132,12 +134,6 @@ prog
   .command('info')
   .description('Get your local environment information')
   .action(infoCommand);
-
-try {
-  if (!process.env.DISABLE_SENTRY) {
-    configureSentry();
-  }
-} catch (_) {} // ignore errors of configuring sentry
 
 function handleUncaughtError(error) {
   if (prog.verbose || inTeamCity()) {
@@ -158,11 +154,7 @@ function handleUncaughtError(error) {
     console.error(chalk.red(`  ${error.message ? error.message : error}`));
   }
 
-  if (!process.env.DISABLE_SENTRY) {
-    handleError(error);
-  } else {
-    process.exit(1);
-  }
+  process.exit(1);
 }
 
 process.on('unhandledRejection', handleUncaughtError);

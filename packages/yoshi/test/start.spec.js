@@ -123,6 +123,26 @@ describe('Aggregator: Start', () => {
         return checkServerLogContainsJson(expected);
       });
 
+      it('should override default "APP_CONF_DIR" value', () => {
+        const userAppConfDir = './foo/bar';
+        const expected = {
+          APP_CONF_DIR: userAppConfDir,
+        };
+
+        child = test
+          .setup({
+            'src/client.js': '',
+            'index.js': `console.log(JSON.stringify(process.env))`,
+            'package.json': fx.packageJson(),
+            'pom.xml': fx.pom(),
+          })
+          .spawn('start', undefined, {
+            APP_CONF_DIR: userAppConfDir,
+          });
+
+        return checkServerLogContainsJson(expected);
+      });
+
       it('should override values', () => {
         const expected = {
           DEBUG: 'wixstores:*',
@@ -532,18 +552,20 @@ describe('Aggregator: Start', () => {
           return cdnIsServing('assets/test.json', 5005, 'https', { agent });
         });
 
-        it('should enable ssl when ran --ssl', () => {
-          child = test
-            .setup({
-              'src/assets/test.json': '{a: 1}',
-              'src/index.js': 'var a = 1;',
-              'package.json': fx.packageJson({
-                servers: { cdn: { port: 5005, dir: 'dist/statics' } },
-              }),
-            })
-            .spawn('start', '--ssl');
+        ['--ssl', '--https'].forEach(option => {
+          it(`should enable ssl when ran ${option}`, () => {
+            child = test
+              .setup({
+                'src/assets/test.json': '{a: 1}',
+                'src/index.js': 'var a = 1;',
+                'package.json': fx.packageJson({
+                  servers: { cdn: { port: 5005, dir: 'dist/statics' } },
+                }),
+              })
+              .spawn('start', option);
 
-          return cdnIsServing('assets/test.json', 5005, 'https', { agent });
+            return cdnIsServing('assets/test.json', 5005, 'https', { agent });
+          });
         });
       });
     });
@@ -624,7 +646,7 @@ describe('Aggregator: Start', () => {
       });
 
       describe('when using no transpile', () => {
-        it(`should restart server after a file has been changed`, () => {
+        it.skip(`should restart server after a file has been changed`, () => {
           child = test
             .setup({
               'src/server.js': fx.httpServer('hello'),
@@ -718,7 +740,7 @@ describe('Aggregator: Start', () => {
       });
     });
 
-    it('should print application ready message only after the server port is avaialble', async () => {
+    it('should print application ready message only after the server port is available', async () => {
       const port = await detect(3005);
 
       // Intentionally start listening after a timeout, to check that we indeed wait for the port
@@ -758,7 +780,7 @@ describe('Aggregator: Start', () => {
       );
     });
 
-    it('should pring waiting for app server to start message if the server did not start in time', async () => {
+    it('should print waiting for app server to start message if the server did not start in time', async () => {
       const port = await detect(3005);
 
       // Intentionally start listening after a timeout, to check that we indeed wait for the port

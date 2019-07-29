@@ -21,7 +21,7 @@ const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const HtmlPolyfillPlugin = require('./html-polyfill-plugin');
 const { localIdentName } = require('../src/constants');
-const EnvirnmentMarkPlugin = require('../src/webpack-plugins/environment-mark-plugin');
+const EnvironmentMarkPlugin = require('../src/webpack-plugins/environment-mark-plugin');
 const {
   ROOT_DIR,
   SRC_DIR,
@@ -44,7 +44,9 @@ const {
   toIdentifier,
   getProjectArtifactId,
   createBabelConfig,
+  unprocessedModules,
 } = require('yoshi-helpers/utils');
+const { defaultEntry } = require('yoshi-helpers/constants');
 const { addEntry, overrideRules } = require('../src/webpack-utils');
 
 const reScript = /\.js?$/;
@@ -109,6 +111,38 @@ function prependNameWith(filename, prefix) {
   return filename.replace(/\.[0-9a-z]+$/i, match => `.${prefix}${match}`);
 }
 
+function createTerserPlugin() {
+  return new TerserPlugin({
+    // Use multi-process parallel running to improve the build speed
+    // Default number of concurrent runs: os.cpus().length - 1
+    parallel: true,
+    // Enable file caching
+    cache: true,
+    sourceMap: true,
+    terserOptions: {
+      output: {
+        // support emojis
+        ascii_only: true,
+      },
+      keep_fnames: project.keepFunctionNames,
+    },
+  });
+}
+
+function createDefinePlugin(isDebug) {
+  // https://webpack.js.org/plugins/define-plugin/
+  return new webpack.DefinePlugin({
+    'process.env.NODE_ENV': JSON.stringify(
+      isProduction ? 'production' : 'development',
+    ),
+    'process.env.IS_MINIFIED': isDebug ? 'false' : 'true',
+    'window.__CI_APP_VERSION__': JSON.stringify(
+      artifactVersion ? artifactVersion : '0.0.0',
+    ),
+    'process.env.ARTIFACT_ID': JSON.stringify(getProjectArtifactId()),
+  });
+}
+
 // NOTE ABOUT PUBLIC PATH USING UNPKG SERVICE
 // Projects that uses `wnpm-ci` have their package.json version field on a fixed version which is not their real version
 // These projects determine their version on the "release" step, which means they will have a wrong public path
@@ -128,7 +162,9 @@ const splitChunksConfig = isObject(useSplitChunks)
   ? useSplitChunks
   : defaultSplitChunksConfig;
 
-const entry = project.entry || project.defaultEntry;
+const entry = project.entry || defaultEntry;
+
+const webWorkerEntry = project.webWorkerEntry;
 
 const possibleServerEntries = ['./server', '../dev/server'];
 
@@ -216,6 +252,7 @@ const getStyleLoaders = ({
                   // https://github.com/facebookincubator/create-react-app/issues/2677
                   ident: 'postcss',
                   plugins: [
+                    project.experimentalRtlCss && require('postcss-rtl')(),
                     require('autoprefixer')({
                       // https://github.com/browserslist/browserslist
                       overrideBrowserslist: [
@@ -227,7 +264,7 @@ const getStyleLoaders = ({
                       ].join(','),
                       flexbox: 'no-2009',
                     }),
-                  ],
+                  ].filter(Boolean),
                   sourceMap: isDebug,
                 },
               },
@@ -316,7 +353,7 @@ function createCommonWebpackConfig({
       symlinks: project.experimentalMonorepoSubProcess,
     },
 
-    // Since Yoshi doesn't depend on every loader it uses directly, we first look
+    // Since Yoshi does not depend on every loader it uses directly, we first look
     // for loaders in Yoshi's `node_modules` and then look at the root `node_modules`
     //
     // See https://github.com/wix/yoshi/pull/392
@@ -332,7 +369,7 @@ function createCommonWebpackConfig({
       new CaseSensitivePathsPlugin(),
       // Way of communicating to `babel-preset-yoshi` or `babel-preset-wix` that
       // it should optimize for Webpack
-      new EnvirnmentMarkPlugin(),
+      new EnvironmentMarkPlugin(),
       // https://github.com/Realytics/fork-ts-checker-webpack-plugin
       ...(isTypescriptProject && project.projectType === 'app' && isDebug
         ? [
@@ -372,7 +409,7 @@ function createCommonWebpackConfig({
               {
                 test: reScript,
                 loader: 'yoshi-angular-dependencies/ng-annotate-loader',
-                include: project.unprocessedModules,
+                include: unprocessedModules,
               },
             ]
           : []),
@@ -380,7 +417,7 @@ function createCommonWebpackConfig({
         // Rules for TS / TSX
         {
           test: /\.(ts|tsx)$/,
-          include: project.unprocessedModules,
+          include: unprocessedModules,
           use: [
             {
               loader: 'thread-loader',
@@ -424,7 +461,7 @@ function createCommonWebpackConfig({
         // Rules for JS
         {
           test: reScript,
-          include: project.unprocessedModules,
+          include: unprocessedModules,
           use: [
             {
               loader: 'thread-loader',
@@ -545,7 +582,7 @@ function createCommonWebpackConfig({
     },
 
     // https://webpack.js.org/configuration/devtool
-    // If we are in CI or requested explictly we create full source maps
+    // If we are in CI or requested explicitly we create full source maps
     // Once we are in a local build, we create cheap eval source map only
     // for a development build (hence the !isProduction)
     devtool:
@@ -590,22 +627,7 @@ function createClientWebpackConfig({
       // https://webpack.js.org/plugins/module-concatenation-plugin
       concatenateModules: isProduction && !disableModuleConcat,
       minimizer: [
-        new TerserPlugin({
-          // Use multi-process parallel running to improve the build speed
-          // Default number of concurrent runs: os.cpus().length - 1
-          parallel: true,
-          // Enable file caching
-          cache: true,
-          sourceMap: true,
-          terserOptions: {
-            output: {
-              // support emojis
-              ascii_only: true,
-            },
-            keep_fnames: project.keepFunctionNames,
-          },
-        }),
-
+        createTerserPlugin(),
         // https://github.com/NMFR/optimize-css-assets-webpack-plugin
         new OptimizeCSSAssetsPlugin(),
       ],
@@ -635,6 +657,8 @@ function createClientWebpackConfig({
 
     plugins: [
       ...config.plugins,
+
+      createDefinePlugin(isDebug),
 
       // https://github.com/jantimon/html-webpack-plugin
       ...(project.experimentalBuildHtml
@@ -708,7 +732,7 @@ function createClientWebpackConfig({
             // https://github.com/wix-incubator/tpa-style-webpack-plugin
             ...(project.enhancedTpaStyle ? [new TpaStyleWebpackPlugin()] : []),
             // https://github.com/wix/rtlcss-webpack-plugin
-            ...(!project.experimentalBuildHtml
+            ...(!project.experimentalBuildHtml && !project.experimentalRtlCss
               ? [
                   new RtlCssPlugin(
                     isDebug ? '[name].rtl.css' : '[name].rtl.min.css',
@@ -717,18 +741,6 @@ function createClientWebpackConfig({
               : []),
           ]
         : []),
-
-      // https://webpack.js.org/plugins/define-plugin/
-      new webpack.DefinePlugin({
-        'process.env.NODE_ENV': JSON.stringify(
-          isProduction ? 'production' : 'development',
-        ),
-        'process.env.IS_MINIFIED': isDebug ? 'false' : 'true',
-        'window.__CI_APP_VERSION__': JSON.stringify(
-          artifactVersion ? artifactVersion : '0.0.0',
-        ),
-        'process.env.ARTIFACT_ID': JSON.stringify(getProjectArtifactId()),
-      }),
 
       // https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
@@ -797,7 +809,11 @@ function createClientWebpackConfig({
 //
 // Configuration for the server-side bundle (server.js)
 // -----------------------------------------------------------------------------
-function createServerWebpackConfig({ isDebug = true, isHmr = false } = {}) {
+function createServerWebpackConfig({
+  isDebug = true,
+  isHmr = false,
+  hmrPort,
+} = {}) {
   const config = createCommonWebpackConfig({ isDebug, isHmr });
 
   const styleLoaders = getStyleLoaders({
@@ -931,15 +947,58 @@ function createServerWebpackConfig({ isDebug = true, isHmr = false } = {}) {
   };
 
   if (isHmr) {
-    addEntry(serverConfig, [require.resolve('./hot')]);
+    addEntry(serverConfig, [`${require.resolve('./hot')}?${hmrPort}`]);
   }
 
   return serverConfig;
+}
+
+//
+// Configuration for the web-worker bundle
+// -----------------------------------------------------------------------------
+function createWebWorkerWebpackConfig({ isDebug = true, isHmr = false }) {
+  const config = createCommonWebpackConfig({ isDebug, isHmr });
+
+  const webWorkerConfig = {
+    ...config,
+
+    name: 'web-worker',
+
+    target: 'webworker',
+
+    entry: webWorkerEntry,
+
+    optimization: {
+      minimize: !isDebug,
+      // https://webpack.js.org/plugins/module-concatenation-plugin
+      concatenateModules: isProduction && !disableModuleConcat,
+      minimizer: [createTerserPlugin()],
+
+      // https://webpack.js.org/plugins/split-chunks-plugin
+      splitChunks: useSplitChunks ? splitChunksConfig : false,
+    },
+
+    output: {
+      ...config.output,
+
+      // Bundle as UMD format
+      library: '[name]',
+      libraryTarget: 'umd',
+      globalObject: 'self',
+    },
+
+    plugins: [...config.plugins, createDefinePlugin(isDebug)],
+
+    externals: [project.webWorkerExternals].filter(Boolean),
+  };
+
+  return webWorkerConfig;
 }
 
 module.exports = {
   createCommonWebpackConfig,
   createClientWebpackConfig,
   createServerWebpackConfig,
+  createWebWorkerWebpackConfig,
   getStyleLoaders,
 };

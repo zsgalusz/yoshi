@@ -1,5 +1,5 @@
 {
-  "lerna": "2.11.0",
+  "lerna": "3.15.0",
   "packages": [
     "packages/*"
   ],
@@ -15,14 +15,5 @@
       "PR: Internal :house:": ":house: Internal"
     }
   },
-  "command": {
-    "publish": {
-      "allowBranch": [
-        "master",
-        "version_*",
-        "hotfix_*"
-      ]
-    }
-  },
-  "version": "4.9.2"
+  "version": "4.10.5"
 }
