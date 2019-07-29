@@ -23,10 +23,13 @@ const path = require('path');
 const fs = require('fs-extra');
 const chalk = require('chalk');
 const openBrowser = require('./utils/open-browser');
+const {
+  guessEditor,
+  launchEditor,
+  launchSpecificEditor,
+} = require('./utils/open-editor');
 const chokidar = require('chokidar');
 const project = require('yoshi-config');
-const launchEditor = require('react-dev-utils/launchEditor');
-const readline = require('readline');
 const {
   BUILD_DIR,
   PUBLIC_DIR,
@@ -175,8 +178,6 @@ module.exports = async () => {
     process.exit(1);
   }
 
-  onKeyPress('e', () => launchEditor(ROOT_DIR, 1 /* row */, 1 /* col */));
-
   ['SIGINT', 'SIGTERM'].forEach(sig => {
     process.on(sig, () => {
       serverProcess.end();
@@ -205,22 +206,61 @@ module.exports = async () => {
   }
 
   openBrowser(cliArgs.url || project.startUrl || `http://localhost:${PORT}`);
-
+  openEditorByKeyPress();
   return {
     persistent: true,
   };
 };
 
-function onKeyPress(key, cb) {
+function openEditorByKeyPress() {
+  const [editor] = guessEditor();
+  console.log();
+  if (editor && editor !== 'vim') {
+    console.log(
+      chalk.white.bold(
+        `To open this project in your code editor press ${chalk.cyan('E')}.`,
+      ),
+    );
+    onKeyPress({ e: () => openEditor() });
+  } else {
+    console.log(
+      chalk.white.bold(`Choose the editor you wish to open the project in:`),
+    );
+    console.log(`1. Visual Studio Code`);
+    console.log(`2. Webstorm`);
+    console.log(`3. Vim`);
+    console.log();
+    onKeyPress({
+      1: () => openEditor('code'),
+      2: () => openEditor('/Applications/WebStorm.app/Contents/MacOS/webstorm'),
+      3: () => openEditor('vim'),
+    });
+  }
+}
+
+function openEditor(editor) {
+  console.log(chalk.white.dim(`Opening Code Editor...`));
+  if (editor) {
+    launchSpecificEditor(editor, ROOT_DIR);
+  } else {
+    launchEditor(ROOT_DIR);
+  }
+}
+
+// TODO: move to a utils file
+function onKeyPress(conf) {
   if (isInteractive) {
-    readline.emitKeypressEvents(process.stdin);
-    process.stdin.setRawMode(true);
-    process.stdin.on('keypress', char => {
-      // ctrl-c
-      if (char === '\u0003') {
+    const CONTROL_C = '\u0003';
+    const CONTROL_D = '\u0004';
+    const stdin = process.stdin;
+    stdin.setRawMode(true);
+    stdin.setEncoding('utf8');
+    stdin.on('data', char => {
+      if (char === CONTROL_C || char === CONTROL_D) {
+        stdin.setRawMode(false);
         process.kill(process.pid);
-      } else if (char.toLowerCase() === key.toLowerCase()) {
-        cb();
+      } else if (conf[char]) {
+        conf[char]();
       }
     });
   }
