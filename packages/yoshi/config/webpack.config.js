@@ -802,11 +802,7 @@ function createClientWebpackConfig({
 //
 // Configuration for the server-side bundle (server.js)
 // -----------------------------------------------------------------------------
-function createServerWebpackConfig({
-  isDebug = true,
-  isHmr = false,
-  hmrPort,
-} = {}) {
+function createServerWebpackConfig({ isDebug = true, isHmr = false } = {}) {
   const config = createCommonWebpackConfig({ isDebug, isHmr });
 
   const styleLoaders = getStyleLoaders({
@@ -823,7 +819,7 @@ function createServerWebpackConfig({
     target: 'node',
 
     entry: globby
-      .sync('**/*.(js|ts)', { cwd: API_DIR, absolute: true })
+      .sync('**/*.js', { cwd: API_DIR, absolute: true })
       .reduce((acc, filepath) => {
         return {
           ...acc,
@@ -943,10 +939,6 @@ function createServerWebpackConfig({
 
     devtool: 'cheap-module-inline-source-map',
   };
-
-  // if (isHmr) {
-  //   addEntry(serverConfig, [`${require.resolve('./hot')}?${hmrPort}`]);
-  // }
 
   return serverConfig;
 }

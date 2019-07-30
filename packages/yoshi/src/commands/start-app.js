@@ -96,7 +96,6 @@ module.exports = async () => {
   const serverConfig = createServerWebpackConfig({
     isDebug: true,
     isHmr: true,
-    hmrPort,
   });
 
   let webWorkerConfig;
