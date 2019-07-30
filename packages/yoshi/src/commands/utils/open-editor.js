@@ -8,8 +8,6 @@
 const fs = require('fs');
 const path = require('path');
 const child_process = require('child_process');
-const os = require('os');
-const chalk = require('chalk');
 const shellQuote = require('shell-quote');
 
 function isTerminalEditor(editor) {
@@ -18,8 +16,9 @@ function isTerminalEditor(editor) {
     case 'emacs':
     case 'nano':
       return true;
+    default:
+      return false;
   }
-  return false;
 }
 
 // Map from full process name to binary that starts the process
@@ -89,7 +88,7 @@ function getArgumentsForLineNumber(
   fileName,
   lineNumber,
   colNumber,
-  workspace
+  workspace,
 ) {
   const editorBasename = path.basename(editor).replace(/\.(exe|cmd|bat)$/i, '');
   switch (editorBasename) {
@@ -144,12 +143,12 @@ function getArgumentsForLineNumber(
         ['--line', lineNumber, fileName],
         workspace,
       );
+    // For all others, drop the lineNumber until we have
+    // a mapping above, since providing the lineNumber incorrectly
+    // can result in errors or confusing behavior.
+    default:
+      return [fileName];
   }
-
-  // For all others, drop the lineNumber until we have
-  // a mapping above, since providing the lineNumber incorrectly
-  // can result in errors or confusing behavior.
-  return [fileName];
 }
 
 function guessEditor() {
@@ -205,7 +204,7 @@ function launchEditor(fileName) {
     return;
   }
 
-  let [editor, ...args] = guessEditor();
+  const [editor, ...args] = guessEditor();
 
   if (!editor || editor.toLowerCase() === 'none') {
     return;
@@ -222,9 +221,7 @@ function launchSpecificEditor(editor, fileName, args = []) {
   }
   _childProcess = child_process.spawn(
     editor,
-    args = args.concat(
-      getArgumentsForLineNumber(editor, fileName, 1, 1)
-    ),
+    (args = args.concat(getArgumentsForLineNumber(editor, fileName, 1, 1))),
     { silent: true, detached: true },
   );
 
