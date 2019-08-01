@@ -47,6 +47,8 @@ const disableTsThreadOptimization =
 
 const disableModuleConcat = process.env.DISABLE_MODULE_CONCATENATION === 'true';
 
+const experimentalResolveSymlinks = process.env.WEBPACK_RESOLVE_SYMLINKS === 'true';
+
 const isProduction = checkIsProduction();
 
 const inTeamCity = checkInTeamCity();
@@ -279,7 +281,7 @@ function createCommonWebpackConfig({
       alias: project.resolveAlias,
 
       // Whether to resolve symlinks to their symlinked location.
-      symlinks: false,
+      symlinks: experimentalResolveSymlinks,
     },
 
     // Since Yoshi doesn't depend on every loader it uses directly, we first look
