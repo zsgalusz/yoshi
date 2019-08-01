@@ -1,6 +1,6 @@
-const babelJest = require('babel-jest');
-const { createBabelConfig } = require('yoshi-helpers/utils');
+import babelJest from 'babel-jest';
+import { createBabelConfig } from 'yoshi-helpers/utils';
 
 const babelConfig = createBabelConfig();
 
-module.exports = babelJest.createTransformer(babelConfig);
+export = babelJest.createTransformer(babelConfig);

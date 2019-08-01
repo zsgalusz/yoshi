@@ -1,5 +1,8 @@
-// eslint-disable-next-line
-import { BootstrapSetupOptions, BootstrapTeardownOptions } from 'yoshi-config/build/jest/config';
+import {
+  BootstrapSetupOptions,
+  BootstrapTeardownOptions,
+} from 'yoshi-config/build/jest/config';
+import { Browser } from 'puppeteer';
 
 declare global {
   namespace NodeJS {

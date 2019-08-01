@@ -1,7 +1,10 @@
 import fs from 'fs-extra';
-import puppeteer from 'puppeteer';
+import puppeteer, { Browser, Page } from 'puppeteer';
 import { setupRequireHooks } from 'yoshi-helpers/require-hooks';
 import loadJestYoshiConfig from 'yoshi-config/jest';
+import NodeEnvironment from 'jest-environment-node';
+import { Global } from '@jest/types';
+import BootstrapEnvironment from '../jest-environment-yoshi-bootstrap';
 import { WS_ENDPOINT_PATH } from './constants';
 
 // the user's config is loaded outside of a jest runtime and should be transpiled
@@ -11,10 +14,12 @@ setupRequireHooks();
 const jestYoshiConfig = loadJestYoshiConfig();
 
 const ParentEnvironment = !jestYoshiConfig.bootstrap
-  ? require('jest-environment-node')
-  : require('../jest-environment-yoshi-bootstrap');
+  ? NodeEnvironment
+  : BootstrapEnvironment;
 
 class PuppeteerEnvironment extends ParentEnvironment {
+  global: Global.Global & { browser: Browser; page: Page };
+
   async setup() {
     await super.setup();
 

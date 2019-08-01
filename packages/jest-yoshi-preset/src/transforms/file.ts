@@ -1,6 +1,6 @@
-const path = require('path');
+import path from 'path';
 
-module.exports = {
+export = {
   process(src: string, filename: string) {
     const assetFilename = JSON.stringify(path.basename(filename));
 

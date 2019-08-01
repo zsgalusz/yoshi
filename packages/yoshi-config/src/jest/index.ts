@@ -6,6 +6,8 @@ import { validate } from 'jest-validate';
 import validConfig from './validConfig';
 import { Config } from './config';
 
+export { Config };
+
 export default (): Config => {
   const configPath = path.join(process.cwd(), 'jest-yoshi.config.js');
 

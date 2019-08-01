@@ -1,10 +1,7 @@
 import childProcess from 'child_process';
 import { processIsJest, getProcessIdOnPort } from 'yoshi-helpers/utils';
 
-if (!process.env.JEST_WORKER_ID) {
-  throw new Error(`process.env.JEST_WORKER_ID is not defined`);
-}
-const JEST_WORKER_ID = parseInt(process.env.JEST_WORKER_ID, 10);
+const JEST_WORKER_ID = parseInt(process.env.JEST_WORKER_ID as string, 10);
 
 let COUNTER = 1;
 

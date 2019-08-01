@@ -32,7 +32,7 @@ const serverLogPrefixer = () => {
   });
 };
 
-export default async () => {
+export = async () => {
   const jestYoshiConfig = loadJestYoshiConfig();
 
   // a bit hacky, run puppeteer setup only if it's required

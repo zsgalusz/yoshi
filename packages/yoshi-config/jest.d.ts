@@ -1,4 +1,2 @@
-import fn from './build/jest/index.d';
-
-export default fn;
+export { default } from './build/jest/index.d';
 export * from './build/jest/index.d';
