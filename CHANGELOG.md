@@ -1,10 +1,18 @@
 # Changelog
 
+## 3.31.2 (2019-08-01)
+
+#### :nail_care: Polish
+
+- `yoshi`
+  - [#1477](https://github.com/wix/yoshi/pull/1477) Added `WEBPACK_RESOLVE_SYMLINKS` environment parameter ([@amiryonatan](https://github.com/amiryonatan))
+
 ## 3.31.1 (2019-03-21)
 
 #### :bug: Bug Fix
-* `yoshi`
-  * [#1154](https://github.com/wix/yoshi/pull/1154) Add Stylable Webpack plugin project level hashing ([@yairhaimo](https://github.com/yairhaimo))
+
+- `yoshi`
+  - [#1154](https://github.com/wix/yoshi/pull/1154) Add Stylable Webpack plugin project level hashing ([@yairhaimo](https://github.com/yairhaimo))
 
 ## 3.31.0 (2019-03-13)
 
