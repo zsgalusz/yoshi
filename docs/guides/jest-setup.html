@@ -105,6 +105,28 @@
 <p>It creates a global <a href="https://github.com/GoogleChrome/puppeteer/blob/v1.5.0/docs/api.md#class-browser">Browser</a> instance and a global <a href="https://github.com/GoogleChrome/puppeteer/blob/v1.5.0/docs/api.md#class-page">Page</a> instance for every test file. They're available as <code>global.browser</code> and <code>global.page</code> respectively.</p>
 <p>Has a default test timeout of 10 seconds.</p>
 <h2><a class="anchor" aria-hidden="true" id="configuration"></a><a href="#configuration" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Configuration</h2>
+<h4><a class="anchor" aria-hidden="true" id="api"></a><a href="#api" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>API</h4>
+<ul>
+<li><code>puppeteer</code> - a configuration object to be passed as <a href="https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#puppeteerlaunchoptions">options</a> to Puppeteer's launch method</li>
+<li><code>bootstrap</code> - node platform bootstrap setup:
+<ul>
+<li><code>setup</code> - environment setup function which is called before each test file</li>
+<li><code>teardown</code> - environment teardown function which called after each test file</li>
+</ul></li>
+<li><code>server</code> - server to be bootstraped
+<ul>
+<li><code>command</code> - runs a command which bootstrap the server</li>
+<li><code>port</code> - wait for a server to start listening on this port before running the tests. This port will be available in your server script as an environment variable (PORT)</li>
+</ul></li>
+<li><code>e2eOptions</code> - overrides for <code>e2e</code> environment. For now, only <code>globals</code> is available</li>
+<li><code>specOptions</code> - overrides for <code>spec</code> environment. For now, only <code>globals</code> is available</li>
+<li><code>collectCoverage</code> - Jest's <a href="https://jestjs.io/docs/en/configuration#collectcoverage-boolean">collectCoverage</a></li>
+<li><code>coveragePathIgnorePatterns</code> - Jest's <a href="https://jestjs.io/docs/en/configuration#coveragepathignorepatterns-array-string">coveragePathIgnorePatterns</a></li>
+<li><code>collectCoverageFrom</code> - Jest's <a href="https://jestjs.io/docs/en/configuration#collectcoveragefrom-array">collectCoverageFrom</a></li>
+<li><code>coverageReporters</code> - Jest's <a href="https://jestjs.io/docs/en/configuration#coveragereporters-array-string">coverageReporters</a></li>
+<li><code>coverageDirectory</code> - Jest's <a href="https://jestjs.io/docs/en/configuration#coveragedirectory-string">coverageDirectory</a></li>
+<li><code>coverageThreshold</code> - Jest's <a href="https://jestjs.io/docs/en/configuration#coveragethreshold-object">coverageThreshold</a></li>
+</ul>
 <p>This preset looks for a <code>jest-yoshi.config.js</code> file at the root of your project. The exported object is used to configure different parts of the preset.</p>
 <p>example configurations:</p>
 <ul>
@@ -122,7 +144,7 @@
     <span class="hljs-comment">// runs a command which bootstrap the server</span>
     command: <span class="hljs-string">"node server.js"</span>,
     <span class="hljs-comment">// wait for a server to start listening on this port before running the tests</span>
-    <span class="hljs-comment">// this port will be available in you server script as an environment variable (PORT)</span>
+    <span class="hljs-comment">// this port will be available in your server script as an environment variable (PORT)</span>
     port: <span class="hljs-number">3000</span>
   },
   <span class="hljs-attr">puppeteer</span>: {
@@ -141,7 +163,7 @@
 <blockquote>
 <p>A path to a module that runs some code to configure or set up the testing framework before each test.</p>
 </blockquote>
-</span></div></article></div><div class="docLastUpdate"><em>Last updated on 7/9/2019</em></div><div class="docs-prevnext"><a class="docs-prev button" href="/yoshi/docs/guides/enzyme-support"><span class="arrow-prev">← </span><span>Testing With Enzyme</span></a><a class="docs-next button" href="/yoshi/docs/guides/babel-setup"><span>Babel Setup</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#introduction">Introduction</a></li><li><a href="#installation">Installation</a></li><li><a href="#usage">Usage</a><ul class="toc-headings"><li><a href="#dev-mode">Dev mode</a></li><li><a href="#ci-mode">CI mode</a></li></ul></li><li><a href="#test-types">Test types</a><ul class="toc-headings"><li><a href="#component-and-unit-tests">Component and Unit tests</a></li><li><a href="#browser-and-server-e2e-tests">Browser and Server e2e tests</a></li></ul></li><li><a href="#configuration">Configuration</a><ul class="toc-headings"><li><a href="#setup-files">Setup Files</a></li></ul></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/yoshi/" class="nav-home"><img src="/yoshi/img/yoshi.png" alt="Yoshi" width="66" height="58"/></a><div><h5>Docs</h5><a href="/yoshi/docs/getting-started/create-app.html">Getting Started</a><a href="/yoshi/docs/api/configuration.html">API Reference</a></div><div><h5>More</h5><a href="/yoshi/blog">Blog</a><a href="https://github.com/wix/yoshi">GitHub</a><a class="github-button" href="https://github.com/wix/yoshi" data-icon="octicon-star" data-count-href="https://github.com/wix/yoshi/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">Stars</a></div></section><section class="copyright">Copyright © 2019 Wix.com</section></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
+</span></div></article></div><div class="docLastUpdate"><em>Last updated on 8/1/2019</em></div><div class="docs-prevnext"><a class="docs-prev button" href="/yoshi/docs/guides/enzyme-support"><span class="arrow-prev">← </span><span>Testing With Enzyme</span></a><a class="docs-next button" href="/yoshi/docs/guides/babel-setup"><span>Babel Setup</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#introduction">Introduction</a></li><li><a href="#installation">Installation</a></li><li><a href="#usage">Usage</a><ul class="toc-headings"><li><a href="#dev-mode">Dev mode</a></li><li><a href="#ci-mode">CI mode</a></li></ul></li><li><a href="#test-types">Test types</a><ul class="toc-headings"><li><a href="#component-and-unit-tests">Component and Unit tests</a></li><li><a href="#browser-and-server-e2e-tests">Browser and Server e2e tests</a></li></ul></li><li><a href="#configuration">Configuration</a><ul class="toc-headings"><li><a href="#setup-files">Setup Files</a></li></ul></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/yoshi/" class="nav-home"><img src="/yoshi/img/yoshi.png" alt="Yoshi" width="66" height="58"/></a><div><h5>Docs</h5><a href="/yoshi/docs/getting-started/create-app.html">Getting Started</a><a href="/yoshi/docs/api/configuration.html">API Reference</a></div><div><h5>More</h5><a href="/yoshi/blog">Blog</a><a href="https://github.com/wix/yoshi">GitHub</a><a class="github-button" href="https://github.com/wix/yoshi" data-icon="octicon-star" data-count-href="https://github.com/wix/yoshi/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">Stars</a></div></section><section class="copyright">Copyright © 2019 Wix.com</section></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
                 document.addEventListener('keyup', function(e) {
                   if (e.target !== document.body) {
                     return;
