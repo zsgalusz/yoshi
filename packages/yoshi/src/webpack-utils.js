@@ -151,7 +151,7 @@ function overrideRules(rules, patch) {
   });
 }
 
-function createDevServer(clientCompiler, { publicPath, https, host }) {
+function createDevServer(clientCompiler, { publicPath, hmrPort, https, host }) {
   const devServer = new WebpackDevServer(clientCompiler, {
     // Enable gzip compression for everything served
     compress: true,
@@ -159,7 +159,11 @@ function createDevServer(clientCompiler, { publicPath, https, host }) {
     contentBase: STATICS_DIR,
     watchContentBase: true,
     hot: true,
+    injectHot: true,
+    // Disable live reload to make HMR work
+    liveReload: false,
     publicPath,
+    sockPort: hmrPort,
     // We write our own errors/warnings to the console
     quiet: true,
     https,

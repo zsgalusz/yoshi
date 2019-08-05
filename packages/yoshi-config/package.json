@@ -9,11 +9,12 @@
   "author": "Ronen Amiel & Ran Yitzhaki",
   "license": "ISC",
   "devDependencies": {
+    "@jest/types": "24.8.0",
     "@types/cosmiconfig": "5.0.3",
     "@types/find-up": "2.1.1",
     "@types/lodash": "4.14.136",
     "@types/puppeteer": "1.19.0",
-    "@jest/types": "24.8.0",
+    "@types/read-pkg": "^5.1.0",
     "@types/webpack": "4.32.1"
   },
   "dependencies": {

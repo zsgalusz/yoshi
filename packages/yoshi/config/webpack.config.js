@@ -10,6 +10,7 @@ const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { HotAcceptPlugin } = require('hot-accept-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const StylableWebpackPlugin = require('@stylable/webpack-plugin');
 const { resolveNamespaceFactory } = require('@stylable/node');
@@ -45,6 +46,7 @@ const {
   getProjectArtifactId,
   createBabelConfig,
   unprocessedModules,
+  getListOfEntries,
 } = require('yoshi-helpers/utils');
 const { defaultEntry } = require('yoshi-helpers/constants');
 const { addEntry, overrideRules } = require('../src/webpack-utils');
@@ -54,9 +56,6 @@ const reStyle = /\.(css|less|scss|sass)$/;
 const reAssets = /\.(png|jpg|jpeg|gif|woff|woff2|ttf|otf|eot|wav|mp3)$/;
 
 const extensions = ['.js', '.jsx', '.ts', '.tsx', '.json'];
-
-const babelConfig = createBabelConfig({ modules: false });
-
 const disableModuleConcat = process.env.DISABLE_MODULE_CONCATENATION === 'true';
 
 const isProduction = checkIsProduction();
@@ -323,6 +322,7 @@ function createCommonWebpackConfig({
   isHmr = false,
   withLocalSourceMaps,
 } = {}) {
+  const entryFiles = getListOfEntries(entry);
   const config = {
     context: SRC_DIR,
 
@@ -386,6 +386,13 @@ function createCommonWebpackConfig({
           ]
         : []),
       ...(isHmr ? [new webpack.HotModuleReplacementPlugin()] : []),
+      ...(isHmr
+        ? [
+            new HotAcceptPlugin({
+              test: entryFiles.map(require.resolve),
+            }),
+          ]
+        : []),
     ],
 
     module: {
@@ -472,7 +479,10 @@ function createCommonWebpackConfig({
             {
               loader: 'babel-loader',
               options: {
-                ...babelConfig,
+                ...createBabelConfig({
+                  modules: false,
+                  isHmr,
+                }),
               },
             },
           ],

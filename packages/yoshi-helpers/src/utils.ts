@@ -50,20 +50,49 @@ export const unprocessedModules = (p: string) => {
   );
 };
 
-export const createBabelConfig = (presetOptions = {}) => {
+type BabelConfigEntity = string | [string, { [keys: string]: any }?];
+
+type BabelConfigOptions = {
+  ignoreReact?: boolean;
+  targets?: Array<string> | string;
+  modules?: boolean;
+  isHmr?: boolean;
+  entryFiles?: Array<string> | string;
+};
+
+export const createBabelConfig = (options: BabelConfigOptions = {}) => {
   const pathsToResolve = [__filename];
   try {
     pathsToResolve.push(require.resolve('yoshi'));
   } catch (e) {}
-  return {
-    presets: [
-      [
-        require.resolve('babel-preset-yoshi', {
-          paths: pathsToResolve,
-        }),
-        presetOptions,
-      ],
+
+  const resolveWithYoshi = (pkg: string): string =>
+    require.resolve(pkg, {
+      paths: pathsToResolve,
+    });
+
+  const plugins: Array<BabelConfigEntity> = [];
+  const presets: Array<BabelConfigEntity> = [
+    [
+      resolveWithYoshi('babel-preset-yoshi'),
+      {
+        modules: options.modules,
+        targets: options.targets,
+        ignoreReact: options.ignoreReact,
+      },
     ],
+  ];
+  if (options.isHmr && options.entryFiles) {
+    plugins.push(resolveWithYoshi('react-hot-loader/babel'), [
+      resolveWithYoshi('babel-plugin-transform-hmr-runtime'),
+      {
+        entryFiles: options.entryFiles,
+      },
+    ]);
+  }
+  return {
+    presets,
+    plugins,
     babelrc: false,
     configFile: false,
   };
