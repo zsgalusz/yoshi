@@ -1,6 +1,6 @@
 import React from 'react';
 import s from './Logo.scss';
 
-const Logo = () => <div className={s.root} />;
+const Logo = () => <div data-id="egg" className={s.root} />;
 
 export default Logo;

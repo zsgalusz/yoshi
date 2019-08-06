@@ -29,8 +29,9 @@
     "test:integration:start": "npm run test:start --prefix ./packages/yoshi",
     "test:integration:test": "npm run test:test --prefix ./packages/yoshi",
     "test:integration:others": "npm run test:others --prefix ./packages/yoshi",
-    "website:dev": "npm start --prefix './website'",
-    "test-babel-plugin-transform-hmr-runtime": "npm test --prefix ./packages/babel-plugin-transform-hmr-runtime"
+    "test-babel-plugin-transform-hmr-runtime": "npm test --prefix ./packages/babel-plugin-transform-hmr-runtime",
+    "test:yoshi-template-intro": "npm test --prefix ./packages/yoshi-template-intro",
+    "website:dev": "npm start --prefix './website'"
   },
   "husky": {
     "hooks": {

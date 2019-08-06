@@ -10,6 +10,6 @@ describe('Intro', () => {
   it('renders a title correctly', () => {
     wrapper = mount(<Intro />);
 
-    expect(wrapper.find('img')).toHaveLength(1);
+    expect(wrapper.find('[data-id="egg"]')).toHaveLength(1);
   });
 });
