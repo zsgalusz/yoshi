@@ -1,9 +1,9 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { mount, ReactWrapper } from 'enzyme';
 import Intro from './TemplateIntro';
 
 describe('Intro', () => {
-  let wrapper;
+  let wrapper: ReactWrapper<{}, {}, React.Component<{}, {}>>;
 
   afterEach(() => wrapper.unmount());
 
