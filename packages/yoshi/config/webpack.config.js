@@ -386,7 +386,7 @@ function createCommonWebpackConfig({
           ]
         : []),
       ...(isHmr ? [new webpack.HotModuleReplacementPlugin()] : []),
-      ...(isHmr
+      ...(isHmr === 'auto'
         ? [
             new HotAcceptPlugin({
               test: entryFiles.map(require.resolve),

@@ -56,7 +56,7 @@ type BabelConfigOptions = {
   ignoreReact?: boolean;
   targets?: Array<string> | string;
   modules?: boolean;
-  isHmr?: boolean;
+  isHmr?: boolean | 'auto';
   entryFiles?: Array<string> | string;
 };
 
@@ -82,13 +82,11 @@ export const createBabelConfig = (options: BabelConfigOptions = {}) => {
       },
     ],
   ];
-  if (options.isHmr && options.entryFiles) {
-    plugins.push(resolveWithYoshi('react-hot-loader/babel'), [
+  if (options.isHmr === 'auto') {
+    plugins.push(
+      resolveWithYoshi('react-hot-loader/babel'),
       resolveWithYoshi('babel-plugin-transform-hmr-runtime'),
-      {
-        entryFiles: options.entryFiles,
-      },
-    ]);
+    );
   }
   return {
     presets,
