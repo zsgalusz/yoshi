@@ -2,16 +2,13 @@
   "name": "yoshi-template-intro",
   "version": "4.11.0",
   "license": "UNLICENSED",
-  "main": "dist/src/TemplateIntro",
-  "module": "dist/es/src/TemplateIntro",
+  "main": "build/TemplateIntro",
+  "module": "build/TemplateIntro",
   "author": {
     "name": "Artem Yavorsky",
     "email": "artemy@wix.com"
   },
   "scripts": {
-    "start": "yoshi start",
-    "prepublishOnly": "npm run build",
-    "build": "yoshi build",
     "test": "yoshi test --jest"
   },
   "devDependencies": {
