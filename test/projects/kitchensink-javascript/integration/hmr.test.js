@@ -38,10 +38,7 @@ describe('hmr', () => {
       await page.waitForSelector('#overriden-content');
 
       expect(
-        await page.$eval(
-          '#css-inclusion #overriden-content',
-          elm => elm.textContent,
-        ),
+        await page.$eval('#overriden-content', elm => elm.textContent),
       ).toBe('Overridden content!');
 
       fs.writeFileSync(
@@ -55,10 +52,7 @@ describe('hmr', () => {
       await page.waitForSelector('#overriden-content-again');
 
       expect(
-        await page.$eval(
-          '#css-inclusion #overriden-content',
-          elm => elm.textContent,
-        ),
+        await page.$eval('#overriden-content-again', elm => elm.textContent),
       ).toBe('Overridden content again!');
     });
   });
