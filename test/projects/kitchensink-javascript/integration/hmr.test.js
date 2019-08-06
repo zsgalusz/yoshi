@@ -30,24 +30,36 @@ describe('hmr', () => {
 
       const editedContent = originalContent.replace(
         'CSS Modules are working!',
-        'Overridden content!',
+        '<span id="overriden-content" >Overridden content!</span>',
       );
 
       fs.writeFileSync(clientFilePath, editedContent);
 
-      await page.waitForNavigation();
+      await page.waitForSelector('#overriden-content');
 
-      expect(await page.$eval('#css-inclusion', elm => elm.textContent)).toBe(
-        'Overridden content!',
+      expect(
+        await page.$eval(
+          '#css-inclusion #overriden-content',
+          elm => elm.textContent,
+        ),
+      ).toBe('Overridden content!');
+
+      fs.writeFileSync(
+        clientFilePath,
+        editedContent.replace(
+          '<span id="overriden-content" >Overridden content!</span>',
+          '<span id="overriden-content-again">Overridden content again!</span>',
+        ),
       );
 
-      fs.writeFileSync(clientFilePath, originalContent);
+      await page.waitForSelector('#overriden-content-again');
 
-      await page.waitForNavigation();
-
-      expect(await page.$eval('#css-inclusion', elm => elm.textContent)).toBe(
-        'CSS Modules are working!',
-      );
+      expect(
+        await page.$eval(
+          '#css-inclusion #overriden-content',
+          elm => elm.textContent,
+        ),
+      ).toBe('Overridden content again!');
     });
   });
 
