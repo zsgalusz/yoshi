@@ -17,16 +17,20 @@
     "@wix/wix-bootstrap-greynode": "latest",
     "@wix/wix-bootstrap-hadron": "latest",
     "@wix/wix-config-emitter": "latest",
+    "@wix/wix-express-aspects": "latest",
     "@wix/wix-express-csrf": "latest",
     "@wix/wix-express-require-https": "latest",
     "@wix/wix-petri-testkit": "latest",
+    "pretty-error": "2.1.1",
     "ejs": "2.6.2",
     "express": "4.17.1",
     "globby": "10.0.1",
     "import-fresh": "3.1.0",
+    "serialize-error": "4.1.0",
     "sockjs-client": "1.3.0",
     "lodash": "4.17.14",
     "yoshi-config": "4.11.2",
+    "type-fest": "0.6.0",
     "youch": "2.0.10"
   }
 }

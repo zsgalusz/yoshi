@@ -2,14 +2,44 @@ import path from 'path';
 import { isString } from 'util';
 import globby from 'globby';
 import Youch from 'youch';
-import { RequestHandler } from 'express';
+import { RequestHandler, Request, Response } from 'express';
 import config from 'yoshi-config';
 import importFresh from 'import-fresh';
-import { API_BUILD_DIR } from 'yoshi-config/paths';
+import { API_BUILD_DIR, ROUTES_BUILD_DIR } from 'yoshi-config/paths';
 import SockJS from 'sockjs-client';
+import serializeError from 'serialize-error';
+import PrettyError from 'pretty-error';
 import { getMatcher } from './utils';
 
+const pe = new PrettyError();
+
 async function createRoutes() {
+  const serverChunks = await globby('**/*.js', {
+    cwd: ROUTES_BUILD_DIR,
+    absolute: true,
+  });
+
+  return Promise.all(
+    serverChunks.map(async absolutePath => {
+      const chunk: any = importFresh(absolutePath);
+
+      const relativePath = `/${path.relative(
+        ROUTES_BUILD_DIR,
+        absolutePath.replace(/\.[^/.]+$/, ''),
+      )}`;
+
+      const match = getMatcher(relativePath);
+
+      return {
+        isFn: false,
+        match,
+        fn: chunk.default,
+      };
+    }),
+  );
+}
+
+async function createApi() {
   const serverChunks = await globby('**/*.js', {
     cwd: API_BUILD_DIR,
     absolute: true,
@@ -19,7 +49,7 @@ async function createRoutes() {
     serverChunks.map(async absolutePath => {
       const chunk: any = importFresh(absolutePath);
 
-      const relativePath = `/${path.relative(
+      const relativePath = `/_api_/${path.relative(
         API_BUILD_DIR,
         absolutePath.replace(/\.[^/.]+$/, ''),
       )}`;
@@ -27,9 +57,14 @@ async function createRoutes() {
       const match = getMatcher(relativePath);
 
       return {
+        isFn: true,
         match,
-        relativePath,
-        fn: chunk,
+        fn: (req: Request, res: Response, context: any) => {
+          return chunk[req.body.methodName].call(
+            { req, res, ...context },
+            ...req.body.args,
+          );
+        },
       };
     }),
   );
@@ -40,13 +75,13 @@ const socket = new SockJS(
 );
 
 export default async (context: any): Promise<RequestHandler> => {
-  const projectConfig = context.config.load(config.unscopedName);
+  // const projectConfig = context.config.load(config.unscopedName);
 
-  let routes = await createRoutes();
+  let routes = [...(await createRoutes()), ...(await createApi())];
 
   socket.onmessage = async () => {
     try {
-      routes = await createRoutes();
+      routes = [...(await createRoutes()), ...(await createApi())];
     } catch (error) {
       socket.send(JSON.stringify({ success: false }));
     }
@@ -63,15 +98,15 @@ export default async (context: any): Promise<RequestHandler> => {
     }
 
     // @ts-ignore
-    const petri = context.petri.client(req.aspects);
-    const experiments = await petri.conductAllInScope(config.unscopedName);
+    // const petri = context.petri.client(req.aspects);
+    // const experiments = await petri.conductAllInScope(config.unscopedName);
 
     try {
       const params = route.match(req.path);
       const result = await route.fn(req, res, {
         params,
-        experiments,
-        projectConfig,
+        // experiments,
+        // projectConfig,
       });
 
       if (typeof result === 'object') {
@@ -80,6 +115,12 @@ export default async (context: any): Promise<RequestHandler> => {
         res.send(result);
       }
     } catch (error) {
+      if (route.isFn) {
+        return res.status(500).json(serializeError(error));
+      }
+
+      console.log(pe.render(error));
+
       const youch = new Youch(error, req);
 
       youch.toHTML().then((html: string) => {

@@ -32,6 +32,7 @@ const {
   API_DIR,
   TEMPLATES_DIR,
   TEMPLATES_BUILD_DIR,
+  ROUTES_DIR,
 } = require('yoshi-config/paths');
 const project = require('yoshi-config');
 const {
@@ -770,6 +771,12 @@ function createClientWebpackConfig({
 
         // Rules for Style Sheets
         ...styleLoaders,
+
+        {
+          test: /\.(js|ts)$/,
+          include: [API_DIR],
+          loader: require.resolve('./http'),
+        },
       ],
     },
 
@@ -818,14 +825,15 @@ function createServerWebpackConfig({ isDebug = true, isHmr = false } = {}) {
 
     target: 'node',
 
-    entry: globby
-      .sync('**/*.js', { cwd: API_DIR, absolute: true })
-      .reduce((acc, filepath) => {
-        return {
-          ...acc,
-          [path.relative(SRC_DIR, filepath).replace(/\.[^/.]+$/, '')]: filepath,
-        };
-      }, {}),
+    entry: [
+      ...globby.sync('**/*.(js|ts)', { cwd: API_DIR, absolute: true }),
+      ...globby.sync('**/*.(js|ts)', { cwd: ROUTES_DIR, absolute: true }),
+    ].reduce((acc, filepath) => {
+      return {
+        ...acc,
+        [path.relative(SRC_DIR, filepath).replace(/\.[^/.]+$/, '')]: filepath,
+      };
+    }, {}),
 
     output: {
       ...config.output,
@@ -833,7 +841,7 @@ function createServerWebpackConfig({ isDebug = true, isHmr = false } = {}) {
       filename: '[name].js',
       chunkFilename: 'chunks/[name].js',
       libraryTarget: 'umd',
-      libraryExport: 'default',
+      // libraryExport: 'default',
       globalObject: "(typeof self !== 'undefined' ? self : this)",
       // Point sourcemap entries to original disk location (format as URL on Windows)
       devtoolModuleFilenameTemplate: info =>
@@ -888,7 +896,7 @@ function createServerWebpackConfig({ isDebug = true, isHmr = false } = {}) {
       // Treat node modules as external for a small (and fast) server
       // bundle
       nodeExternals({
-        whitelist: [reStyle, reAssets, /bootstrap-hot-loader/],
+        whitelist: [reStyle, reAssets, /bootstrap-hot-loader/, /yoshi-server/],
       }),
       // Here for local integration tests as Yoshi's `node_modules`
       // are symlinked locally
