@@ -1,7 +1,19 @@
+import { RequiredRecursively } from '../utils';
 import { Config } from './config';
 
-const validConfig: Required<Config> = {
-  puppeteer: {},
+const validConfig: RequiredRecursively<Config> = {
+  puppeteer: {
+    executablePath: '/usr/',
+    ignoreDefaultArgs: true,
+    handleSIGINT: false,
+    handleSIGTERM: false,
+    handleSIGHUP: false,
+    dumpio: false,
+    env: {
+      NODE_ENV: 'develop',
+    },
+    pipe: false,
+  },
   bootstrap: {
     setup: async () => {},
     teardown: async () => {},

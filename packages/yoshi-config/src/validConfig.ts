@@ -1,6 +1,7 @@
 import { multipleValidOptions } from 'jest-validate';
 import { InitialConfig } from './config';
 import { RequiredRecursively } from './utils';
+import validTestConfig from './jest/validConfig';
 
 const validConfig: RequiredRecursively<InitialConfig> = {
   extends: 'preset',
@@ -25,6 +26,7 @@ const validConfig: RequiredRecursively<InitialConfig> = {
       ssl: false,
     },
   },
+  test: validTestConfig,
   resolveAlias: {
     hello: 'world',
   },

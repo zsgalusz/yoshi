@@ -71,6 +71,7 @@ export default (initialConfig: InitialConfig, pkgJson: PackageJson): Config => {
     projectType: get(c => c.projectType, null),
     webWorkerEntry: get(c => c.webWorker.entry, undefined),
     webWorkerExternals: get(c => c.webWorker.externals, undefined),
+    test: get(c => c.test, undefined),
 
     jestConfig: jest,
 

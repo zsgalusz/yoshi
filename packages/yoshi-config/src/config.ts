@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-unresolved
 import { Entry, EntryFunc, ExternalsElement, Options } from 'webpack';
 import { PackageJson } from 'read-pkg';
+import { Config as TestYoshiConfig } from './jest/config';
 
 type ProjectType = 'app';
 
@@ -47,6 +48,7 @@ export type InitialConfig = {
   servers?: {
     cdn?: Partial<CdnConfig>;
   };
+  test?: TestYoshiConfig;
   externals?: WebpackExternals;
   specs?: SpecsConfig;
   petriSpecs?: PetriOptions;
@@ -87,6 +89,7 @@ export type Config = {
   servers: {
     cdn: Omit<CdnConfig, 'dir'>;
   };
+  test?: TestYoshiConfig;
   entry?: WebpackEntry;
   splitChunks: Options.SplitChunksOptions | false;
   separateCss: boolean | 'prod';

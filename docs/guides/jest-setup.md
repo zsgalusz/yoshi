@@ -112,12 +112,24 @@ Has a default test timeout of 10 seconds.
 - `coverageDirectory` - Jest's [coverageDirectory](https://jestjs.io/docs/en/configuration#coveragedirectory-string)
 - `coverageThreshold` - Jest's [coverageThreshold](https://jestjs.io/docs/en/configuration#coveragethreshold-object)
 
-This preset looks for a `jest-yoshi.config.js` file at the root of your project. The exported object is used to configure different parts of the preset.
+This preset looks for a `yoshi.test` or `jest-yoshi.config.js` file at the root of your project. The exported object is used to configure different parts of the preset.
 
-example configurations:
+example configuration:
 
-- [fullstack project](https://github.com/wix/yoshi/blob/master/packages/create-yoshi-app/templates/fullstack/typescript/jest-yoshi.config.js)
-- [client project](https://github.com/wix/yoshi/blob/master/packages/create-yoshi-app/templates/client/typescript/jest-yoshi.config.js)
+_package.json_
+
+```json
+  "yoshi": {
+    "test": {
+      "server": {
+        "command": "node dist/server.js",
+        "port": 3100
+      }
+    }
+  }
+```
+
+or _jest-yoshi.config.js_
 
 ```js
 module.exports = {
