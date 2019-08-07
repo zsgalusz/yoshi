@@ -108,7 +108,6 @@ export default wrap(async function() {
 });
 ```
 
-- Different return values should be supported, similarly to how it's done in [polkadot](https://github.com/lukeed/polkadot). For example, returning an object/array will send it as a JSON response. See [polka/send-type](https://github.com/lukeed/polka/tree/master/packages/send-type#data-detections) for more types we can support.
 - Runtime and 404 errors from route functions should show verbose responses in development. Currently, a blank page is shown. We should show verbose and pretty error pages, similar to [youch](https://github.com/poppinss/youch).
 
 ### Issues / notes
@@ -147,7 +146,7 @@ export default async function() {
 }
 ```
 
-- Some server code requires users to be logged in. Limiting access to a server function or route only to logged-in users should be done by importing and calling `requireLogin()`. It will return a 403 (forbidden) error if the user isn't logged in:
+- Some server code requires users to be logged in. Limiting access to a server or route function only to logged-in users should be done by importing and calling `requireLogin()`. It should return a 403 (forbidden) error if the user isn't logged in:
 
 ```js
 import { wrap, requireLogin } from "yoshi-server";
@@ -162,7 +161,7 @@ export const greet = wrap(async function(age: number) {
 });
 ```
 
-- Most [Node Platform](https://github.com/wix-platform/wix-node-platform) use an ERB configuration file to get runtime information from Chef. To avoid having to load the config in many server/route functions, `yoshi-server` will load the app's ERB config file and provide it as `this.config` (Separate config files can still be loaded with `this.context.config.load()`):
+- Most [Node Platform](https://github.com/wix-platform/wix-node-platform) apps use an ERB configuration file to get runtime information from Chef. To avoid having to load the config in many server/route functions, `yoshi-server` will load the app's ERB config file and provide it as `this.config` (Separate config files can still be loaded with `this.context.config.load()`):
 
 ```js
 import { wrap } from "yoshi-server";
