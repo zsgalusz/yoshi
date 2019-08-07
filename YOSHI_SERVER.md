@@ -48,7 +48,7 @@ api.request(greet, 12).then(data => {
 });
 ```
 
-- An [Express](http://expressjs.com) request and response objects are available on the function context (`this`):
+- An [Express](http://expressjs.com) request and response objects are available on the server function context (`this`):
 
 ```js
 export const greeting = function() {
