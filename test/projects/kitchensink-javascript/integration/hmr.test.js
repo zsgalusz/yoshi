@@ -19,7 +19,7 @@ const originalServerContent = fs.readFileSync(serverFilePath, 'utf-8');
 
 describe('hmr', () => {
   describe('client side', () => {
-    it('reloads the browser on javascript changes', async () => {
+    it('replace hot module on javascript changes', async () => {
       await initTest('css-inclusion');
 
       expect(await page.$eval('#css-inclusion', elm => elm.textContent)).toBe(
