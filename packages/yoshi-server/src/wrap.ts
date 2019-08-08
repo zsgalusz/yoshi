@@ -4,6 +4,8 @@ import { WithAspects } from '@wix/wix-express-aspects';
 import Config from '@wix/wix-config';
 import { PetriClientFactory } from '@wix/wix-petri-client';
 
+export type OptionalPromise<T> = T | Promise<T>;
+
 export type Context = {
   req: Request & WithAspects;
   res: Response;
@@ -15,16 +17,16 @@ export type Context = {
 
 type JsonArgs = Array<JsonValue>;
 
-type JsonResult = Promise<JsonValue>;
+type JsonResult = OptionalPromise<JsonValue>;
 
-export type Fn<Context, Args extends JsonArgs, Result extends JsonResult> = (
+export type Fn<Args extends JsonArgs, Result extends JsonResult> = (
   this: Context,
   ...args: Args
 ) => Result;
 
 export function wrap<Value extends JsonResult, Args extends JsonArgs>(
-  fn: Fn<Context, Args, Value>,
-): Fn<Context, Args, Value> {
+  fn: Fn<Args, Value>,
+): Fn<Args, Value> {
   // @ts-ignore
   return fn;
 }
