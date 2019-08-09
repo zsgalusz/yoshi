@@ -17,22 +17,10 @@ function getExports(source) {
 const path = require('path');
 
 module.exports = function(source) {
-  // const { endpoint } = getOptions(this);
-  const endpoint = '/_api_';
-  const parser = require.resolve('./fetcher');
-
-  this.addDependency(parser);
-
   const fileName = path.basename(this.resourcePath).replace(/\.(js|ts)$/, '');
-
-  const headers = [
-    `import { httpFunctionsFetcher } from '${parser}';`,
-    `var fetcher = httpFunctionsFetcher.bind(null, '${endpoint}', '${fileName}')`,
-  ];
-
-  const functions = getExports(source).map(fn => {
-    return `export const ${fn} = fetcher('${fn}');`;
+  const functions = getExports(source).map(methodName => {
+    return `export const ${methodName} = { methodName: '${methodName}', fileName: '${fileName}' };`;
   });
 
-  return [...headers, ...functions].join('\n\n');
+  return functions.join('\n\n');
 };

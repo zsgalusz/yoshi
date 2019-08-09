@@ -2,16 +2,34 @@ import path from 'path';
 import { isString } from 'util';
 import globby from 'globby';
 import Youch from 'youch';
-import { RequestHandler, Request, Response } from 'express';
+import { RequestHandler } from 'express';
 import config from 'yoshi-config';
 import importFresh from 'import-fresh';
-import { API_BUILD_DIR, ROUTES_BUILD_DIR } from 'yoshi-config/paths';
+import { ROUTES_BUILD_DIR, API_BUILD_DIR } from 'yoshi-config/paths';
 import SockJS from 'sockjs-client';
 import serializeError from 'serialize-error';
-import PrettyError from 'pretty-error';
 import { getMatcher } from './utils';
 
-const pe = new PrettyError();
+async function createFunctions() {
+  const serverChunks = await globby('**/*.js', {
+    cwd: API_BUILD_DIR,
+    absolute: true,
+  });
+
+  return Promise.all(
+    serverChunks.map(async absolutePath => {
+      const chunk: any = importFresh(absolutePath);
+
+      return {
+        fn: chunk,
+        filename: path.relative(
+          API_BUILD_DIR,
+          absolutePath.replace(/\.[^/.]+$/, ''),
+        ),
+      };
+    }),
+  );
+}
 
 async function createRoutes() {
   const serverChunks = await globby('**/*.js', {
@@ -31,40 +49,8 @@ async function createRoutes() {
       const match = getMatcher(relativePath);
 
       return {
-        isFn: false,
         match,
         fn: chunk.default,
-      };
-    }),
-  );
-}
-
-async function createApi() {
-  const serverChunks = await globby('**/*.js', {
-    cwd: API_BUILD_DIR,
-    absolute: true,
-  });
-
-  return Promise.all(
-    serverChunks.map(async absolutePath => {
-      const chunk: any = importFresh(absolutePath);
-
-      const relativePath = `/_api_/${path.relative(
-        API_BUILD_DIR,
-        absolutePath.replace(/\.[^/.]+$/, ''),
-      )}`;
-
-      const match = getMatcher(relativePath);
-
-      return {
-        isFn: true,
-        match,
-        fn: (req: Request, res: Response, context: any) => {
-          return chunk[req.body.methodName].call(
-            { req, res, ...context },
-            ...req.body.args,
-          );
-        },
       };
     }),
   );
@@ -75,13 +61,22 @@ const socket = new SockJS(
 );
 
 export default async (context: any): Promise<RequestHandler> => {
-  // const projectConfig = context.config.load(config.unscopedName);
+  const projectConfig = context.config.load(config.unscopedName);
 
-  let routes = [...(await createRoutes()), ...(await createApi())];
+  let [routes, functions] = await Promise.all([
+    createRoutes(),
+    createFunctions(),
+  ]);
 
   socket.onmessage = async () => {
     try {
-      routes = [...(await createRoutes()), ...(await createApi())];
+      const [newRoutes, newFunctions] = await Promise.all([
+        createRoutes(),
+        createFunctions(),
+      ]);
+
+      routes = newRoutes;
+      functions = newFunctions;
     } catch (error) {
       socket.send(JSON.stringify({ success: false }));
     }
@@ -89,6 +84,36 @@ export default async (context: any): Promise<RequestHandler> => {
   };
 
   return async (req, res) => {
+    if (req.path === '/_server_functions_') {
+      const chunk = functions.find(c => c.filename === req.body.fileName);
+
+      if (chunk) {
+        try {
+          return res.json(
+            await chunk.fn[req.body.methodName](...req.body.args),
+          );
+        } catch (error) {
+          return res.status(500).json(serializeError(error));
+        }
+      }
+    }
+
+    if (req.path === '/_server_functions_batch_') {
+      const results = req.body.data.map(async (data: any) => {
+        const chunk = functions.find(c => c.filename === data.fileName);
+
+        if (chunk) {
+          try {
+            return chunk.fn[data.methodName](...data.args);
+          } catch (error) {
+            return res.status(500).json(serializeError(error));
+          }
+        }
+      });
+
+      return res.json(await Promise.all(results));
+    }
+
     const route = routes.find(({ match }) => {
       return match(req.path);
     });
@@ -97,17 +122,16 @@ export default async (context: any): Promise<RequestHandler> => {
       return res.status(404).send('404');
     }
 
-    // @ts-ignore
-    // const petri = context.petri.client(req.aspects);
-    // const experiments = await petri.conductAllInScope(config.unscopedName);
-
     try {
       const params = route.match(req.path);
-      const result = await route.fn(req, res, {
+      const result = await route.fn.call(
+        {
+          req,
+          res,
+          projectConfig,
+        },
         params,
-        // experiments,
-        // projectConfig,
-      });
+      );
 
       if (typeof result === 'object') {
         res.json(result);
@@ -115,12 +139,6 @@ export default async (context: any): Promise<RequestHandler> => {
         res.send(result);
       }
     } catch (error) {
-      if (route.isFn) {
-        return res.status(500).json(serializeError(error));
-      }
-
-      console.log(pe.render(error));
-
       const youch = new Youch(error, req);
 
       youch.toHTML().then((html: string) => {
