@@ -16,6 +16,7 @@
   "devDependencies": {
     "@types/enzyme": "^3.10.3",
     "@types/react": "^16.8.24",
+    "@types/react-dom": "^16.8.5",
     "enzyme": "~2.9.0",
     "husky": "~0.14.0",
     "jest-yoshi-preset": "4.11.0",
@@ -28,7 +29,6 @@
     "yoshi-style-dependencies": "4.6.0"
   },
   "peerDependencies": {
-    "prop-types": "~15.7.0",
     "react": "15.6.1",
     "react-dom": "15.6.1"
   },

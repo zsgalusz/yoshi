@@ -4,6 +4,7 @@ const chalk = require('chalk');
 const globby = require('globby');
 const stringLength = require('string-length');
 const execa = require('execa');
+const get = require('lodash/get');
 
 const OK = chalk.reset.inverse.bold.green(' DONE ');
 
@@ -15,8 +16,17 @@ const packages = globby.sync('*', {
   absolute: true,
 });
 
-const packagesWithTs = packages.filter(p =>
-  fs.existsSync(path.resolve(p, 'tsconfig.json')),
+const withBuildScript = projectPath => {
+  const pkg = require(path.resolve(projectPath, 'package.json'));
+  return Boolean(get(pkg, 'scripts.build', false));
+};
+
+const withTsConfig = projectPath => {
+  return fs.existsSync(path.resolve(projectPath, 'tsconfig.json'));
+};
+
+const packagesWithTs = packages.filter(
+  p => withTsConfig(p) && !withBuildScript(p),
 );
 
 const args = [
