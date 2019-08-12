@@ -97,6 +97,7 @@ module.exports = async () => {
     isDebug: true,
     isHmr: true,
     hmrPort,
+    devEntry: path.resolve(cliArgs.server),
   });
 
   let webWorkerConfig;
@@ -124,7 +125,7 @@ module.exports = async () => {
 
   // Start up server process
   const serverProcess = new ServerProcess({
-    serverFilePath: cliArgs.server,
+    serverFilePath: path.join(BUILD_DIR, 'devEntry'),
     hmrPort,
   });
 

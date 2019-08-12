@@ -813,6 +813,7 @@ function createServerWebpackConfig({
   isDebug = true,
   isHmr = false,
   hmrPort,
+  devEntry,
 } = {}) {
   const config = createCommonWebpackConfig({ isDebug, isHmr });
 
@@ -831,6 +832,9 @@ function createServerWebpackConfig({
 
     entry: {
       server: possibleServerEntries.find(exists) || possibleServerEntries[0],
+      ...(devEntry && {
+        devEntry,
+      }),
     },
 
     output: {
