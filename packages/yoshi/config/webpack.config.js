@@ -826,7 +826,7 @@ function createServerWebpackConfig({ isDebug = true, isHmr = false } = {}) {
     target: 'node',
 
     entry: [
-      ...globby.sync('**/*.(js|ts)', { cwd: API_DIR, absolute: true }),
+      // ...globby.sync('**/*.(js|ts)', { cwd: API_DIR, absolute: true }),
       ...globby.sync('**/*.(js|ts)', { cwd: ROUTES_DIR, absolute: true }),
     ].reduce((acc, filepath) => {
       return {
@@ -896,7 +896,7 @@ function createServerWebpackConfig({ isDebug = true, isHmr = false } = {}) {
       // Treat node modules as external for a small (and fast) server
       // bundle
       nodeExternals({
-        whitelist: [reStyle, reAssets, /bootstrap-hot-loader/, /yoshi-server/],
+        whitelist: [reStyle, reAssets, /bootstrap-hot-loader/],
       }),
       // Here for local integration tests as Yoshi's `node_modules`
       // are symlinked locally

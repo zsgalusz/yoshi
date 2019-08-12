@@ -25,11 +25,15 @@ const chalk = require('chalk');
 const openBrowser = require('./utils/open-browser');
 const chokidar = require('chokidar');
 const project = require('yoshi-config');
+const globby = require('globby');
+const Watchpack = require('watchpack');
 const {
   BUILD_DIR,
   PUBLIC_DIR,
   ASSETS_DIR,
   TARGET_DIR,
+  ROUTES_DIR,
+  SRC_DIR,
 } = require('yoshi-config/paths');
 const { isWebWorkerBundle } = require('yoshi-helpers/queries');
 const { PORT } = require('../constants');
@@ -45,6 +49,7 @@ const {
 } = require('../webpack-utils');
 const ServerProcess = require('../server-process');
 const detect = require('detect-port');
+const DynamicEntryPlugin = require('webpack/lib/DynamicEntryPlugin');
 
 const host = '0.0.0.0';
 
@@ -165,49 +170,98 @@ module.exports = async () => {
     );
   }
 
-  serverCompiler.watch({ 'info-verbosity': 'none' }, async (error, stats) => {
-    // We save the result of this build to webpack-dev-server's internal state so the last
-    // server build results are sent to the browser on every refresh.
-    // It also affects the error overlay
-    //
-    // https://github.com/webpack/webpack-dev-server/blob/143762596682d8da4fdc73555880be05255734d7/lib/Server.js#L722
-    devServer._stats = stats;
+  const wp = new Watchpack();
 
-    const jsonStats = stats.toJson();
+  wp.on('aggregated', function(changes, removals) {
+    watching.invalidate();
+  });
 
-    // If the spawned server process has died, restart it
-    if (serverProcess.child && serverProcess.child.exitCode !== null) {
-      await serverProcess.restart();
+  serverCompiler.hooks.make.tapPromise('1', async compilation => {
+    const entries = [
+      // ...globby.sync('**/*.(js|ts)', { cwd: API_DIR, absolute: true }),
+      ...globby.sync('**/*.(js|ts)', { cwd: ROUTES_DIR, absolute: true }),
+    ];
 
-      // Send the browser an instruction to refresh
-      await devServer.send('hash', jsonStats.hash);
-      await devServer.send('ok');
-    }
-    // If it's alive, send it a message to trigger HMR
-    else {
-      // If there are no errors and the server can be refreshed
-      // then send it a signal and wait for a response
-      if (serverProcess.child && !error && !stats.hasErrors()) {
-        const { success } = await serverProcess.send({});
+    const promises = entries.map(filepath => {
+      const name = path.relative(SRC_DIR, filepath).replace(/\.[^/.]+$/, '');
+      const dep = DynamicEntryPlugin.createDependency(filepath, name);
 
-        // HMR wasn't successful, restart the server process
-        if (!success) {
-          await serverProcess.restart();
-        }
+      return new Promise((resolve, reject) => {
+        compilation.addEntry(serverCompiler.context, dep, name, err =>
+          err ? reject(err) : resolve(),
+        );
+      });
+    });
+
+    await Promise.all(promises);
+  });
+
+  const watching = serverCompiler.watch(
+    { 'info-verbosity': 'none' },
+    async (error, stats) => {
+      // We save the result of this build to webpack-dev-server's internal state so the last
+      // server build results are sent to the browser on every refresh.
+      // It also affects the error overlay
+      //
+      // https://github.com/webpack/webpack-dev-server/blob/143762596682d8da4fdc73555880be05255734d7/lib/Server.js#L722
+      devServer._stats = stats;
+
+      const jsonStats = stats.toJson();
+
+      // If the spawned server process has died, restart it
+      if (serverProcess.child && serverProcess.child.exitCode !== null) {
+        await serverProcess.restart();
 
         // Send the browser an instruction to refresh
         await devServer.send('hash', jsonStats.hash);
         await devServer.send('ok');
-      } else {
-        // If there are errors, show them on the browser
-        if (jsonStats.errors.length > 0) {
-          await devServer.send('errors', jsonStats.errors);
-        } else if (jsonStats.warnings.length > 0) {
-          await devServer.send('warnings', jsonStats.warnings);
+      }
+      // If it's alive, send it a message to trigger HMR
+      else {
+        // If there are no errors and the server can be refreshed
+        // then send it a signal and wait for a response
+        if (serverProcess.child && !error && !stats.hasErrors()) {
+          const { success } = await serverProcess.send({});
+
+          // HMR wasn't successful, restart the server process
+          if (!success) {
+            await serverProcess.restart();
+          }
+
+          // Send the browser an instruction to refresh
+          await devServer.send('hash', jsonStats.hash);
+          await devServer.send('ok');
+        } else {
+          // If there are errors, show them on the browser
+          if (jsonStats.errors.length > 0) {
+            await devServer.send('errors', jsonStats.errors);
+          } else if (jsonStats.warnings.length > 0) {
+            await devServer.send('warnings', jsonStats.warnings);
+          }
         }
       }
-    }
-  });
+    },
+  );
+
+  // setInterval(() => {
+  //   watching.invalidate();
+  // }, 1000);
+
+  // serverCompiler.hooks.make.tapPromise('1', async compilation => {
+  //   const name = 'api/greeting-2';
+  //   const entry = '/Users/ronena/Projects/project-1/src/api/greeting-2.ts';
+
+  //   console.log('running');
+
+  //   if (fs.existsSync(entry)) {
+  //     const dep = DynamicEntryPlugin.createDependency(entry, name);
+  //     await new Promise((resolve, reject) => {
+  //       compilation.addEntry(serverCompiler.context, dep, name, err =>
+  //         err ? reject(err) : resolve(),
+  //       );
+  //     });
+  //   }
+  // });
 
   console.log(chalk.cyan('Starting development environment...\n'));
 
@@ -226,6 +280,8 @@ module.exports = async () => {
     // If there's an error, just exit(1)
     process.exit(1);
   }
+
+  wp.watch([], [ROUTES_DIR]);
 
   ['SIGINT', 'SIGTERM'].forEach(sig => {
     process.on(sig, () => {
