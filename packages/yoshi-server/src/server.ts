@@ -1,4 +1,4 @@
-import { parse as parseUrl, UrlWithParsedQuery } from 'url';
+import { parse as parseUrl } from 'url';
 import { RequestListener } from 'http';
 import Youch from 'youch';
 import SockJS from 'sockjs-client';
@@ -7,48 +7,19 @@ import { send, json } from 'micro';
 import createRoutes from './createRoutes';
 import createFunctions from './createFunctions';
 
-async function createRouter() {
-  const routes = await createRoutes();
-
-  return function match(parsedUrl: UrlWithParsedQuery) {
-    for (const route of routes) {
-      const params = route.match(parsedUrl.pathname);
-
-      if (params) {
-        return {
-          route,
-          params,
-        };
-      }
-    }
-  };
-}
-
-async function createInvoker() {
-  const functions = await createFunctions();
-
-  return function invoke(fileName: string, methodName: string) {
-    for (const fn of functions) {
-      if (fn.filename === fileName) {
-        return fn.chunk[methodName];
-      }
-    }
-  };
-}
-
 const socket = new SockJS(
   `http://localhost:${process.env.HMR_PORT}/_yoshi_server_hmr_`,
 );
 
 export default async (context: any): Promise<RequestListener> => {
-  let match = await createRouter();
-  let invoke = await createInvoker();
+  let matchRoute = await createRoutes();
+  let matchFunction = await createFunctions();
 
   // Hot reload
   socket.onmessage = async () => {
     try {
-      match = await createRouter();
-      invoke = await createInvoker();
+      matchRoute = await createRoutes();
+      matchFunction = await createFunctions();
     } catch (error) {
       socket.send(JSON.stringify({ success: false }));
     }
@@ -66,22 +37,26 @@ export default async (context: any): Promise<RequestListener> => {
       }
 
       const { methodName, fileName, args } = await json(req);
-      const { __fn__ } = invoke(fileName, methodName);
-
-      let result;
 
       try {
-        result = await __fn__.call({ context, req, res }, args);
+        const matched = matchFunction(fileName, methodName);
+
+        if (matched) {
+          const fnThis = { context, req, res };
+          const result = await matched.__fn__.call(fnThis, args);
+
+          return send(res, 200, result);
+        }
       } catch (error) {
         return send(res, 500, serializeError(error));
       }
 
-      return send(res, 200, result);
+      return send(res, 400);
     }
 
     // Try to match a route
     try {
-      const matched = match(parsedUrl);
+      const matched = matchRoute(parsedUrl);
 
       if (matched) {
         return send(res, 200, await matched.route.fn());

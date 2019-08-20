@@ -3,13 +3,13 @@ import globby from 'globby';
 import importFresh from 'import-fresh';
 import { API_BUILD_DIR } from 'yoshi-config/paths';
 
-export default async function createFunctions() {
+export default async function createInvoker() {
   const serverChunks = await globby('**/*.js', {
     cwd: API_BUILD_DIR,
     absolute: true,
   });
 
-  return Promise.all(
+  const functions = await Promise.all(
     serverChunks.map(async absolutePath => {
       const chunk: any = importFresh(absolutePath);
 
@@ -22,4 +22,12 @@ export default async function createFunctions() {
       };
     }),
   );
+
+  return (fileName: string, methodName: string) => {
+    for (const fn of functions) {
+      if (fn.filename === fileName) {
+        return fn.chunk[methodName];
+      }
+    }
+  };
 }
