@@ -1,26 +1,13 @@
 import unfetch from 'isomorphic-unfetch';
-import { FunctionArgs, FunctionResult, UnpackPromise, DSL } from './types';
+import { FunctionArgs, FunctionResult, UnpackPromise, DSL } from '../types';
+import { joinUrls } from './utils';
 
 type Options = {
   baseUrl?: string;
 };
 
-function joinUrls(baseUrl: string, relativeUrl: string) {
-  return baseUrl.replace(/\/+$/, '') + '/' + relativeUrl.replace(/^\/+/, '');
-}
-
 // https://github.com/developit/unfetch/issues/46
 const fetch = unfetch;
-
-// const isBrowser = typeof process === 'undefined';
-
-// function readCookie(name: string) {
-//   const match = document.cookie.match(
-//     new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'),
-//   );
-
-//   return match ? decodeURIComponent(match[3]) : null;
-// }
 
 export function create({ baseUrl = '/' }: Options = {}) {
   return {

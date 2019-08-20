@@ -19,10 +19,7 @@ export type ServerFunction<
   Result extends FunctionResult
 > = (this: FunctionContext, ...args: Args) => Result;
 
-export type DSL<
-  Args extends FunctionArgs = [],
-  Result extends FunctionResult = null
-> = {
+export type DSL<Args extends FunctionArgs, Result extends FunctionResult> = {
   fileName: string;
   methodName: string;
   __fn__: ServerFunction<Args, Result>;

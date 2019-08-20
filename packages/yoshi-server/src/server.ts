@@ -66,12 +66,12 @@ export default async (context: any): Promise<RequestListener> => {
       }
 
       const { methodName, fileName, args } = await json(req);
-      const wrapper = invoke(fileName, methodName);
+      const { __fn__ } = invoke(fileName, methodName);
 
       let result;
 
       try {
-        result = await wrapper.__fn__.call({ context, req, res }, args);
+        result = await __fn__.call({ context, req, res }, args);
       } catch (error) {
         return send(res, 500, serializeError(error));
       }

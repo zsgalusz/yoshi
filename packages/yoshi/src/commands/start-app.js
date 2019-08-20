@@ -34,6 +34,7 @@ const {
   TARGET_DIR,
   API_DIR,
   SRC_DIR,
+  ROUTES_DIR,
 } = require('yoshi-config/paths');
 const { isWebWorkerBundle } = require('yoshi-helpers/queries');
 const { PORT } = require('../constants');
@@ -179,7 +180,7 @@ module.exports = async () => {
   serverCompiler.hooks.make.tapPromise('1', async compilation => {
     const entries = [
       ...globby.sync('**/*.(js|ts)', { cwd: API_DIR, absolute: true }),
-      // ...globby.sync('**/*.(js|ts)', { cwd: ROUTES_DIR, absolute: true }),
+      ...globby.sync('**/*.(js|ts)', { cwd: ROUTES_DIR, absolute: true }),
     ];
 
     const promises = entries.map(filepath => {
