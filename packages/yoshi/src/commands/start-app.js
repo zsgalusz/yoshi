@@ -32,7 +32,7 @@ const {
   PUBLIC_DIR,
   ASSETS_DIR,
   TARGET_DIR,
-  ROUTES_DIR,
+  API_DIR,
   SRC_DIR,
 } = require('yoshi-config/paths');
 const { isWebWorkerBundle } = require('yoshi-helpers/queries');
@@ -178,8 +178,8 @@ module.exports = async () => {
 
   serverCompiler.hooks.make.tapPromise('1', async compilation => {
     const entries = [
-      // ...globby.sync('**/*.(js|ts)', { cwd: API_DIR, absolute: true }),
-      ...globby.sync('**/*.(js|ts)', { cwd: ROUTES_DIR, absolute: true }),
+      ...globby.sync('**/*.(js|ts)', { cwd: API_DIR, absolute: true }),
+      // ...globby.sync('**/*.(js|ts)', { cwd: ROUTES_DIR, absolute: true }),
     ];
 
     const promises = entries.map(filepath => {
@@ -281,7 +281,7 @@ module.exports = async () => {
     process.exit(1);
   }
 
-  wp.watch([], [ROUTES_DIR]);
+  wp.watch([], [API_DIR]);
 
   ['SIGINT', 'SIGTERM'].forEach(sig => {
     process.on(sig, () => {

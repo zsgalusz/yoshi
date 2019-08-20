@@ -826,7 +826,7 @@ function createServerWebpackConfig({ isDebug = true, isHmr = false } = {}) {
     target: 'node',
 
     entry: [
-      // ...globby.sync('**/*.(js|ts)', { cwd: API_DIR, absolute: true }),
+      ...globby.sync('**/*.(js|ts)', { cwd: API_DIR, absolute: true }),
       ...globby.sync('**/*.(js|ts)', { cwd: ROUTES_DIR, absolute: true }),
     ].reduce((acc, filepath) => {
       return {

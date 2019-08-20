@@ -1,32 +1,8 @@
-import { Request, Response } from 'express';
-import { JsonValue } from 'type-fest';
-import { WithAspects } from '@wix/wix-express-aspects';
-import Config from '@wix/wix-config';
-import { PetriClientFactory } from '@wix/wix-petri-client';
+import { FunctionResult, FunctionArgs, ServerFunction, DSL } from './types';
 
-export type OptionalPromise<T> = T | Promise<T>;
-
-export type Context = {
-  req: Request & WithAspects;
-  res: Response;
-  context: {
-    config: Config;
-    petri: PetriClientFactory;
-  };
-};
-
-type JsonArgs = Array<JsonValue>;
-
-type JsonResult = OptionalPromise<JsonValue>;
-
-export type Fn<Args extends JsonArgs, Result extends JsonResult> = (
-  this: Context,
-  ...args: Args
-) => Result;
-
-export function wrap<Value extends JsonResult, Args extends JsonArgs>(
-  fn: Fn<Args, Value>,
-): Fn<Args, Value> {
-  // @ts-ignore
-  return fn;
+export function wrap<Args extends FunctionArgs, Result extends FunctionResult>(
+  fn: ServerFunction<Args, Result>,
+): DSL<Args, Result> {
+  // Explain that this is done in build-time
+  return { fileName: '', methodName: '', __fn__: fn };
 }
