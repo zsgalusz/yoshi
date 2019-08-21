@@ -32,7 +32,6 @@ const {
   API_DIR,
   TEMPLATES_DIR,
   TEMPLATES_BUILD_DIR,
-  ROUTES_DIR,
 } = require('yoshi-config/paths');
 const project = require('yoshi-config');
 const {
@@ -51,7 +50,11 @@ const {
   unprocessedModules,
 } = require('yoshi-helpers/utils');
 const { defaultEntry } = require('yoshi-helpers/constants');
-const { addEntry, overrideRules } = require('../src/webpack-utils');
+const {
+  addEntry,
+  overrideRules,
+  findDynamicServerEntries,
+} = require('../src/webpack-utils');
 
 const reScript = /\.js?$/;
 const reStyle = /\.(css|less|scss|sass)$/;
@@ -161,6 +164,14 @@ const splitChunksConfig = isObject(useSplitChunks)
 const entry = project.entry || defaultEntry;
 
 const webWorkerEntry = project.webWorkerEntry;
+
+const serverEntry = ['./server', '../dev/server'].find(entry => {
+  return (
+    globby.sync(`${entry}(${extensions.join('|')})`, {
+      cwd: SRC_DIR,
+    }).length > 0
+  );
+});
 
 // Common function to get style loaders
 const getStyleLoaders = ({
@@ -825,15 +836,12 @@ function createServerWebpackConfig({ isDebug = true, isHmr = false } = {}) {
 
     target: 'node',
 
-    entry: [
-      ...globby.sync('**/*.(js|ts)', { cwd: API_DIR, absolute: true }),
-      ...globby.sync('**/*.(js|ts)', { cwd: ROUTES_DIR, absolute: true }),
-    ].reduce((acc, filepath) => {
-      return {
-        ...acc,
-        [path.relative(SRC_DIR, filepath).replace(/\.[^/.]+$/, '')]: filepath,
-      };
-    }, {}),
+    entry: {
+      ...findDynamicServerEntries(config.context),
+      ...{
+        ...(serverEntry ? { server: serverEntry } : {}),
+      },
+    },
 
     output: {
       ...config.output,

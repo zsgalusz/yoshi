@@ -25,16 +25,11 @@ const chalk = require('chalk');
 const openBrowser = require('./utils/open-browser');
 const chokidar = require('chokidar');
 const project = require('yoshi-config');
-const globby = require('globby');
-const Watchpack = require('watchpack');
 const {
   BUILD_DIR,
   PUBLIC_DIR,
   ASSETS_DIR,
   TARGET_DIR,
-  API_DIR,
-  SRC_DIR,
-  ROUTES_DIR,
 } = require('yoshi-config/paths');
 const { isWebWorkerBundle } = require('yoshi-helpers/queries');
 const { PORT } = require('../constants');
@@ -47,10 +42,10 @@ const {
   createCompiler,
   createDevServer,
   waitForCompilation,
+  watchDynamicEntries,
 } = require('../webpack-utils');
 const ServerProcess = require('../server-process');
 const detect = require('detect-port');
-const DynamicEntryPlugin = require('webpack/lib/DynamicEntryPlugin');
 
 const host = '0.0.0.0';
 
@@ -171,32 +166,6 @@ module.exports = async () => {
     );
   }
 
-  const wp = new Watchpack();
-
-  wp.on('aggregated', () => {
-    watching.invalidate();
-  });
-
-  serverCompiler.hooks.make.tapPromise('watchEntries', async compilation => {
-    const entries = [
-      ...globby.sync('**/*.(js|ts)', { cwd: API_DIR, absolute: true }),
-      ...globby.sync('**/*.(js|ts)', { cwd: ROUTES_DIR, absolute: true }),
-    ];
-
-    const promises = entries.map(filepath => {
-      const name = path.relative(SRC_DIR, filepath).replace(/\.[^/.]+$/, '');
-      const dep = DynamicEntryPlugin.createDependency(filepath, name);
-
-      return new Promise((resolve, reject) => {
-        compilation.addEntry(serverCompiler.context, dep, name, err =>
-          err ? reject(err) : resolve(),
-        );
-      });
-    });
-
-    await Promise.all(promises);
-  });
-
   const watching = serverCompiler.watch(
     { 'info-verbosity': 'none' },
     async (error, stats) => {
@@ -244,6 +213,9 @@ module.exports = async () => {
     },
   );
 
+  // Re-run Webpack with new entries as they're added
+  watchDynamicEntries(serverCompiler, watching);
+
   console.log(chalk.cyan('Starting development environment...\n'));
 
   // Start up webpack dev server
@@ -261,8 +233,6 @@ module.exports = async () => {
     // If there's an error, just exit(1)
     process.exit(1);
   }
-
-  wp.watch([], [API_DIR, ROUTES_DIR]);
 
   ['SIGINT', 'SIGTERM'].forEach(sig => {
     process.on(sig, () => {
