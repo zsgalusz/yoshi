@@ -173,7 +173,7 @@ module.exports = async () => {
 
   const wp = new Watchpack();
 
-  wp.on('aggregated', function(changes, removals) {
+  wp.on('aggregated', () => {
     watching.invalidate();
   });
 
