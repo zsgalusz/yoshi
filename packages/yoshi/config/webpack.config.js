@@ -165,9 +165,9 @@ const entry = project.entry || defaultEntry;
 
 const webWorkerEntry = project.webWorkerEntry;
 
-const serverEntry = ['./server', '../dev/server'].find(entry => {
+const serverEntry = ['./server', '../dev/server'].find(filename => {
   return (
-    globby.sync(`${entry}(${extensions.join('|')})`, {
+    globby.sync(`${filename}(${extensions.join('|')})`, {
       cwd: SRC_DIR,
     }).length > 0
   );
