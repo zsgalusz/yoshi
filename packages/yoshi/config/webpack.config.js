@@ -775,7 +775,7 @@ function createClientWebpackConfig({
         {
           test: /\.(js|ts)$/,
           include: [API_DIR],
-          loader: require.resolve('./http'),
+          loader: require.resolve('yoshi-server/build/loader'),
         },
       ],
     },
