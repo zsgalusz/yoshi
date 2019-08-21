@@ -244,26 +244,6 @@ module.exports = async () => {
     },
   );
 
-  // setInterval(() => {
-  //   watching.invalidate();
-  // }, 1000);
-
-  // serverCompiler.hooks.make.tapPromise('1', async compilation => {
-  //   const name = 'api/greeting-2';
-  //   const entry = '/Users/ronena/Projects/project-1/src/api/greeting-2.ts';
-
-  //   console.log('running');
-
-  //   if (fs.existsSync(entry)) {
-  //     const dep = DynamicEntryPlugin.createDependency(entry, name);
-  //     await new Promise((resolve, reject) => {
-  //       compilation.addEntry(serverCompiler.context, dep, name, err =>
-  //         err ? reject(err) : resolve(),
-  //       );
-  //     });
-  //   }
-  // });
-
   console.log(chalk.cyan('Starting development environment...\n'));
 
   // Start up webpack dev server
@@ -282,7 +262,7 @@ module.exports = async () => {
     process.exit(1);
   }
 
-  wp.watch([], [API_DIR]);
+  wp.watch([], [API_DIR, ROUTES_DIR]);
 
   ['SIGINT', 'SIGTERM'].forEach(sig => {
     process.on(sig, () => {
