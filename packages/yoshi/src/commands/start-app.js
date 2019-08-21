@@ -177,7 +177,7 @@ module.exports = async () => {
     watching.invalidate();
   });
 
-  serverCompiler.hooks.make.tapPromise('1', async compilation => {
+  serverCompiler.hooks.make.tapPromise('watchEntries', async compilation => {
     const entries = [
       ...globby.sync('**/*.(js|ts)', { cwd: API_DIR, absolute: true }),
       ...globby.sync('**/*.(js|ts)', { cwd: ROUTES_DIR, absolute: true }),
