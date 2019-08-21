@@ -54,6 +54,34 @@ export default async (context: any): Promise<RequestListener> => {
       return send(res, 400);
     }
 
+    // Batch endpoint
+    if (parsedUrl.pathname === '/_batch_') {
+      if (req.method !== 'POST') {
+        return send(res, 400);
+      }
+
+      const data = await json(req);
+
+      try {
+        const results: any = await Promise.all(
+          data.map(async ({ fileName, methodName, args }: any) => {
+            const matched = matchFunction(fileName, methodName);
+
+            if (matched) {
+              const fnThis = { context, req, res };
+              const result = await matched.__fn__.call(fnThis, args);
+
+              return result;
+            }
+          }),
+        );
+
+        return send(res, 200, results);
+      } catch (error) {
+        return send(res, 500, serializeError(error));
+      }
+    }
+
     // Try to match a route
     try {
       const matched = matchRoute(parsedUrl);
