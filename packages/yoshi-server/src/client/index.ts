@@ -56,13 +56,11 @@ export default class HttpClient {
       body: JSON.stringify(data),
     });
 
-    const json = await res.json();
-
-    if (res.status === 500) {
-      console.log(json);
+    if (!res.ok) {
+      throw new Error(JSON.stringify(await res.json()));
     }
 
-    return json;
+    return res.json();
   }
 
   async request<Result extends FunctionResult, Args extends FunctionArgs>(
@@ -83,12 +81,10 @@ export default class HttpClient {
       }),
     });
 
-    const json = await res.json();
-
-    if (res.status === 500) {
-      console.log(json);
+    if (!res.ok) {
+      throw new Error(JSON.stringify(await res.json()));
     }
 
-    return json;
+    return res.json();
   }
 }
