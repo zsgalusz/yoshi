@@ -1,7 +1,7 @@
 import { useState, useContext, useEffect } from 'react';
 import { FunctionArgs, FunctionResult, UnpackPromise, DSL } from '../types';
 import HttpClient from '../client';
-import { ClientContext } from './ClientContext';
+import { HttpContext } from './context';
 
 type State<Result> = {
   loading: boolean;
@@ -13,7 +13,7 @@ export function useRequest<
   Result extends FunctionResult,
   Args extends FunctionArgs
 >(dsl: DSL<Args, Result>, ...args: Args): State<Result> {
-  const context = useContext(ClientContext);
+  const context = useContext(HttpContext);
 
   const [state, setState] = useState<State<Result>>({
     loading: true,
@@ -59,7 +59,7 @@ export function useBatch<
 >;
 
 export function useBatch(...ts: Array<[DSL<any, any>, FunctionArgs]>) {
-  const context = useContext(ClientContext);
+  const context = useContext(HttpContext);
 
   const [state, setState] = useState<State<any>>({
     loading: true,
