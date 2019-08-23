@@ -3,7 +3,8 @@
   "rules": {
     "import/no-extraneous-dependencies": "error",
     "array-callback-return": "off",
-    "no-loop-func": "off"
+    "no-loop-func": "off",
+    "react-hooks/exhaustive-deps": "off"
   },
   "settings": {
     "react": {
