@@ -7,7 +7,7 @@ const clearConsole = require('react-dev-utils/clearConsole');
 const { prepareUrls } = require('react-dev-utils/WebpackDevServerUtils');
 const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 const project = require('yoshi-config');
-const { STATICS_DIR, API_DIR, ROUTES_DIR } = require('yoshi-config/paths');
+const { STATICS_DIR, ROUTES_DIR, SRC_DIR } = require('yoshi-config/paths');
 const { PORT } = require('./constants');
 const { redirectMiddleware } = require('../src/tasks/cdn/server-api');
 const WebpackDevServer = require('webpack-dev-server');
@@ -199,7 +199,7 @@ function waitForCompilation(compiler) {
 
 function findDynamicServerEntries(context) {
   return [
-    ...globby.sync('**/*.(js|ts)', { cwd: API_DIR, absolute: true }),
+    ...globby.sync('**/*.api.(js|ts)', { cwd: SRC_DIR, absolute: true }),
     ...globby.sync('**/*.(js|ts)', { cwd: ROUTES_DIR, absolute: true }),
   ].reduce((acc, filepath) => {
     return {
@@ -232,7 +232,7 @@ function watchDynamicEntries(compiler, watching) {
     await Promise.all(promises);
   });
 
-  wp.watch([], [API_DIR, ROUTES_DIR]);
+  wp.watch([], [SRC_DIR, ROUTES_DIR]);
 }
 
 module.exports = {

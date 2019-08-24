@@ -1,11 +1,11 @@
 import path from 'path';
 import globby from 'globby';
 import importFresh from 'import-fresh';
-import { API_BUILD_DIR } from 'yoshi-config/paths';
+import { BUILD_DIR } from 'yoshi-config/paths';
 
 export default async function createInvoker() {
-  const serverChunks = await globby('**/*.js', {
-    cwd: API_BUILD_DIR,
+  const serverChunks = await globby('**/*.api.js', {
+    cwd: BUILD_DIR,
     absolute: true,
   });
 
@@ -16,7 +16,7 @@ export default async function createInvoker() {
       return {
         chunk,
         filename: path.relative(
-          API_BUILD_DIR,
+          BUILD_DIR,
           absolutePath.replace(/\.[^/.]+$/, ''),
         ),
       };

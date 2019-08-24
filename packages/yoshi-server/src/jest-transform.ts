@@ -1,8 +1,6 @@
 import path from 'path';
 import traverse from '@babel/traverse';
 import { parse } from '@babel/parser';
-// eslint-disable-next-line import/no-unresolved
-import { loader } from 'webpack';
 import { SRC_DIR } from 'yoshi-config/paths';
 
 function collectExportNames(source: string) {
@@ -26,16 +24,16 @@ function collectExportNames(source: string) {
   return exportedNames;
 }
 
-const serverFunctionLoader: loader.Loader = function(source) {
-  const fileName = path
-    .relative(SRC_DIR, this.resourcePath)
-    .replace(/\.(js|ts)$/, '');
+export = {
+  process(source: string, fullFileName: string) {
+    const fileName = path
+      .relative(SRC_DIR, fullFileName)
+      .replace(/\.(js|ts)$/, '');
 
-  const functions = collectExportNames(source as string).map(methodName => {
-    return `export const ${methodName} = { methodName: '${methodName}', fileName: '${fileName}' };`;
-  });
+    const functions = collectExportNames(source as string).map(methodName => {
+      return `export const ${methodName} = { methodName: '${methodName}', fileName: '${fileName}' };`;
+    });
 
-  return functions.join('\n\n');
+    return functions.join('\n\n');
+  },
 };
-
-export default serverFunctionLoader;

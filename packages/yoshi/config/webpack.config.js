@@ -29,7 +29,6 @@ const {
   STATICS_DIR,
   TSCONFIG_FILE,
   MONOREPO_ROOT,
-  API_DIR,
   TEMPLATES_DIR,
   TEMPLATES_BUILD_DIR,
 } = require('yoshi-config/paths');
@@ -784,8 +783,7 @@ function createClientWebpackConfig({
         ...styleLoaders,
 
         {
-          test: /\.(js|ts)$/,
-          include: [API_DIR],
+          test: /\.api\.(js|ts)$/,
           loader: require.resolve('yoshi-server/build/loader'),
         },
       ],
@@ -899,10 +897,9 @@ function createServerWebpackConfig({ isDebug = true, isHmr = false } = {}) {
         ...styleLoaders,
 
         {
-          test: /\.(js|ts)$/,
+          test: /\.api\.(js|ts)$/,
           // Explain why its here
           issuer: () => true,
-          include: [API_DIR],
           loader: require.resolve('yoshi-server/build/loader'),
         },
       ],
