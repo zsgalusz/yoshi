@@ -15,14 +15,14 @@ export type FunctionArgs = Array<JsonValue>;
 export type FunctionResult = OptionalPromise<JsonValue>;
 
 export type ServerFunction<
-  Args extends FunctionArgs,
-  Result extends FunctionResult
+  Result extends FunctionResult,
+  Args extends FunctionArgs
 > = (this: FunctionContext, ...args: Args) => Result;
 
-export type DSL<Args extends FunctionArgs, Result extends FunctionResult> = {
+export type DSL<Result extends FunctionResult, Args extends FunctionArgs> = {
   fileName: string;
   methodName: string;
-  __fn__: ServerFunction<Args, Result>;
+  __fn__: ServerFunction<Result, Args>;
 };
 
 export type UnpackPromise<T> = T extends Promise<infer U> ? U : T;

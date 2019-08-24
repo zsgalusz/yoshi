@@ -1,24 +1,25 @@
-import unfetch from 'isomorphic-unfetch';
+import { isEqual } from 'lodash';
 import { FunctionArgs, FunctionResult, UnpackPromise, DSL } from '../types';
 import { joinUrls } from './utils';
 import { HttpClient } from './interface';
 
-type Options = {
-  baseUrl?: string;
+type Mock<Result extends FunctionResult, Args extends FunctionArgs> = {
+  request: {
+    fn: DSL<Result, Args>;
+    variables: Args;
+  };
+  result: UnpackPromise<Result>;
 };
 
-// https://github.com/developit/unfetch/issues/46
-const fetch = unfetch;
-
 export default class implements HttpClient {
-  private baseUrl: string;
+  private mocks: Array<Mock<any, any>>;
 
-  constructor({ baseUrl = '/' }: Options = {}) {
-    this.baseUrl = baseUrl;
+  constructor(mocks: Array<Mock<any, any>>) {
+    this.mocks = mocks;
   }
 
   async batch(...ts: Array<[DSL<any, any>, FunctionArgs]>) {
-    const url = joinUrls(this.baseUrl, '/_batch_');
+    const url = joinUrls('', '/_batch_');
 
     const data = ts.map(([{ fileName, methodName }, args]) => {
       return { fileName, methodName, args };
@@ -40,27 +41,19 @@ export default class implements HttpClient {
   }
 
   async request<Result extends FunctionResult, Args extends FunctionArgs>(
-    { fileName, methodName }: DSL<Result, Args>,
+    dsl: DSL<Result, Args>,
     ...args: Args
   ): Promise<UnpackPromise<Result>> {
-    const url = joinUrls(this.baseUrl, '/_api_');
-
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        fileName,
-        methodName,
-        args,
-      }),
+    const mock = this.mocks.find(({ request }) => {
+      if (request.fn === dsl) {
+        return isEqual(args, request.variables);
+      }
     });
 
-    if (!res.ok) {
-      throw new Error(JSON.stringify(await res.json()));
+    if (mock) {
+      return mock.result;
     }
 
-    return res.json();
+    throw new Error('not found');
   }
 }

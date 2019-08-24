@@ -1,5 +1,5 @@
 import React from 'react';
-import HttpClient from '../client';
+import { HttpClient } from '../client/interface';
 
 export const HttpContext: React.Context<{
   client?: HttpClient;

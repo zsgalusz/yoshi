@@ -1,6 +1,6 @@
 import { useState, useContext, useEffect } from 'react';
 import { FunctionArgs, FunctionResult, UnpackPromise, DSL } from '../types';
-import HttpClient from '../client';
+import { HttpClient } from '../client/interface';
 import { HttpContext } from './context';
 
 type State<Result> = {
@@ -12,7 +12,7 @@ type State<Result> = {
 export function useRequest<
   Result extends FunctionResult,
   Args extends FunctionArgs
->(dsl: DSL<Args, Result>, ...args: Args): State<Result> {
+>(dsl: DSL<Result, Args>, ...args: Args): State<Result> {
   const context = useContext(HttpContext);
 
   const [state, setState] = useState<State<Result>>({
@@ -39,8 +39,8 @@ export function useBatch<
   Result2 extends FunctionResult,
   Args2 extends FunctionArgs
 >(
-  t1: [DSL<Args1, Result1>, Args1],
-  t2: [DSL<Args2, Result2>, Args2],
+  t1: [DSL<Result1, Args1>, Args1],
+  t2: [DSL<Result2, Args2>, Args2],
 ): State<[UnpackPromise<Result1>, UnpackPromise<Result2>]>;
 
 export function useBatch<
@@ -51,9 +51,9 @@ export function useBatch<
   Result3 extends FunctionResult,
   Args3 extends FunctionArgs
 >(
-  t1: [DSL<Args1, Result1>, Args1],
-  t2: [DSL<Args2, Result2>, Args2],
-  t3: [DSL<Args3, Result3>, Args3],
+  t1: [DSL<Result1, Args1>, Args1],
+  t2: [DSL<Result2, Args2>, Args2],
+  t3: [DSL<Result3, Args3>, Args3],
 ): State<
   [UnpackPromise<Result1>, UnpackPromise<Result2>, UnpackPromise<Result3>]
 >;
