@@ -897,6 +897,14 @@ function createServerWebpackConfig({ isDebug = true, isHmr = false } = {}) {
 
         // Rules for Style Sheets
         ...styleLoaders,
+
+        {
+          test: /\.(js|ts)$/,
+          // Explain why its here
+          issuer: () => true,
+          include: [API_DIR],
+          loader: require.resolve('yoshi-server/build/loader'),
+        },
       ],
     },
 
