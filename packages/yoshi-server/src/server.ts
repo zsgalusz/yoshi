@@ -1,11 +1,11 @@
-import { RequestListener } from 'http';
 import path from 'path';
+import { RequestListener } from 'http';
 import Youch from 'youch';
-import SockJS from 'sockjs-client';
-import serializeError from 'serialize-error';
-import { send, json } from 'micro';
 import globby from 'globby';
+import SockJS from 'sockjs-client';
+import { send, json } from 'micro';
 import importFresh from 'import-fresh';
+import serializeError from 'serialize-error';
 import { ROUTES_BUILD_DIR, BUILD_DIR } from 'yoshi-config/paths';
 import { getMatcher } from './utils';
 import Router, { route, Route } from './router';
@@ -45,20 +45,16 @@ export default class Server {
         fn: async (req, res) => {
           const { methodName, fileName, args } = await json(req);
 
-          try {
-            const matched = functions[fileName][methodName];
+          const matched = functions[fileName][methodName];
 
-            if (matched) {
-              const fnThis = { context: this.context, req, res };
-              const result = await matched.__fn__.call(fnThis, args);
+          if (matched) {
+            const fnThis = { context: this.context, req, res };
+            const result = await matched.__fn__.call(fnThis, args);
 
-              return send(res, 200, result);
-            }
-          } catch (error) {
-            return send(res, 500, serializeError(error));
+            return send(res, 200, result);
           }
 
-          return send(res, 400);
+          throw new Error('Could not find method');
         },
       },
       {
@@ -66,24 +62,22 @@ export default class Server {
         fn: async (req, res) => {
           const data = await json(req);
 
-          try {
-            const results: any = await Promise.all(
-              data.map(async ({ fileName, methodName, args }: any) => {
-                const matched = functions[fileName][methodName];
+          const results = await Promise.all(
+            data.map(async ({ fileName, methodName, args }: any) => {
+              const matched = functions[fileName][methodName];
 
-                if (matched) {
-                  const fnThis = { context: this.context, req, res };
-                  const result = await matched.__fn__.call(fnThis, args);
+              if (matched) {
+                const fnThis = { context: this.context, req, res };
+                const result = await matched.__fn__.call(fnThis, args);
 
-                  return result;
-                }
-              }),
-            );
+                return result;
+              }
 
-            return send(res, 200, results);
-          } catch (error) {
-            return send(res, 500, serializeError(error));
-          }
+              throw new Error('Could not find method');
+            }),
+          );
+
+          return send(res, 200, results);
         },
       },
       ...dynamicRoutes,
@@ -91,13 +85,17 @@ export default class Server {
   }
 
   public handle: RequestListener = async (req, res) => {
-    const match = this.router.match(req, res);
+    try {
+      const fn = this.router.match(req, res);
 
-    if (match) {
-      return match();
+      if (fn) {
+        return await fn();
+      }
+    } catch (error) {
+      return send(res, 500, serializeError(error));
     }
 
-    await send(res, 404, '404');
+    return send(res, 404, '404');
   };
 
   private createDynamicRoutes(): Array<Route> {
