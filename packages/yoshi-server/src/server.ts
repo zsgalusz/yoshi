@@ -1,103 +1,155 @@
-import { parse as parseUrl } from 'url';
 import { RequestListener } from 'http';
+import path from 'path';
 import Youch from 'youch';
 import SockJS from 'sockjs-client';
 import serializeError from 'serialize-error';
 import { send, json } from 'micro';
-import createRoutes from './createRoutes';
-import createFunctions from './createFunctions';
+import globby from 'globby';
+import importFresh from 'import-fresh';
+import { ROUTES_BUILD_DIR, BUILD_DIR } from 'yoshi-config/paths';
+import { getMatcher } from './utils';
+import Router, { route, Route } from './router';
 
-const socket = new SockJS(
-  `http://localhost:${process.env.HMR_PORT}/_yoshi_server_hmr_`,
-);
+export default class Server {
+  private context: any;
+  private socket: WebSocket;
+  private router: Router;
 
-export default async (context: any): Promise<RequestListener> => {
-  let matchRoute = await createRoutes();
-  let matchFunction = await createFunctions();
+  constructor(context: any) {
+    this.context = context;
 
-  // Hot reload
-  socket.onmessage = async () => {
-    try {
-      matchRoute = await createRoutes();
-      matchFunction = await createFunctions();
-    } catch (error) {
-      socket.send(JSON.stringify({ success: false }));
-    }
-    socket.send(JSON.stringify({ success: true }));
-  };
+    this.socket = new SockJS(
+      `http://localhost:${process.env.HMR_PORT}/_yoshi_server_hmr_`,
+    );
 
-  // Return handler
-  return async (req, res) => {
-    const parsedUrl = parseUrl(req.url as string, true);
+    this.router = new Router(this.generateRoutes());
 
-    // Server function endpoint
-    if (parsedUrl.pathname === '/_api_') {
-      if (req.method !== 'POST') {
-        return send(res, 400);
-      }
-
-      const { methodName, fileName, args } = await json(req);
-
+    this.socket.onmessage = async () => {
       try {
-        const matched = matchFunction(fileName, methodName);
-
-        if (matched) {
-          const fnThis = { context, req, res };
-          const result = await matched.__fn__.call(fnThis, args);
-
-          return send(res, 200, result);
-        }
+        this.router = new Router(this.generateRoutes());
       } catch (error) {
-        return send(res, 500, serializeError(error));
+        this.socket.send(JSON.stringify({ success: false }));
       }
 
-      return send(res, 400);
-    }
+      this.socket.send(JSON.stringify({ success: true }));
+    };
+  }
 
-    // Batch endpoint
-    if (parsedUrl.pathname === '/_batch_') {
-      if (req.method !== 'POST') {
-        return send(res, 400);
-      }
+  private generateRoutes(): Array<Route> {
+    const functions = this.createFunctions();
+    const dynamicRoutes = this.createDynamicRoutes();
 
-      const data = await json(req);
+    return [
+      {
+        match: route('/_api_'),
+        fn: async (req, res) => {
+          const { methodName, fileName, args } = await json(req);
 
-      try {
-        const results: any = await Promise.all(
-          data.map(async ({ fileName, methodName, args }: any) => {
-            const matched = matchFunction(fileName, methodName);
+          try {
+            const matched = functions[fileName][methodName];
 
             if (matched) {
-              const fnThis = { context, req, res };
+              const fnThis = { context: this.context, req, res };
               const result = await matched.__fn__.call(fnThis, args);
 
-              return result;
+              return send(res, 200, result);
             }
-          }),
-        );
+          } catch (error) {
+            return send(res, 500, serializeError(error));
+          }
 
-        return send(res, 200, results);
-      } catch (error) {
-        return send(res, 500, serializeError(error));
-      }
+          return send(res, 400);
+        },
+      },
+      {
+        match: route('/_batch_'),
+        fn: async (req, res) => {
+          const data = await json(req);
+
+          try {
+            const results: any = await Promise.all(
+              data.map(async ({ fileName, methodName, args }: any) => {
+                const matched = functions[fileName][methodName];
+
+                if (matched) {
+                  const fnThis = { context: this.context, req, res };
+                  const result = await matched.__fn__.call(fnThis, args);
+
+                  return result;
+                }
+              }),
+            );
+
+            return send(res, 200, results);
+          } catch (error) {
+            return send(res, 500, serializeError(error));
+          }
+        },
+      },
+      ...dynamicRoutes,
+    ];
+  }
+
+  public handle: RequestListener = async (req, res) => {
+    const match = this.router.match(req, res);
+
+    if (match) {
+      return match();
     }
 
-    // Try to match a route
-    try {
-      const matched = matchRoute(parsedUrl);
-
-      if (matched) {
-        return send(res, 200, await matched.route.fn());
-      }
-    } catch (error) {
-      // Handle errors
-      const youch = new Youch(error, req);
-      const html: string = await youch.toHTML();
-
-      return send(res, 500, html);
-    }
-
-    // No route was found
     await send(res, 404, '404');
   };
-};
+
+  private createDynamicRoutes(): Array<Route> {
+    const serverChunks = globby.sync('**/*.js', {
+      cwd: ROUTES_BUILD_DIR,
+      absolute: true,
+    });
+
+    return serverChunks.map(absolutePath => {
+      const chunk: any = importFresh(absolutePath);
+
+      const relativePath = `/${path.relative(
+        ROUTES_BUILD_DIR,
+        absolutePath.replace(/\.[^/.]+$/, ''),
+      )}`;
+
+      const match = getMatcher(relativePath);
+
+      return {
+        match,
+        fn: async (req, res) => {
+          try {
+            return send(res, 200, await chunk.default());
+          } catch (error) {
+            // Handle errors
+            const youch = new Youch(error, req);
+            const html: string = await youch.toHTML();
+
+            return send(res, 500, html);
+          }
+        },
+      };
+    });
+  }
+
+  private createFunctions(): { [filename: string]: any } {
+    const serverChunks = globby.sync('**/*.api.js', {
+      cwd: BUILD_DIR,
+      absolute: true,
+    });
+
+    return serverChunks.reduce((acc, absolutePath) => {
+      const chunk: any = importFresh(absolutePath);
+      const filename = path.relative(
+        BUILD_DIR,
+        absolutePath.replace(/\.[^/.]+$/, ''),
+      );
+
+      return {
+        ...acc,
+        [filename]: chunk,
+      };
+    }, {});
+  }
+}

@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import server from './server';
+import Server from './server';
 
 export = async (app: Router, context: any) => {
-  const handle = await server(context);
+  const server = new Server(context);
 
-  app.all('*', handle);
+  app.all('*', server.handle);
 
   return app;
 };
