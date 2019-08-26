@@ -1,3 +1,5 @@
+import path from 'path';
+
 function getRouteMatcher(routeRegex: ReturnType<typeof getRouteRegex>) {
   const { re, groups } = routeRegex;
   return (pathname: string | undefined) => {
@@ -56,4 +58,8 @@ export function getMatcher(normalizedRoute: string) {
   const matcher = getRouteMatcher(regex);
 
   return matcher;
+}
+
+export function relativeFilePath(from: string, to: string) {
+  return path.relative(from, to.replace(/\.[^/.]+$/, ''));
 }

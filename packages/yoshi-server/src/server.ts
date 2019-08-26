@@ -1,4 +1,3 @@
-import path from 'path';
 import { RequestListener } from 'http';
 import Youch from 'youch';
 import globby from 'globby';
@@ -7,7 +6,7 @@ import { send, json } from 'micro';
 import importFresh from 'import-fresh';
 import serializeError from 'serialize-error';
 import { ROUTES_BUILD_DIR, BUILD_DIR } from 'yoshi-config/paths';
-import { getMatcher } from './utils';
+import { getMatcher, relativeFilePath } from './utils';
 import Router, { route, Route } from './router';
 
 export default class Server {
@@ -106,21 +105,19 @@ export default class Server {
 
     return serverChunks.map(absolutePath => {
       const chunk: any = importFresh(absolutePath);
-
-      const relativePath = `/${path.relative(
+      const relativePath = `/${relativeFilePath(
         ROUTES_BUILD_DIR,
-        absolutePath.replace(/\.[^/.]+$/, ''),
+        absolutePath,
       )}`;
-
       const match = getMatcher(relativePath);
 
       return {
         match,
-        fn: async (req, res) => {
+        fn: async (req, res, params) => {
           try {
-            return send(res, 200, await chunk.default());
+            const fnThis = { context: this.context, req, res, params };
+            return send(res, 200, await chunk.default.call(fnThis));
           } catch (error) {
-            // Handle errors
             const youch = new Youch(error, req);
             const html: string = await youch.toHTML();
 
@@ -139,10 +136,7 @@ export default class Server {
 
     return serverChunks.reduce((acc, absolutePath) => {
       const chunk: any = importFresh(absolutePath);
-      const filename = path.relative(
-        BUILD_DIR,
-        absolutePath.replace(/\.[^/.]+$/, ''),
-      );
+      const filename = relativeFilePath(BUILD_DIR, absolutePath);
 
       return {
         ...acc,

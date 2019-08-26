@@ -25,6 +25,7 @@ export default class implements HttpClient {
     });
 
     const res = await fetch(url, {
+      credentials: 'same-origin',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -47,6 +48,7 @@ export default class implements HttpClient {
 
     const res = await fetch(url, {
       method: 'POST',
+      credentials: 'same-origin',
       headers: {
         'Content-Type': 'application/json',
       },
