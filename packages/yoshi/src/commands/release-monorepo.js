@@ -1,6 +1,5 @@
 const fs = require('fs-extra');
 const path = require('path');
-const execa = require('execa');
 const wnpm = require('wnpm-ci');
 const parseArgs = require('minimist');
 const { splitPackagesPromise } = require('./utils');
@@ -35,19 +34,6 @@ module.exports = async () => {
     await Promise.all(
       libs.map(lib => {
         return wnpm.prepareForRelease({ shouldBumpMinor, cwd: lib.location });
-      }),
-    );
-
-    // This part is inconsistent with how non-monorepo apps work:
-    // Here we publish packages as part of `yoshi release` while in most apps
-    // CI does the publishinng
-    await Promise.all(
-      libs.map(lib => {
-        console.log(`Publishing ${lib.name}...`);
-        console.log();
-
-        // `npm-ci` is installed globally on CI
-        return execa.shell('npx npm-ci publish', { cwd: lib.location });
       }),
     );
   }
