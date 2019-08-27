@@ -34,7 +34,13 @@ export default class implements HttpClient {
     });
 
     if (!res.ok) {
-      throw new Error(JSON.stringify(await res.json()));
+      const error = await res.json();
+
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(error);
+      }
+
+      throw new Error(JSON.stringify(error));
     }
 
     return res.json();
@@ -60,7 +66,13 @@ export default class implements HttpClient {
     });
 
     if (!res.ok) {
-      throw new Error(JSON.stringify(await res.json()));
+      const error = await res.json();
+
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(error);
+      }
+
+      throw new Error(JSON.stringify(error));
     }
 
     return res.json();

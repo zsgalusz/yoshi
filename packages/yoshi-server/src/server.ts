@@ -12,30 +12,32 @@ import Router, { route, Route } from './router';
 
 export default class Server {
   private context: any;
-  private socket: WebSocket;
   private router: Router;
   private config: { [name: string]: any };
 
   constructor(context: any) {
     this.context = context;
 
-    this.socket = new SockJS(
-      `http://localhost:${process.env.HMR_PORT}/_yoshi_server_hmr_`,
-    );
-
     this.router = new Router(this.generateRoutes());
 
     this.config = context.config.load(config.unscopedName);
 
-    this.socket.onmessage = async () => {
-      try {
-        this.router = new Router(this.generateRoutes());
-      } catch (error) {
-        this.socket.send(JSON.stringify({ success: false }));
-      }
+    // Setup HMR
+    if (process.env.NODE_ENV === 'development') {
+      const socket = new SockJS(
+        `http://localhost:${process.env.HMR_PORT}/_yoshi_server_hmr_`,
+      );
 
-      this.socket.send(JSON.stringify({ success: true }));
-    };
+      socket.onmessage = async () => {
+        try {
+          this.router = new Router(this.generateRoutes());
+        } catch (error) {
+          socket.send(JSON.stringify({ success: false }));
+        }
+
+        socket.send(JSON.stringify({ success: true }));
+      };
+    }
   }
 
   private generateRoutes(): Array<Route> {
@@ -57,6 +59,7 @@ export default class Server {
               req,
               res,
             };
+
             const result = await matched.__fn__.call(fnThis, args);
 
             return send(res, 200, result);
@@ -81,9 +84,8 @@ export default class Server {
                   req,
                   res,
                 };
-                const result = await matched.__fn__.call(fnThis, args);
 
-                return result;
+                return matched.__fn__.call(fnThis, args);
               }
 
               throw new Error('Could not find method');
@@ -105,6 +107,10 @@ export default class Server {
         return await fn();
       }
     } catch (error) {
+      if (process.env.NODE_ENV === 'production') {
+        return send(res, 500, '500');
+      }
+
       return send(res, 500, serializeError(error));
     }
 
@@ -136,6 +142,7 @@ export default class Server {
               res,
               params,
             };
+
             return send(res, 200, await chunk.default.call(fnThis));
           } catch (error) {
             const youch = new Youch(error, req);
