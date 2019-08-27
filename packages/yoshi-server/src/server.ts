@@ -5,6 +5,7 @@ import SockJS from 'sockjs-client';
 import { send, json } from 'micro';
 import importFresh from 'import-fresh';
 import serializeError from 'serialize-error';
+import config from 'yoshi-config';
 import { ROUTES_BUILD_DIR, BUILD_DIR } from 'yoshi-config/paths';
 import { getMatcher, relativeFilePath } from './utils';
 import Router, { route, Route } from './router';
@@ -13,6 +14,7 @@ export default class Server {
   private context: any;
   private socket: WebSocket;
   private router: Router;
+  private config: { [name: string]: any };
 
   constructor(context: any) {
     this.context = context;
@@ -22,6 +24,8 @@ export default class Server {
     );
 
     this.router = new Router(this.generateRoutes());
+
+    this.config = context.config.load(config.unscopedName);
 
     this.socket.onmessage = async () => {
       try {
@@ -47,7 +51,12 @@ export default class Server {
           const matched = functions[fileName][methodName];
 
           if (matched) {
-            const fnThis = { context: this.context, req, res };
+            const fnThis = {
+              context: this.context,
+              config: this.config,
+              req,
+              res,
+            };
             const result = await matched.__fn__.call(fnThis, args);
 
             return send(res, 200, result);
@@ -66,7 +75,12 @@ export default class Server {
               const matched = functions[fileName][methodName];
 
               if (matched) {
-                const fnThis = { context: this.context, req, res };
+                const fnThis = {
+                  context: this.context,
+                  config: this.config,
+                  req,
+                  res,
+                };
                 const result = await matched.__fn__.call(fnThis, args);
 
                 return result;
@@ -115,7 +129,13 @@ export default class Server {
         match,
         fn: async (req, res, params) => {
           try {
-            const fnThis = { context: this.context, req, res, params };
+            const fnThis = {
+              context: this.context,
+              config: this.config,
+              req,
+              res,
+              params,
+            };
             return send(res, 200, await chunk.default.call(fnThis));
           } catch (error) {
             const youch = new Youch(error, req);
