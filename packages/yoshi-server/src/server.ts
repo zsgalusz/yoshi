@@ -10,12 +10,37 @@ import { ROUTES_BUILD_DIR, BUILD_DIR } from 'yoshi-config/paths';
 import * as t from 'io-ts';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { isLeft } from 'fp-ts/lib/Either';
+import { Request, Response } from 'express';
+import { WithAspects } from '@wix/wix-express-aspects';
 import { getMatcher, relativeFilePath } from './utils';
 import Router, { route, Route } from './router';
+import { DSL, FunctionContext } from './types';
 
-const chunkModule = t.record(t.string, t.union([t.Function, t.undefined]));
+type RequiredRecursively<T> = Exclude<
+  T extends string | number | boolean | Function | RegExp
+    ? T
+    : {
+        [P in keyof T]-?: T[P] extends Array<infer U>
+          ? Array<RequiredRecursively<U>>
+          : T[P] extends Array<infer U>
+          ? Array<RequiredRecursively<U>>
+          : RequiredRecursively<T[P]>;
+      },
+  null | undefined
+>;
 
-const serverFunctions = t.record(t.string, t.union([chunkModule, t.undefined]));
+type AccessorFunction<T, R> = (object: RequiredRecursively<T>) => R;
+
+function getFrom<T>(object: T) {
+  return function<R>(accessorFn: AccessorFunction<T, R>, defaultValue: R): R {
+    try {
+      const result = accessorFn((object as unknown) as RequiredRecursively<T>);
+      return result === undefined || result === null ? defaultValue : result;
+    } catch (e) {
+      return defaultValue;
+    }
+  };
+}
 
 const clientRequest = t.array(
   t.type({
@@ -70,40 +95,26 @@ export default class Server {
             return send(res, 406, PathReporter.report(result));
           }
 
-          const fnData = result.right.map(({ fileName, methodName, args }) => {
-            const chunk = functions[fileName];
+          const fns = [];
 
-            if (!chunk) {
-              throw new Error('');
-            }
-
-            const method = chunk[methodName];
+          for (const { fileName, methodName, args } of result.right) {
+            const get = getFrom(functions);
+            const method = get(c => c[fileName][methodName].__fn__, null);
 
             if (!method) {
-              throw new Error('');
+              return send(res, 406, 'method not found');
             }
 
-            return { method, args };
-          });
+            const fnThis: FunctionContext = {
+              context: this.context,
+              req: req as Request & WithAspects,
+              res: res as Response,
+            };
 
-          let results;
-
-          try {
-            results = await Promise.all(
-              fnData.map(async ({ method, args }) => {
-                const fnThis = {
-                  context: this.context,
-                  config: this.config,
-                  req,
-                  res,
-                };
-
-                return method.call(fnThis, args);
-              }),
-            );
-          } catch (error) {
-            return console.log(error);
+            fns.push(method.bind(fnThis, ...args));
           }
+
+          const results = await Promise.all(fns.map(fn => fn()));
 
           return send(res, 200, results);
         },
@@ -168,13 +179,17 @@ export default class Server {
     });
   }
 
-  private createFunctions() {
+  private createFunctions(): {
+    [filename: string]:
+      | { [methodName: string]: DSL<any, any> | undefined }
+      | undefined;
+  } {
     const serverChunks = globby.sync('**/*.api.js', {
       cwd: BUILD_DIR,
       absolute: true,
     });
 
-    const chunks = serverChunks.reduce((acc, absolutePath) => {
+    return serverChunks.reduce((acc, absolutePath) => {
       const chunk = importFresh(absolutePath);
       const filename = relativeFilePath(BUILD_DIR, absolutePath);
 
@@ -183,13 +198,5 @@ export default class Server {
         [filename]: chunk,
       };
     }, {});
-
-    const result = serverFunctions.decode(chunks);
-
-    if (isLeft(result)) {
-      throw new Error('');
-    }
-
-    return result.right;
   }
 }
