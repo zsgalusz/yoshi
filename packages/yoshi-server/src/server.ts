@@ -1,4 +1,4 @@
-import { RequestListener, IncomingMessage, ServerResponse } from 'http';
+import { RequestListener } from 'http';
 import Youch from 'youch';
 import globby from 'globby';
 import SockJS from 'sockjs-client';
@@ -9,17 +9,21 @@ import config from 'yoshi-config';
 import { ROUTES_BUILD_DIR, BUILD_DIR } from 'yoshi-config/paths';
 import * as t from 'io-ts';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import { isLeft, mapLeft, map, either, Either } from 'fp-ts/lib/Either';
+import { isLeft } from 'fp-ts/lib/Either';
 import { getMatcher, relativeFilePath } from './utils';
 import Router, { route, Route } from './router';
 
-const ClientRequest = t.type({
-  fileName: t.string,
-  methodName: t.string,
-  args: t.array(t.any),
-});
+const chunkModule = t.record(t.string, t.union([t.Function, t.undefined]));
 
-const BatchClientRequest = t.array(ClientRequest);
+const serverFunctions = t.record(t.string, t.union([chunkModule, t.undefined]));
+
+const clientRequest = t.array(
+  t.type({
+    fileName: t.string,
+    methodName: t.string,
+    args: t.array(t.any),
+  }),
+);
 
 export default class Server {
   private context: any;
@@ -51,16 +55,6 @@ export default class Server {
     }
   }
 
-  private async validateRequestBody<O>(
-    req: IncomingMessage,
-    codec: t.Type<O, any, any>,
-  ): Promise<Either<Array<string>, O>> {
-    const body = await json(req);
-    const result = codec.decode(body);
-
-    return either.mapLeft(result, () => PathReporter.report(result));
-  }
-
   private generateRoutes(): Array<Route> {
     const functions = this.createFunctions();
     const dynamicRoutes = this.createDynamicRoutes();
@@ -69,74 +63,53 @@ export default class Server {
       {
         match: route('/_api_'),
         fn: async (req, res) => {
-          const data = await this.validateRequestBody(req, ClientRequest);
+          const body = await json(req);
+          const result = clientRequest.decode(body);
 
-          if (isLeft(data)) {
-            return send(res, 406, data.left);
+          if (isLeft(result)) {
+            return send(res, 406, PathReporter.report(result));
           }
 
-          const result = await this.runServerFunction({
-            req,
-            res,
-            functions,
-            fnData: data.right,
+          const fnData = result.right.map(({ fileName, methodName, args }) => {
+            const chunk = functions[fileName];
+
+            if (!chunk) {
+              throw new Error('');
+            }
+
+            const method = chunk[methodName];
+
+            if (!method) {
+              throw new Error('');
+            }
+
+            return { method, args };
           });
 
-          return send(res, 200, result);
-        },
-      },
-      {
-        match: route('/_batch_'),
-        fn: async (req, res) => {
-          const data = await this.validateRequestBody(req, BatchClientRequest);
+          let results;
 
-          if (isLeft(data)) {
-            return send(res, 406, data.left);
+          try {
+            results = await Promise.all(
+              fnData.map(async ({ method, args }) => {
+                const fnThis = {
+                  context: this.context,
+                  config: this.config,
+                  req,
+                  res,
+                };
+
+                return method.call(fnThis, args);
+              }),
+            );
+          } catch (error) {
+            return console.log(error);
           }
-
-          const results = await Promise.all(
-            data.right.map(async fnData => {
-              return this.runServerFunction({
-                req,
-                res,
-                functions,
-                fnData,
-              });
-            }),
-          );
 
           return send(res, 200, results);
         },
       },
       ...dynamicRoutes,
     ];
-  }
-
-  private async runServerFunction({
-    req,
-    res,
-    functions,
-    fnData,
-  }: {
-    req: IncomingMessage;
-    res: ServerResponse;
-    functions: { [filename: string]: any };
-    fnData: t.TypeOf<typeof ClientRequest>;
-  }) {
-    const matched = functions[fnData.fileName][fnData.methodName];
-
-    if (!matched) {
-      throw new Error('Could not find function');
-    }
-
-    const fnThis = {
-      context: this.context,
-      config: this.config,
-      req,
-      res,
-    };
-
-    return matched.__fn__.call(fnThis, fnData.args);
   }
 
   public handle: RequestListener = async (req, res) => {
@@ -195,14 +168,14 @@ export default class Server {
     });
   }
 
-  private createFunctions(): { [filename: string]: any } {
+  private createFunctions() {
     const serverChunks = globby.sync('**/*.api.js', {
       cwd: BUILD_DIR,
       absolute: true,
     });
 
-    return serverChunks.reduce((acc, absolutePath) => {
-      const chunk: any = importFresh(absolutePath);
+    const chunks = serverChunks.reduce((acc, absolutePath) => {
+      const chunk = importFresh(absolutePath);
       const filename = relativeFilePath(BUILD_DIR, absolutePath);
 
       return {
@@ -210,5 +183,13 @@ export default class Server {
         [filename]: chunk,
       };
     }, {});
+
+    const result = serverFunctions.decode(chunks);
+
+    if (isLeft(result)) {
+      throw new Error('');
+    }
+
+    return result.right;
   }
 }

@@ -1,6 +1,10 @@
 import { FunctionArgs, FunctionResult, UnpackPromise, DSL } from '../types';
 
 export interface HttpClient {
+  batch<Result1 extends FunctionResult, Args1 extends FunctionArgs>(
+    t1: [DSL<Result1, Args1>, Args1],
+  ): Promise<[UnpackPromise<Result1>]>;
+
   batch<
     Result1 extends FunctionResult,
     Args1 extends FunctionArgs,
