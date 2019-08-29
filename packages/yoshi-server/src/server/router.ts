@@ -23,11 +23,11 @@ export default class Router {
   match(req: Request, res: Response) {
     const { pathname } = parseUrl(req.url as string, true);
 
-    for (const route of this.routes) {
-      const params = route.match(pathname as string);
+    for (const { match, fn } of this.routes) {
+      const params = match(pathname as string);
 
       if (params) {
-        return () => route.fn(req, res, params);
+        return () => fn(req, res, params);
       }
     }
   }
