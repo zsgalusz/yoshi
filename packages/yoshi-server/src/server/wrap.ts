@@ -4,7 +4,7 @@ import {
   ServerFunction,
   RouteFunction,
   DSL,
-} from './types';
+} from '../types';
 
 export function fn<Args extends FunctionArgs, Result extends FunctionResult>(
   _fn_: ServerFunction<Result, Args>,

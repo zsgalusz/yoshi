@@ -9,9 +9,9 @@ import { ROUTES_BUILD_DIR, BUILD_DIR } from 'yoshi-config/paths';
 import * as t from 'io-ts';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { isLeft } from 'fp-ts/lib/Either';
+import { DSL, RouteFunction } from '../types';
 import { getMatcher, relativeFilePath, get } from './utils';
 import Router, { route, Route } from './router';
-import { DSL, RouteFunction } from './types';
 
 const bodyType = t.type({
   fileName: t.string,
