@@ -1,4 +1,4 @@
-import { RequestListener } from 'http';
+import { RequestHandler } from 'express';
 import Youch from 'youch';
 import globby from 'globby';
 import SockJS from 'sockjs-client';
@@ -9,11 +9,9 @@ import { ROUTES_BUILD_DIR, BUILD_DIR } from 'yoshi-config/paths';
 import * as t from 'io-ts';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { isLeft } from 'fp-ts/lib/Either';
-import { Request, Response } from 'express';
-import { WithAspects } from '@wix/wix-express-aspects';
 import { getMatcher, relativeFilePath, get } from './utils';
 import Router, { route, Route } from './router';
-import { DSL, FunctionContext, RouteFunction, RouteContext } from './types';
+import { DSL, RouteFunction } from './types';
 
 const bodyType = t.type({
   fileName: t.string,
@@ -73,10 +71,10 @@ export default class Server {
             });
           }
 
-          const fnThis: FunctionContext = {
+          const fnThis = {
             context: this.context,
-            req: req as Request & WithAspects,
-            res: res as Response,
+            req,
+            res,
           };
 
           return send(res, 200, await method.apply(fnThis, args));
@@ -86,7 +84,7 @@ export default class Server {
     ];
   }
 
-  public handle: RequestListener = async (req, res) => {
+  public handle: RequestHandler = async (req, res) => {
     try {
       const fn = this.router.match(req, res);
 
@@ -124,10 +122,10 @@ export default class Server {
         match,
         fn: async (req, res, params) => {
           try {
-            const fnThis: RouteContext = {
+            const fnThis = {
               context: this.context,
-              req: req as Request & WithAspects,
-              res: res as Response,
+              req: req,
+              res: res,
               params,
             };
 

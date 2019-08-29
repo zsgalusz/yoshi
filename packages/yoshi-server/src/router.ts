@@ -1,5 +1,5 @@
 import { parse as parseUrl } from 'url';
-import { IncomingMessage, ServerResponse } from 'http';
+import { Request, Response } from 'express';
 import pathToRegexp from 'path-to-regexp';
 
 export const route = pathMatch();
@@ -10,7 +10,7 @@ export type RouteMatch = (pathname: string) => false | Params;
 
 export type Route = {
   match: RouteMatch;
-  fn: (req: IncomingMessage, res: ServerResponse, params: Params) => void;
+  fn: (req: Request, res: Response, params: Params) => void;
 };
 
 export default class Router {
@@ -20,7 +20,7 @@ export default class Router {
     this.routes = routes;
   }
 
-  match(req: IncomingMessage, res: ServerResponse) {
+  match(req: Request, res: Response) {
     const { pathname } = parseUrl(req.url as string, true);
 
     for (const route of this.routes) {
