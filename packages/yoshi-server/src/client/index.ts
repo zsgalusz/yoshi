@@ -18,7 +18,7 @@ export default class implements HttpClient {
   }
 
   async request<Result extends FunctionResult, Args extends FunctionArgs>(
-    { fileName, methodName }: DSL<Result, Args>,
+    { fileName, functionName }: DSL<Result, Args>,
     ...args: Args
   ): Promise<UnpackPromise<Result>> {
     const url = joinUrls(this.baseUrl, '/_api_');
@@ -29,7 +29,7 @@ export default class implements HttpClient {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ fileName, methodName, args }),
+      body: JSON.stringify({ fileName, functionName, args }),
     });
 
     if (!res.ok) {

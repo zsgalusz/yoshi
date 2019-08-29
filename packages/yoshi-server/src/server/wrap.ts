@@ -10,7 +10,7 @@ export function fn<Args extends FunctionArgs, Result extends FunctionResult>(
   _fn_: ServerFunction<Result, Args>,
 ): DSL<Result, Args> {
   // Explain that this is done in build-time
-  return { fileName: '', methodName: '', __fn__: _fn_ };
+  return { fileName: '', functionName: '', __fn__: _fn_ };
 }
 
 export function route<Result extends FunctionResult>(

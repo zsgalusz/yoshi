@@ -21,7 +21,7 @@ export type ServerFunction<
 
 export type DSL<Result extends FunctionResult, Args extends FunctionArgs> = {
   fileName: string;
-  methodName: string;
+  functionName: string;
   __fn__: ServerFunction<Result, Args>;
 };
 

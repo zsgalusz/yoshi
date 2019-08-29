@@ -15,7 +15,7 @@ import Router, { route, Route } from './router';
 
 const bodyType = t.type({
   fileName: t.string,
-  methodName: t.string,
+  functionName: t.string,
   args: t.array(t.any),
 });
 
@@ -61,13 +61,13 @@ export default class Server {
             return send(res, 406, PathReporter.report(validation));
           }
 
-          const { fileName, methodName, args } = validation.right;
+          const { fileName, functionName, args } = validation.right;
 
-          const method = get(functions, fileName, methodName, '__fn__');
+          const fn = get(functions, fileName, functionName, '__fn__');
 
-          if (!method) {
+          if (!fn) {
             return send(res, 406, {
-              error: `Method ${methodName}() was not found in file ${fileName}`,
+              error: `Function ${functionName}() was not found in file ${fileName}`,
             });
           }
 
@@ -77,7 +77,7 @@ export default class Server {
             res,
           };
 
-          return send(res, 200, await method.apply(fnThis, args));
+          return send(res, 200, await fn.apply(fnThis, args));
         },
       },
       ...dynamicRoutes,
@@ -143,7 +143,7 @@ export default class Server {
 
   private createFunctions(): {
     [filename: string]:
-      | { [methodName: string]: DSL<any, any> | undefined }
+      | { [functionName: string]: DSL<any, any> | undefined }
       | undefined;
   } {
     const serverChunks = globby.sync('**/*.api.js', {

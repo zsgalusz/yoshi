@@ -29,8 +29,8 @@ export function transform(source: string, fullFileName: string) {
     .relative(SRC_DIR, fullFileName)
     .replace(/\.(js|ts)$/, '');
 
-  const functions = collectExportNames(source as string).map(methodName => {
-    return `export const ${methodName} = { methodName: '${methodName}', fileName: '${fileName}' };`;
+  const functions = collectExportNames(source as string).map(functionName => {
+    return `export const ${functionName} = { functionName: '${functionName}', fileName: '${fileName}' };`;
   });
 
   return functions.join('\n\n');
