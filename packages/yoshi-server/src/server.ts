@@ -5,7 +5,6 @@ import SockJS from 'sockjs-client';
 import { send, json } from 'micro';
 import importFresh from 'import-fresh';
 import serializeError from 'serialize-error';
-import config from 'yoshi-config';
 import { ROUTES_BUILD_DIR, BUILD_DIR } from 'yoshi-config/paths';
 import * as t from 'io-ts';
 import { PathReporter } from 'io-ts/lib/PathReporter';
@@ -14,9 +13,9 @@ import { Request, Response } from 'express';
 import { WithAspects } from '@wix/wix-express-aspects';
 import { getMatcher, relativeFilePath, get } from './utils';
 import Router, { route, Route } from './router';
-import { DSL, FunctionContext } from './types';
+import { DSL, FunctionContext, RouteFunction, RouteContext } from './types';
 
-const clientRequest = t.type({
+const bodyType = t.type({
   fileName: t.string,
   methodName: t.string,
   args: t.array(t.any),
@@ -25,14 +24,11 @@ const clientRequest = t.type({
 export default class Server {
   private context: any;
   private router: Router;
-  private config: { [name: string]: any };
 
   constructor(context: any) {
     this.context = context;
 
     this.router = new Router(this.generateRoutes());
-
-    this.config = context.config.load(config.unscopedName);
 
     // Setup HMR
     if (process.env.NODE_ENV === 'development') {
@@ -61,7 +57,7 @@ export default class Server {
         match: route('/_api_'),
         fn: async (req, res) => {
           const body = await json(req);
-          const validation = clientRequest.decode(body);
+          const validation = bodyType.decode(body);
 
           if (isLeft(validation)) {
             return send(res, 406, PathReporter.report(validation));
@@ -83,19 +79,7 @@ export default class Server {
             res: res as Response,
           };
 
-          let result;
-
-          try {
-            result = method.apply(fnThis, args);
-          } catch (error) {
-            if (process.env.NODE_ENV === 'production') {
-              return send(res, 500, '500');
-            }
-
-            return send(res, 500, error);
-          }
-
-          return send(res, 200, result);
+          return send(res, 200, await method.apply(fnThis, args));
         },
       },
       ...dynamicRoutes,
@@ -127,7 +111,9 @@ export default class Server {
     });
 
     return serverChunks.map(absolutePath => {
-      const chunk: any = importFresh(absolutePath);
+      const { default: chunk } = importFresh(absolutePath) as {
+        default: RouteFunction<any>;
+      };
       const relativePath = `/${relativeFilePath(
         ROUTES_BUILD_DIR,
         absolutePath,
@@ -138,15 +124,14 @@ export default class Server {
         match,
         fn: async (req, res, params) => {
           try {
-            const fnThis = {
+            const fnThis: RouteContext = {
               context: this.context,
-              config: this.config,
-              req,
-              res,
+              req: req as Request & WithAspects,
+              res: res as Response,
               params,
             };
 
-            return send(res, 200, await chunk.default.call(fnThis));
+            return send(res, 200, await chunk.call(fnThis));
           } catch (error) {
             const youch = new Youch(error, req);
             const html: string = await youch.toHTML();

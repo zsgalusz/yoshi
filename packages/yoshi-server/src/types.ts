@@ -2,17 +2,18 @@ import { Request, Response } from 'express';
 import { JsonValue } from 'type-fest';
 import { WithAspects } from '@wix/wix-express-aspects';
 
+// General stuff
+export type UnpackPromise<T> = T extends Promise<infer U> ? U : T;
 export type OptionalPromise<T> = T | Promise<T>;
+export type FunctionArgs = Array<JsonValue>;
+export type FunctionResult = OptionalPromise<JsonValue>;
 
+// Server function types
 export type FunctionContext = {
   req: Request & WithAspects;
   res: Response;
   context: any;
 };
-
-export type FunctionArgs = Array<JsonValue>;
-
-export type FunctionResult = OptionalPromise<JsonValue>;
 
 export type ServerFunction<
   Result extends FunctionResult,
@@ -25,4 +26,14 @@ export type DSL<Result extends FunctionResult, Args extends FunctionArgs> = {
   __fn__: ServerFunction<Result, Args>;
 };
 
-export type UnpackPromise<T> = T extends Promise<infer U> ? U : T;
+// Route function types
+export type RouteContext = {
+  req: Request & WithAspects;
+  res: Response;
+  context: any;
+  params: { [name: string]: any | undefined };
+};
+
+export type RouteFunction<Result extends FunctionResult> = (
+  this: RouteContext,
+) => Result;
