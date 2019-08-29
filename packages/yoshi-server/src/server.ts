@@ -16,13 +16,11 @@ import { getMatcher, relativeFilePath, get } from './utils';
 import Router, { route, Route } from './router';
 import { DSL, FunctionContext } from './types';
 
-const clientRequest = t.array(
-  t.type({
-    fileName: t.string,
-    methodName: t.string,
-    args: t.array(t.any),
-  }),
-);
+const clientRequest = t.type({
+  fileName: t.string,
+  methodName: t.string,
+  args: t.array(t.any),
+});
 
 export default class Server {
   private context: any;
@@ -63,47 +61,41 @@ export default class Server {
         match: route('/_api_'),
         fn: async (req, res) => {
           const body = await json(req);
-          const result = clientRequest.decode(body);
+          const validation = clientRequest.decode(body);
 
-          if (isLeft(result)) {
-            return send(res, 406, PathReporter.report(result));
+          if (isLeft(validation)) {
+            return send(res, 406, PathReporter.report(validation));
           }
 
-          const fns = [];
-          const errors = [];
+          const { fileName, methodName, args } = validation.right;
 
-          for (const { fileName, methodName, args } of result.right) {
-            const method = get(functions, fileName, methodName, '__fn__');
+          const method = get(functions, fileName, methodName, '__fn__');
 
-            if (!method) {
-              errors.push(
-                `Method ${methodName}() was not found in file ${fileName}`,
-              );
-              continue;
+          if (!method) {
+            return send(res, 406, {
+              error: `Method ${methodName}() was not found in file ${fileName}`,
+            });
+          }
+
+          const fnThis: FunctionContext = {
+            context: this.context,
+            req: req as Request & WithAspects,
+            res: res as Response,
+          };
+
+          let result;
+
+          try {
+            result = method.apply(fnThis, args);
+          } catch (error) {
+            if (process.env.NODE_ENV === 'production') {
+              return send(res, 500, '500');
             }
 
-            const fnThis: FunctionContext = {
-              context: this.context,
-              req: req as Request & WithAspects,
-              res: res as Response,
-            };
-
-            fns.push(method.bind(fnThis, ...args));
+            return send(res, 500, error);
           }
 
-          if (errors.length > 0) {
-            return send(res, 406, errors);
-          }
-
-          return Promise.all(fns.map(fn => fn()))
-            .then(results => send(res, 200, results))
-            .catch(error => {
-              if (process.env.NODE_ENV === 'production') {
-                return send(res, 500, '500');
-              }
-
-              return send(res, 500, error);
-            });
+          return send(res, 200, result);
         },
       },
       ...dynamicRoutes,
