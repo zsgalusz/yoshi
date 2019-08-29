@@ -12,35 +12,9 @@ import { PathReporter } from 'io-ts/lib/PathReporter';
 import { isLeft } from 'fp-ts/lib/Either';
 import { Request, Response } from 'express';
 import { WithAspects } from '@wix/wix-express-aspects';
-import { getMatcher, relativeFilePath } from './utils';
+import { getMatcher, relativeFilePath, get } from './utils';
 import Router, { route, Route } from './router';
 import { DSL, FunctionContext } from './types';
-
-type RequiredRecursively<T> = Exclude<
-  T extends string | number | boolean | Function | RegExp
-    ? T
-    : {
-        [P in keyof T]-?: T[P] extends Array<infer U>
-          ? Array<RequiredRecursively<U>>
-          : T[P] extends Array<infer U>
-          ? Array<RequiredRecursively<U>>
-          : RequiredRecursively<T[P]>;
-      },
-  null | undefined
->;
-
-type AccessorFunction<T, R> = (object: RequiredRecursively<T>) => R;
-
-function getFrom<T>(object: T) {
-  return function<R>(accessorFn: AccessorFunction<T, R>, defaultValue: R): R {
-    try {
-      const result = accessorFn((object as unknown) as RequiredRecursively<T>);
-      return result === undefined || result === null ? defaultValue : result;
-    } catch (e) {
-      return defaultValue;
-    }
-  };
-}
 
 const clientRequest = t.array(
   t.type({
@@ -96,13 +70,16 @@ export default class Server {
           }
 
           const fns = [];
+          const errors = [];
 
           for (const { fileName, methodName, args } of result.right) {
-            const get = getFrom(functions);
-            const method = get(c => c[fileName][methodName].__fn__, null);
+            const method = get(functions, fileName, methodName, '__fn__');
 
             if (!method) {
-              return send(res, 406, 'method not found');
+              errors.push(
+                `Method ${methodName}() was not found in file ${fileName}`,
+              );
+              continue;
             }
 
             const fnThis: FunctionContext = {
@@ -114,9 +91,19 @@ export default class Server {
             fns.push(method.bind(fnThis, ...args));
           }
 
-          const results = await Promise.all(fns.map(fn => fn()));
+          if (errors.length > 0) {
+            return send(res, 406, errors);
+          }
 
-          return send(res, 200, results);
+          return Promise.all(fns.map(fn => fn()))
+            .then(results => send(res, 200, results))
+            .catch(error => {
+              if (process.env.NODE_ENV === 'production') {
+                return send(res, 500, '500');
+              }
+
+              return send(res, 500, error);
+            });
         },
       },
       ...dynamicRoutes,
