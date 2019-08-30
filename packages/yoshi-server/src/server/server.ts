@@ -10,7 +10,7 @@ import * as t from 'io-ts';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { isLeft } from 'fp-ts/lib/Either';
 import { DSL, RouteFunction } from '../types';
-import { getMatcher, relativeFilePath, get } from './utils';
+import { relativeFilePath, get } from './utils';
 import Router, { route, Route } from './router';
 
 const bodyType = t.type({
@@ -116,10 +116,10 @@ export default class Server {
         ROUTES_BUILD_DIR,
         absolutePath,
       )}`;
-      const match = getMatcher(relativePath);
+      const routePath = relativePath.replace(/\[(\w+)\]/g, ':$1');
 
       return {
-        match,
+        match: route(routePath),
         fn: async (req, res, params) => {
           try {
             const fnThis = {
