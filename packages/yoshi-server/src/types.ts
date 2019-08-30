@@ -1,5 +1,15 @@
 import { Request, Response } from 'express';
 import { JsonValue } from 'type-fest';
+import * as t from 'io-ts';
+
+// IO-TS' types
+export const bodyType = t.type({
+  fileName: t.string,
+  functionName: t.string,
+  args: t.array(t.any),
+});
+
+export type BodyType = t.TypeOf<typeof bodyType>;
 
 // General stuff
 export type UnpackPromise<T> = T extends Promise<infer U> ? U : T;

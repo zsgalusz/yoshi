@@ -1,5 +1,11 @@
 import unfetch from 'isomorphic-unfetch';
-import { FunctionArgs, FunctionResult, UnpackPromise, DSL } from '../types';
+import {
+  FunctionArgs,
+  FunctionResult,
+  UnpackPromise,
+  DSL,
+  BodyType,
+} from '../types';
 import { joinUrls } from './utils';
 import { HttpClient } from './interface';
 
@@ -22,6 +28,7 @@ export default class implements HttpClient {
     ...args: Args
   ): Promise<UnpackPromise<Result>> {
     const url = joinUrls(this.baseUrl, '/_api_');
+    const body: BodyType = { fileName, functionName, args };
 
     const res = await fetch(url, {
       credentials: 'same-origin',
@@ -29,7 +36,7 @@ export default class implements HttpClient {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ fileName, functionName, args }),
+      body: JSON.stringify(body),
     });
 
     if (!res.ok) {

@@ -4,16 +4,22 @@ import pathToRegexp from 'path-to-regexp';
 
 export type Params = { [param: string]: any };
 
+export type Handler = (req: Request, res: Response, params: Params) => void;
+
 export type Route = {
   route: string;
-  handler: (req: Request, res: Response, params: Params) => void;
+  handler: Handler;
 };
 
 export default class Router {
   private routes: Array<Route>;
 
-  constructor(routes: Array<Route> = []) {
-    this.routes = routes;
+  constructor() {
+    this.routes = [];
+  }
+
+  add(route: string, handler: Handler) {
+    this.routes.push({ route, handler });
   }
 
   match(req: Request, res: Response) {

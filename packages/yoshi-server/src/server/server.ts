@@ -1,4 +1,4 @@
-import { RequestHandler } from 'express';
+import { RequestHandler, Request, Response } from 'express';
 import Youch from 'youch';
 import globby from 'globby';
 import SockJS from 'sockjs-client';
@@ -6,18 +6,11 @@ import { send, json } from 'micro';
 import importFresh from 'import-fresh';
 import serializeError from 'serialize-error';
 import { ROUTES_BUILD_DIR, BUILD_DIR } from 'yoshi-config/paths';
-import * as t from 'io-ts';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import { isLeft } from 'fp-ts/lib/Either';
-import { DSL, RouteFunction } from '../types';
+import { DSL, RouteFunction, bodyType } from '../types';
 import { relativeFilePath, get } from './utils';
 import Router, { Route } from './router';
-
-const bodyType = t.type({
-  fileName: t.string,
-  functionName: t.string,
-  args: t.array(t.any),
-});
 
 export default class Server {
   private context: any;
@@ -26,7 +19,7 @@ export default class Server {
   constructor(context: any) {
     this.context = context;
 
-    this.router = new Router(this.generateRoutes());
+    this.router = this.createRouter();
 
     // Setup HMR
     if (process.env.NODE_ENV === 'development') {
@@ -36,7 +29,7 @@ export default class Server {
 
       socket.onmessage = async () => {
         try {
-          this.router = new Router(this.generateRoutes());
+          this.router = this.createRouter();
         } catch (error) {
           socket.send(JSON.stringify({ success: false }));
         }
@@ -46,42 +39,43 @@ export default class Server {
     }
   }
 
-  private generateRoutes(): Array<Route> {
-    const functions = this.createFunctions();
-    const dynamicRoutes = this.createDynamicRoutes();
+  private createRouter(): Router {
+    const router = new Router();
 
-    return [
-      {
-        route: '/_api_',
-        handler: async (req, res) => {
-          const body = await json(req);
-          const validation = bodyType.decode(body);
+    router.add('/_api_', async (req: Request, res: Response) => {
+      const functions = this.createFunctions();
 
-          if (isLeft(validation)) {
-            return send(res, 406, PathReporter.report(validation));
-          }
+      const body = await json(req);
+      const validation = bodyType.decode(body);
 
-          const { fileName, functionName, args } = validation.right;
+      if (isLeft(validation)) {
+        return send(res, 406, PathReporter.report(validation));
+      }
 
-          const fn = get(functions, fileName, functionName, '__fn__');
+      const { fileName, functionName, args } = validation.right;
 
-          if (!fn) {
-            return send(res, 406, {
-              error: `Function ${functionName}() was not found in file ${fileName}`,
-            });
-          }
+      const fn = get(functions, fileName, functionName, '__fn__');
 
-          const fnThis = {
-            context: this.context,
-            req,
-            res,
-          };
+      if (!fn) {
+        return send(res, 406, {
+          error: `Function ${functionName}() was not found in file ${fileName}`,
+        });
+      }
 
-          return send(res, 200, await fn.apply(fnThis, args));
-        },
-      },
-      ...dynamicRoutes,
-    ];
+      const fnThis = {
+        context: this.context,
+        req,
+        res,
+      };
+
+      return send(res, 200, await fn.apply(fnThis, args));
+    });
+
+    this.createDynamicRoutes().forEach(({ route, handler }) => {
+      router.add(route, handler);
+    });
+
+    return router;
   }
 
   public handle: RequestHandler = async (req, res) => {
