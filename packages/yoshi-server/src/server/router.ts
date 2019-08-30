@@ -31,34 +31,26 @@ export default class Router {
 
 function pathMatch(route: string, pathname: string | undefined) {
   const keys: Array<any> = [];
-  const re = pathToRegexp(route, keys, {});
+  const regex = pathToRegexp(route, keys, {});
 
-  const m = re.exec(pathname as string);
+  const match = regex.exec(pathname as string);
 
-  if (!m) return false;
-
-  const params: Params = {};
-
-  let key;
-  let param;
-  for (let i = 0; i < keys.length; i++) {
-    key = keys[i];
-    param = m[i + 1];
-    if (!param) continue;
-    params[key.name] = decodeParam(param);
-    if (key.repeat) params[key.name] = params[key.name].split(key.delimiter);
+  if (!match) {
+    return false;
   }
 
-  return params;
-}
+  return keys.reduce((acc, key, index) => {
+    const param = match[index + 1];
 
-function decodeParam(param: string) {
-  try {
-    return decodeURIComponent(param);
-  } catch (_) {
-    const err = new Error('failed to decode param');
-    // @ts-ignore DECODE_FAILED is handled
-    err.code = 'DECODE_FAILED';
-    throw err;
-  }
+    if (!param) {
+      return acc;
+    }
+
+    const value = decodeURIComponent(param);
+
+    return {
+      ...acc,
+      [key.name]: key.repeat ? value.split(key.delimiter) : value,
+    };
+  }, {});
 }
