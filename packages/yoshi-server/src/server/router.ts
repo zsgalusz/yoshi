@@ -2,15 +2,11 @@ import { parse as parseUrl } from 'url';
 import { Request, Response } from 'express';
 import pathToRegexp from 'path-to-regexp';
 
-export const route = pathMatch();
-
 export type Params = { [param: string]: any };
 
-export type RouteMatch = (pathname: string) => false | Params;
-
 export type Route = {
-  match: RouteMatch;
-  fn: (req: Request, res: Response, params: Params) => void;
+  route: string;
+  handler: (req: Request, res: Response, params: Params) => void;
 };
 
 export default class Router {
@@ -23,42 +19,37 @@ export default class Router {
   match(req: Request, res: Response) {
     const { pathname } = parseUrl(req.url as string, true);
 
-    for (const { match, fn } of this.routes) {
-      const params = match(pathname as string);
+    for (const { handler, route } of this.routes) {
+      const params = pathMatch(route, pathname as string);
 
       if (params) {
-        return () => fn(req, res, params);
+        return () => handler(req, res, params);
       }
     }
   }
 }
 
-function pathMatch() {
-  return (path: string) => {
-    const keys: Array<any> = [];
-    const re = pathToRegexp(path, keys, {});
+function pathMatch(route: string, pathname: string | undefined) {
+  const keys: Array<any> = [];
+  const re = pathToRegexp(route, keys, {});
 
-    return (pathname: string | undefined) => {
-      const m = re.exec(pathname as string);
+  const m = re.exec(pathname as string);
 
-      if (!m) return false;
+  if (!m) return false;
 
-      const params: Params = {};
+  const params: Params = {};
 
-      let key;
-      let param;
-      for (let i = 0; i < keys.length; i++) {
-        key = keys[i];
-        param = m[i + 1];
-        if (!param) continue;
-        params[key.name] = decodeParam(param);
-        if (key.repeat)
-          params[key.name] = params[key.name].split(key.delimiter);
-      }
+  let key;
+  let param;
+  for (let i = 0; i < keys.length; i++) {
+    key = keys[i];
+    param = m[i + 1];
+    if (!param) continue;
+    params[key.name] = decodeParam(param);
+    if (key.repeat) params[key.name] = params[key.name].split(key.delimiter);
+  }
 
-      return params;
-    };
-  };
+  return params;
 }
 
 function decodeParam(param: string) {

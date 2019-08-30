@@ -11,7 +11,7 @@ import { PathReporter } from 'io-ts/lib/PathReporter';
 import { isLeft } from 'fp-ts/lib/Either';
 import { DSL, RouteFunction } from '../types';
 import { relativeFilePath, get } from './utils';
-import Router, { route, Route } from './router';
+import Router, { Route } from './router';
 
 const bodyType = t.type({
   fileName: t.string,
@@ -52,8 +52,8 @@ export default class Server {
 
     return [
       {
-        match: route('/_api_'),
-        fn: async (req, res) => {
+        route: '/_api_',
+        handler: async (req, res) => {
           const body = await json(req);
           const validation = bodyType.decode(body);
 
@@ -119,8 +119,8 @@ export default class Server {
       const routePath = relativePath.replace(/\[(\w+)\]/g, ':$1');
 
       return {
-        match: route(routePath),
-        fn: async (req, res, params) => {
+        route: routePath,
+        handler: async (req, res, params) => {
           try {
             const fnThis = {
               context: this.context,
