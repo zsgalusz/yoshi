@@ -11,7 +11,7 @@ function collectExportNames(source: string) {
     ExportNamedDeclaration({ node }) {
       if (node.declaration) {
         if (node.declaration.type === 'VariableDeclaration') {
-          const declaration = node.declaration.declarations[0];
+          const [declaration] = node.declaration.declarations;
 
           if (declaration.id.type === 'Identifier') {
             exportedNames.push(declaration.id.name);
@@ -29,9 +29,14 @@ export function transform(source: string, fullFileName: string) {
     .relative(SRC_DIR, fullFileName)
     .replace(/\.(js|ts)$/, '');
 
+  const headers = [`import { DSL } from 'yoshi-server/build/types'`];
+
   const functions = collectExportNames(source as string).map(functionName => {
-    return `export const ${functionName} = { functionName: '${functionName}', fileName: '${fileName}' };`;
+    return `export const ${functionName}: DSL<any, any> = {
+      functionName: '${functionName}',
+      fileName: '${fileName}',
+    } as any;`;
   });
 
-  return functions.join('\n\n');
+  return [...headers, ...functions].join('\n\n');
 }
