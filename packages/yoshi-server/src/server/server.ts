@@ -1,4 +1,4 @@
-import { RequestHandler, Request, Response } from 'express';
+import { RequestHandler } from 'express';
 import Youch from 'youch';
 import globby from 'globby';
 import SockJS from 'sockjs-client';
@@ -42,7 +42,7 @@ export default class Server {
   private createRouter(): Router {
     const router = new Router();
 
-    router.add('/_api_', async (req: Request, res: Response) => {
+    router.add('/_api_', async (req, res) => {
       const functions = this.createFunctions();
 
       const body = await json(req);
