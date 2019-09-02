@@ -49,7 +49,9 @@ export default class Server {
       const validation = bodyType.decode(body);
 
       if (isLeft(validation)) {
-        return send(res, 406, PathReporter.report(validation));
+        return send(res, 406, {
+          errors: PathReporter.report(validation),
+        });
       }
 
       const { fileName, functionName, args } = validation.right;
@@ -58,7 +60,9 @@ export default class Server {
 
       if (!fn) {
         return send(res, 406, {
-          error: `Function ${functionName}() was not found in file ${fileName}`,
+          errors: [
+            `Function ${functionName}() was not found in file ${fileName}`,
+          ],
         });
       }
 
@@ -87,10 +91,14 @@ export default class Server {
       }
     } catch (error) {
       if (process.env.NODE_ENV === 'production') {
-        return send(res, 500, '500');
+        return send(res, 500, {
+          errors: ['internal server error'],
+        });
       }
 
-      return send(res, 500, serializeError(error));
+      return send(res, 500, {
+        errors: [serializeError(error)],
+      });
     }
 
     return send(res, 404, '404');
