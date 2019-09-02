@@ -1,5 +1,6 @@
 const path = require('path');
 const cors = require('cors');
+const fs = require('fs-extra');
 const chalk = require('chalk');
 const webpack = require('webpack');
 const globby = require('globby');
@@ -199,8 +200,13 @@ function waitForCompilation(compiler) {
 
 function findDynamicServerEntries(context) {
   return [
-    ...globby.sync('**/*.api.(js|ts)', { cwd: SRC_DIR, absolute: true }),
-    ...globby.sync('**/*.(js|ts)', { cwd: ROUTES_DIR, absolute: true }),
+    ...(fs.pathExistsSync(SRC_DIR)
+      ? globby.sync('**/*.api.(js|ts)', { cwd: SRC_DIR, absolute: true })
+      : []),
+
+    ...(fs.pathExistsSync(ROUTES_DIR)
+      ? globby.sync('**/*.(js|ts)', { cwd: ROUTES_DIR, absolute: true })
+      : []),
   ].reduce((acc, filepath) => {
     return {
       ...acc,
