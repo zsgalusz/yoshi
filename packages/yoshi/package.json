@@ -137,6 +137,7 @@
     "tslint-react-hooks": "^2.1.0",
     "url-loader": "1.1.2",
     "wait-port": "0.2.2",
+    "watchpack": "1.6.0",
     "webpack": "4.39.2",
     "webpack-bundle-analyzer": "3.4.1",
     "webpack-dev-middleware": "3.7.0",
