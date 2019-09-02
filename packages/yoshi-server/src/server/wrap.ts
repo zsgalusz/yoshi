@@ -18,3 +18,10 @@ export function route<Result extends FunctionResult>(
 ): RouteFunction<Result> {
   return _route_;
 }
+
+export function dsl(_dsl_: {
+  fileName: string;
+  functionName: string;
+}): DSL<any, any> {
+  return _dsl_ as DSL<any, any>;
+}

@@ -27,15 +27,15 @@ function collectExportNames(source: string) {
 export function transform(source: string, fullFileName: string) {
   const fileName = path
     .relative(SRC_DIR, fullFileName)
-    .replace(/\.(js|ts)$/, '');
+    .replace(/\.[^/.]+$/, '');
 
-  const headers = [`import { DSL } from 'yoshi-server/build/types'`];
+  const headers = [`import { dsl } from 'yoshi-server/build/server/wrap';`];
 
   const functions = collectExportNames(source as string).map(functionName => {
-    return `export const ${functionName}: DSL<any, any> = {
-      functionName: '${functionName}',
-      fileName: '${fileName}',
-    } as any;`;
+    return `export const ${functionName} = dsl({
+          functionName: '${functionName}',
+          fileName: '${fileName}',
+        });`;
   });
 
   return [...headers, ...functions].join('\n\n');
