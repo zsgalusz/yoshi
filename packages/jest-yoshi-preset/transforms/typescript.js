@@ -1,16 +1,6 @@
 const { createTransformer } = require('ts-jest');
-const transform = require('yoshi-server/build/jest-transform');
+const { serverTransform } = require('../utils');
 
 const transformer = createTransformer();
 
-module.exports = {
-  process(source, filename, config, transformOptions) {
-    let result = source;
-
-    if (filename.endsWith('.api.ts') || filename.endsWith('.api.tsx')) {
-      result = transform.process(source, filename);
-    }
-
-    return transformer.process(result, filename, config, transformOptions);
-  },
-};
+module.exports = serverTransform(transformer);
