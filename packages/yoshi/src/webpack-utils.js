@@ -27,8 +27,9 @@ function createCompiler(config, { https }) {
 
   compiler.hooks.invalid.tap('recompile-log', () => {
     if (isInteractive) {
-      clearConsole();
+      // clearConsole();
     }
+
     console.log('Compiling...');
   });
 
