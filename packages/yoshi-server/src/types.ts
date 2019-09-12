@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { JsonValue } from 'type-fest';
 import * as t from 'io-ts';
+import { BootstrapContext } from '@wix/wix-bootstrap-ng/typed';
 
 // io-ts' types
 export const requestPayloadCodec = t.type({
@@ -21,7 +22,7 @@ export type FunctionResult = OptionalPromise<JsonValue>;
 export type FunctionContext = {
   req: Request;
   res: Response;
-  context: any;
+  context: BootstrapContext;
 };
 
 export type ServerFunction<
@@ -39,7 +40,7 @@ export type DSL<Result extends FunctionResult, Args extends FunctionArgs> = {
 export type RouteContext = {
   req: Request;
   res: Response;
-  context: any;
+  context: BootstrapContext;
   params: { [name: string]: any | undefined };
 };
 
