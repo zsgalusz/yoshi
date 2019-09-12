@@ -1,0 +1,52 @@
+{
+  "name": "jest-yoshi-preset",
+  "version": "4.15.2",
+  "description": "jest configuration for a yoshi fullstack project",
+  "main": "index.js",
+  "types": "types.d.ts",
+  "keywords": [
+    "jest",
+    "yoshi",
+    "fullstack"
+  ],
+  "author": "Ronen Amiel & Ran Yitzhaki",
+  "license": "ISC",
+  "peerDependencies": {
+    "@stylable/core": "^2.3.1-alpha.0",
+    "@stylable/jest": "^2.3.1-alpha.1",
+    "graphql": "^14.1.1",
+    "graphql-tag": "^2.10.1",
+    "jest": "^24.1.0",
+    "yoshi": "^4.1.0"
+  },
+  "dependencies": {
+    "@types/jest": "^24.0.13",
+    "babel-jest": "^24.1.0",
+    "chalk": "2.4.2",
+    "fs-extra": "^8.1.0",
+    "globby": "^9.0.0",
+    "identity-obj-proxy": "^3.0.0",
+    "jest-environment-jsdom-fourteen": "^0.1.0",
+    "jest-environment-node": "^24.8.0",
+    "jest-transform-graphql": "^2.1.0",
+    "jest-watch-typeahead": "^0.2.1",
+    "lodash": "^4.17.15",
+    "puppeteer": "^1.19.0",
+    "regenerator-runtime": "^0.12.0",
+    "ts-jest": "^24.0.0",
+    "wait-port": "^0.2.2",
+    "yoshi-config": "4.15.0",
+    "yoshi-helpers": "4.15.0",
+    "yoshi-server-tools": "4.15.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.1.2",
+    "@stylable/core": "^2.3.1-alpha.0",
+    "@stylable/jest": "^2.3.1-alpha.1",
+    "babel-preset-yoshi": "4.14.0",
+    "graphql": "^14.1.1",
+    "graphql-tag": "^2.10.1",
+    "jest-transform-graphql": "^2.1.0",
+    "typescript": "^3.0.1"
+  }
+}
