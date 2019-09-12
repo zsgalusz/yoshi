@@ -22,6 +22,7 @@ export type FunctionContext = {
   req: Request;
   res: Response;
   context: any;
+  config: any;
 };
 
 export type ServerFunction<
@@ -41,6 +42,7 @@ export type RouteContext = {
   res: Response;
   context: any;
   params: { [name: string]: any | undefined };
+  config: any;
 };
 
 export type RouteFunction<Result extends FunctionResult> = (

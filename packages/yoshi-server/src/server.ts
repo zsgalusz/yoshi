@@ -5,6 +5,7 @@ import globby from 'globby';
 import SockJS from 'sockjs-client';
 import { send } from 'micro';
 import importFresh from 'import-fresh';
+import config from 'yoshi-config';
 import { ROUTES_BUILD_DIR } from 'yoshi-config/paths';
 import { RouteFunction } from './types';
 import { relativeFilePath, pathMatch } from './utils';
@@ -20,12 +21,15 @@ export type Route = {
 
 export default class Server {
   private context: any;
+  private config: any;
   private routes: Array<Route>;
 
   constructor(context: any) {
     this.context = context;
 
     this.routes = this.createRoutes();
+
+    this.config = context.config.load(config.unscopedName);
 
     if (process.env.NODE_ENV === 'development') {
       const socket = new SockJS(
@@ -88,6 +92,7 @@ export default class Server {
         handler: async (req, res, params) => {
           const fnThis = {
             context: this.context,
+            config: this.config,
             req: req,
             res: res,
             params,

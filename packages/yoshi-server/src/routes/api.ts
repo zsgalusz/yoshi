@@ -50,6 +50,7 @@ export default route(async function() {
   try {
     const fnThis = {
       context: this.context,
+      config: this.config,
       req: this.req,
       res: this.res,
     };

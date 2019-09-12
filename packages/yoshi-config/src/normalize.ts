@@ -34,6 +34,7 @@ export default (initialConfig: InitialConfig, pkgJson: PackageJson): Config => {
     unpkg,
 
     pkgJson,
+    unscopedName: name && name.replace('@wix/', ''),
 
     servers: {
       cdn: {
