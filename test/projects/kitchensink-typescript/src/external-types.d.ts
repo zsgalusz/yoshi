@@ -1,4 +1,8 @@
 declare module 'externals';
+declare module '*.unknown' {
+  const _: any;
+  export = _;
+}
 
 interface Window {
   __LOCALE__: string;

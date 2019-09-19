@@ -324,4 +324,16 @@ describe('webpack', () => {
       expect(result).toBe('This is an abstract.');
     });
   });
+
+  describe('unknown', () => {
+    it('unknown file inclusion', async () => {
+      await initTest('unknown-inclusion');
+      const imageSource = await page.$eval(
+        '#unknown-inclusion',
+        elm => elm.src,
+      );
+
+      expect(imageSource).toMatch(/data:image\/webp.+/);
+    });
+  });
 });

@@ -546,10 +546,20 @@ function createCommonWebpackConfig({
             },
 
             // Try to inline assets as base64 or return a public URL to it if it passes
-            // the 10kb limit
+            // the 10kb limit.
+            // This loader is a fall-through catcher,
+            // any unknown file (not getting catched by the previous loaders) we'll use this loader
             {
-              test: reAssets,
               loader: 'url-loader',
+              exclude: [
+                new RegExp(
+                  extensions
+                    .map(ext => `${ext.replace(/\./g, '\\.')}$`)
+                    .join('|'),
+                ),
+                reStyle,
+                /\.html$/,
+              ],
               options: {
                 name: staticAssetName,
                 limit: 10000,
@@ -557,6 +567,8 @@ function createCommonWebpackConfig({
             },
           ],
         },
+        // ** STOP ** Are you adding a new loader?
+        // Make sure to add the new loader(s) before the url-loader.
       ],
     },
 
