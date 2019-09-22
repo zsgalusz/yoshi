@@ -4,19 +4,43 @@ const tempy = require('tempy');
 const execa = require('execa');
 const { authenticateToRegistry } = require('./publishMonorepo');
 const symlinkModules = require('./symlinkModules');
+const chokidar = require('chokidar');
 
 const isCI = !!process.env.TEAMCITY_VERSION;
 
-module.exports = async templateDirectory => {
+module.exports = async (templateDirectory, watchMode = false) => {
   const rootDirectory = tempy.directory();
 
   const testDirectory = path.join(rootDirectory, 'project');
 
   await fs.copy(templateDirectory, testDirectory);
 
+  const copyFile = relativePath => {
+    return fs.copy(
+      path.join(templateDirectory, relativePath),
+      path.join(testDirectory, relativePath),
+    );
+  };
+
+  const removeFile = relativePath => {
+    return fs.remove(path.join(testDirectory, relativePath));
+  };
+
   // Symlink modules locally for faster feedback
   if (!isCI) {
     symlinkModules(testDirectory);
+
+    if (watchMode) {
+      const watcher = chokidar.watch(templateDirectory, {
+        persistent: true,
+        ignoreInitial: false,
+        cwd: templateDirectory,
+      });
+
+      watcher.on('change', copyFile);
+      watcher.on('add', copyFile);
+      watcher.on('unlink', removeFile);
+    }
   } else {
     // Authenticate and install from our fake registry on CI
     authenticateToRegistry(testDirectory);

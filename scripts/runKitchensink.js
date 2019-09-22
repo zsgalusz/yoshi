@@ -3,10 +3,15 @@ const globby = require('globby');
 const { publishMonorepo } = require('./utils/publishMonorepo');
 const setupProject = require('./utils/setupProject');
 const testProject = require('./utils/testProject');
+const parseArgs = require('minimist');
+
+const cliArgs = parseArgs(process.argv.slice(2));
 
 const isCI = !!process.env.TEAMCITY_VERSION;
 
-const filterProject = process.env.FILTER_PROJECT;
+const filterProject = process.env.FILTER_PROJECT || cliArgs.FILTER_PROJECT;
+
+const watchMode = cliArgs.watch;
 
 // Publish the entire monorepo and install everything from CI to get
 // the maximum reliability
@@ -32,10 +37,16 @@ if (filterProject) {
   for (const templateDirectory of projects) {
     const { testDirectory, rootDirectory } = await setupProject(
       templateDirectory,
+      watchMode,
     );
 
     try {
-      await testProject({ testDirectory, templateDirectory, rootDirectory });
+      await testProject({
+        testDirectory,
+        templateDirectory,
+        rootDirectory,
+        watchMode,
+      });
     } catch (error) {
       console.log();
       console.log(error.stack);

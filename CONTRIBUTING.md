@@ -70,6 +70,30 @@ VERBOSE_TESTS=true npm test
 
 This is the same as adding the `.verbose()` method to each and every test.
 
+## Test app flows
+
+test flows are a way to e2e test yoshi.
+There are 2 different yoshi projects (JS and TS),
+which are running build, run and test using the current yoshi version.
+
+### Running test:app-flow
+
+either with env vars
+`FILTER_PROJECT=kitchensink-javascript`
+which the npm script uses
+
+```shell
+npm run test:app-flow:js
+```
+
+Or using cli arguments (watch mode only works with cli args)
+
+```shell
+npm run test:app-flow -- --FILTER_PROJECT=kitchensink-javascript --watch
+```
+
+(also works with ts as expected)
+
 ## Running test:templates
 
 The E2E suite will create a corresponding E2E test for each template from `projects/create-yoshi-app/templates` directory. It will generate the project in a temporary directory, it will then run `npm install` & `npm test` to verify that it's not failing.

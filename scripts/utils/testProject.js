@@ -5,10 +5,15 @@ const chalk = require('chalk');
 const Scripts = require('../../test/scripts');
 const { ciEnv, localEnv } = require('./constants');
 
+const testProductionBuildScript = `npx jest --config='jest.production.config.js' --no-cache --runInBand`;
+const testLocalDevelopmentScript = `npx jest --config='jest.development.config.js' --no-cache --runInBand`;
+const runAdditionalTestsScript = `npx jest --config='jest.plain.config.js' --no-cache --runInBand`;
+
 module.exports = async ({
   templateDirectory,
   testDirectory,
   rootDirectory,
+  watchMode = false,
 }) => {
   console.log();
   console.log(
@@ -32,7 +37,7 @@ module.exports = async ({
 
   const failures = [];
 
-  async function testProductionBuild() {
+  async function testProductionBuild(watch) {
     // Test production build (CI env)
     try {
       console.log(chalk.blue(`> Building project for production`));
@@ -56,7 +61,9 @@ module.exports = async ({
 
       try {
         await execa.shell(
-          `npx jest --config='jest.production.config.js' --no-cache --runInBand`,
+          watch
+            ? `${testProductionBuildScript} --watchAll`
+            : testProductionBuildScript,
           options,
         );
       } finally {
@@ -67,7 +74,7 @@ module.exports = async ({
     }
   }
 
-  async function testLocalDevelopment() {
+  async function testLocalDevelopment(watch) {
     // Test local build (local env)
     try {
       console.log();
@@ -90,7 +97,9 @@ module.exports = async ({
         console.log();
 
         await execa.shell(
-          `npx jest --config='jest.development.config.js' --no-cache --runInBand`,
+          watch
+            ? `${testLocalDevelopmentScript} --watchAll`
+            : testLocalDevelopmentScript,
           options,
         );
       } finally {
@@ -101,7 +110,7 @@ module.exports = async ({
     }
   }
 
-  async function runAdditionalTests() {
+  async function runAdditionalTests(watch) {
     // Run additional tests (errors, analyze)
     if (
       await fs.pathExists(
@@ -114,7 +123,9 @@ module.exports = async ({
         console.log();
 
         await execa.shell(
-          `npx jest --config='jest.plain.config.js' --no-cache --runInBand`,
+          watch
+            ? `${runAdditionalTestsScript} --watchAll`
+            : runAdditionalTestsScript,
           options,
         );
       } catch (error) {
@@ -123,10 +134,17 @@ module.exports = async ({
     }
   }
 
-  await testProductionBuild();
-  await testLocalDevelopment();
-  await runAdditionalTests();
-
+  if (watchMode) {
+    await Promise.all([
+      testProductionBuild(true),
+      testLocalDevelopment(true),
+      runAdditionalTests(true),
+    ]);
+  } else {
+    await testProductionBuild();
+    await testLocalDevelopment();
+    await runAdditionalTests();
+  }
   // Clean eventually
   await fs.remove(rootDirectory);
 
