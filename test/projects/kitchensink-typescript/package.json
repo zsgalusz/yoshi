@@ -37,11 +37,16 @@
     "yoshi-style-dependencies": "latest"
   },
   "jest": {
-    "preset": "jest-yoshi-preset"
+    "preset": "jest-yoshi-preset",
+    "moduleNameMapper": {
+      "\\.unknown$": "identity-obj-proxy"
+    }
   },
   "yoshi": {
     "projectType": "app",
-    "externalUnprocessedModules": ["untranspiled-dependency"],
+    "externalUnprocessedModules": [
+      "untranspiled-dependency"
+    ],
     "entry": {
       "app": "./client",
       "other": "./other"
