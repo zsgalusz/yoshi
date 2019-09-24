@@ -37,7 +37,7 @@ module.exports = async ({
 
   const failures = [];
 
-  async function testProductionBuild(watch) {
+  async function testProductionBuild() {
     // Test production build (CI env)
     try {
       console.log(chalk.blue(`> Building project for production`));
@@ -61,7 +61,7 @@ module.exports = async ({
 
       try {
         await execa.shell(
-          watch
+          watchMode
             ? `${testProductionBuildScript} --watchAll`
             : testProductionBuildScript,
           options,
@@ -74,7 +74,7 @@ module.exports = async ({
     }
   }
 
-  async function testLocalDevelopment(watch) {
+  async function testLocalDevelopment() {
     // Test local build (local env)
     try {
       console.log();
@@ -97,7 +97,7 @@ module.exports = async ({
         console.log();
 
         await execa.shell(
-          watch
+          watchMode
             ? `${testLocalDevelopmentScript} --watchAll`
             : testLocalDevelopmentScript,
           options,
@@ -110,7 +110,7 @@ module.exports = async ({
     }
   }
 
-  async function runAdditionalTests(watch) {
+  async function runAdditionalTests() {
     // Run additional tests (errors, analyze)
     if (
       await fs.pathExists(
@@ -123,7 +123,7 @@ module.exports = async ({
         console.log();
 
         await execa.shell(
-          watch
+          watchMode
             ? `${runAdditionalTestsScript} --watchAll`
             : runAdditionalTestsScript,
           options,

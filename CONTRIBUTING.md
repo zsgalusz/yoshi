@@ -72,27 +72,31 @@ This is the same as adding the `.verbose()` method to each and every test.
 
 ## Test app flows
 
-test flows are a way to e2e test yoshi.
-There are 2 different yoshi projects (JS and TS),
-which are running build, run and test using the current yoshi version.
+Test flows are a way to e2e test yoshi.
+There are 4 different yoshi projects (JS, TS, yoshi-server TS and yoshi-server JS),
+which are running yoshi's build, run and test using the current version.
 
 ### Running test:app-flow
 
-either with env vars
-`FILTER_PROJECT=kitchensink-javascript`
-which the npm script uses
+```shell
+npm run test:app-flow
+```
+
+Because there are multiple kitchensink projects,
+you can filter them using `--filterProject` or run their respective npm script.
+you can also add the `--watch` flag for ease of testing.
+
+Example of npm script usage
 
 ```shell
 npm run test:app-flow:js
 ```
 
-Or using cli arguments (watch mode only works with cli args)
+Example of flag filtering
 
 ```shell
-npm run test:app-flow -- --FILTER_PROJECT=kitchensink-javascript --watch
+npm run test:app-flow -- --filterProject=kitchensink-javascript --watch
 ```
-
-(also works with ts as expected)
 
 ## Running test:templates
 

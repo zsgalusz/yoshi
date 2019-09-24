@@ -9,7 +9,7 @@ const cliArgs = parseArgs(process.argv.slice(2));
 
 const isCI = !!process.env.TEAMCITY_VERSION;
 
-const filterProject = process.env.FILTER_PROJECT || cliArgs.FILTER_PROJECT;
+const filterProject = cliArgs.filterProject;
 
 const watchMode = cliArgs.watch;
 
