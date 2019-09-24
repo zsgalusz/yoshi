@@ -129,6 +129,7 @@ const config = {
         ].filter(Boolean);
 
         const staticAssetsExtensions = [
+          'webp',
           'png',
           'jpg',
           'jpeg',

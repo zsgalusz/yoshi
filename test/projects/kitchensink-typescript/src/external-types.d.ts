@@ -1,5 +1,5 @@
 declare module 'externals';
-declare module '*.unknown' {
+declare module '*.webp' {
   const _: any;
   export = _;
 }

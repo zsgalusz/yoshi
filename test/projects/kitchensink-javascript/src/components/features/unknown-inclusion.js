@@ -1,5 +1,5 @@
 import React from 'react';
-import image from './assets/file.unknown';
+import image from './assets/file.webp';
 
 export default () => (
   <picture id="unknown-inclusion">

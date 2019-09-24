@@ -329,8 +329,8 @@ describe('webpack', () => {
     it('unknown file inclusion', async () => {
       await initTest('unknown-inclusion');
       const imageSource = await page.$eval(
-        '#unknown-inclusion',
-        elm => elm.src,
+        '#unknown-inclusion source',
+        elm => elm.srcset,
       );
 
       expect(imageSource).toMatch(/data:image\/webp.+/);

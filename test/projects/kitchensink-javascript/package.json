@@ -29,10 +29,7 @@
     "yoshi-style-dependencies": "latest"
   },
   "jest": {
-    "preset": "jest-yoshi-preset",
-    "moduleNameMapper": {
-      "\\.unknown$": "identity-obj-proxy"
-    }
+    "preset": "jest-yoshi-preset"
   },
   "yoshi": {
     "projectType": "app",
