@@ -21,9 +21,6 @@ module.exports = async () => {
 
   const { apps, libs } = await loadPackages();
 
-  // console.log(apps);
-  // process.exit(0);
-
   // console.log(chalk.bold.cyan('Building packages...'));
   // console.log();
 
