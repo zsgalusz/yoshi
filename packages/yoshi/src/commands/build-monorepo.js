@@ -14,18 +14,22 @@ const {
 const buildApps = require('./utils/build-apps');
 const buildLibs = require('./utils/build-libs');
 const { verifyTypeScriptReferences } = require('./utils/index');
+// const { isTypescriptProject } = require('yoshi-helpers/queries');
 
 module.exports = async () => {
-  await verifyTypeScriptReferences();
+  // await verifyTypeScriptReferences();
 
   const { apps, libs } = await loadPackages();
 
-  console.log(chalk.bold.cyan('Building packages...'));
-  console.log();
+  // console.log(apps);
+  // process.exit(0);
 
-  await buildLibs(libs);
+  // console.log(chalk.bold.cyan('Building packages...'));
+  // console.log();
 
-  console.log(chalk.bold.cyan('Building bundle...'));
+  // await buildLibs(libs);
+
+  console.log(chalk.bold.cyan('Building bundles...'));
   console.log();
 
   // Build all apps;

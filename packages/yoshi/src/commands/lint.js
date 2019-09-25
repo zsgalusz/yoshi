@@ -66,7 +66,10 @@ module.exports = runner.command(async () => {
     const tsFilesToLint =
       shouldRunOnSpecificFiles && (tsFiles.length || jsFiles.length)
         ? [...tsFiles, ...jsFiles]
-        : [...globs.baseDirs.map(dir => `${dir}/**/*.ts`), '*.ts'];
+        : [
+            ...globs.baseDirs.map(dir => `${dir}/**/*.(ts|tsx|js)`),
+            '*.(ts|tsx|js)',
+          ];
 
     try {
       await runEsLint(tsFilesToLint);

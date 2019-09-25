@@ -4,6 +4,7 @@ const globby = require('globby');
 const webpack = require('webpack');
 const { isObject } = require('lodash');
 const buildUrl = require('build-url');
+const importCwd = require('import-cwd');
 const nodeExternals = require('webpack-node-externals');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
@@ -54,7 +55,7 @@ const reScript = /\.js?$/;
 const reStyle = /\.(css|less|scss|sass)$/;
 const reAssets = /\.(png|jpg|jpeg|gif|woff|woff2|ttf|otf|eot|wav|mp3)$/;
 
-const extensions = ['.js', '.jsx', '.ts', '.tsx', '.json'];
+const extensions = ['.mjs', '.js', '.jsx', '.ts', '.tsx', '.svelte', '.json'];
 
 const babelConfig = createBabelConfig({ modules: false });
 
@@ -337,7 +338,12 @@ function createCommonWebpackConfig({
 
       extensions,
 
-      alias: app.resolveAlias,
+      mainFields: ['svelte', 'browser', 'module', 'main'],
+
+      alias: {
+        ...app.resolveAlias,
+        // svelte: path.resolve('node_modules', 'svelte'),
+      },
 
       // Whether to resolve symlinks to their symlinked location.
       symlinks: rootApp.experimentalMonorepo,
@@ -380,7 +386,7 @@ function createCommonWebpackConfig({
 
     module: {
       // Makes missing exports an error instead of warning
-      strictExportPresence: true,
+      strictExportPresence: false,
 
       rules: [
         // https://github.com/wix/externalize-relative-module-loader
@@ -519,6 +525,24 @@ function createCommonWebpackConfig({
                   },
                 },
               ],
+            },
+
+            {
+              test: /\.svelte$/,
+              loader: 'svelte-loader',
+              options: {
+                preprocess: {
+                  style: importCwd('svelte-preprocess-sass').sass({
+                    includePaths: ['src', 'node_modules'],
+                  }),
+                },
+              },
+            },
+
+            {
+              test: /\.carmi.js$/,
+              exclude: /node_modules/,
+              loader: 'carmi/loader',
             },
 
             // Rules for Markdown

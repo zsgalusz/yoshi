@@ -77,11 +77,11 @@ module.exports = async (app, options) => {
   ] = multiCompiler.compilers;
 
   // Start up server process
-  const serverProcess = new ServerProcess({
-    serverFilePath: options.server,
-    hmrPort,
-    app,
-  });
+  // const serverProcess = new ServerProcess({
+  //   serverFilePath: options.server,
+  //   hmrPort,
+  //   app,
+  // });
 
   // Start up webpack dev server
   const devServer = await createDevServer(clientCompiler, {
@@ -131,38 +131,38 @@ module.exports = async (app, options) => {
 
       const jsonStats = stats.toJson();
 
-      // If the spawned server process has died, restart it
-      if (serverProcess.child && serverProcess.child.exitCode !== null) {
-        await serverProcess.restart();
+      // // If the spawned server process has died, restart it
+      // if (serverProcess.child && serverProcess.child.exitCode !== null) {
+      //   await serverProcess.restart();
 
-        // Send the browser an instruction to refresh
-        await devServer.send('hash', jsonStats.hash);
-        await devServer.send('ok');
-      }
-      // If it's alive, send it a message to trigger HMR
-      else {
-        // If there are no errors and the server can be refreshed
-        // then send it a signal and wait for a responsne
-        if (serverProcess.child && !error && !stats.hasErrors()) {
-          const { success } = await serverProcess.send({});
+      //   // Send the browser an instruction to refresh
+      //   await devServer.send('hash', jsonStats.hash);
+      //   await devServer.send('ok');
+      // }
+      // // If it's alive, send it a message to trigger HMR
+      // else {
+      //   // If there are no errors and the server can be refreshed
+      //   // then send it a signal and wait for a responsne
+      //   if (serverProcess.child && !error && !stats.hasErrors()) {
+      //     const { success } = await serverProcess.send({});
 
-          // HMR wasn't successful, restart the server process
-          if (!success) {
-            await serverProcess.restart();
-          }
+      //     // HMR wasn't successful, restart the server process
+      //     if (!success) {
+      //       await serverProcess.restart();
+      //     }
 
-          // Send the browser an instruction to refresh
-          await devServer.send('hash', jsonStats.hash);
-          await devServer.send('ok');
-        } else {
-          // If there are errors, show them on the browser
-          if (jsonStats.errors.length > 0) {
-            await devServer.send('errors', jsonStats.errors);
-          } else if (jsonStats.warnings.length > 0) {
-            await devServer.send('warnings', jsonStats.warnings);
-          }
-        }
-      }
+      //     // Send the browser an instruction to refresh
+      //     await devServer.send('hash', jsonStats.hash);
+      //     await devServer.send('ok');
+      //   } else {
+      //     // If there are errors, show them on the browser
+      //     if (jsonStats.errors.length > 0) {
+      //       await devServer.send('errors', jsonStats.errors);
+      //     } else if (jsonStats.warnings.length > 0) {
+      //       await devServer.send('warnings', jsonStats.warnings);
+      //     }
+      //   }
+      // }
     },
   );
 
@@ -189,30 +189,30 @@ module.exports = async (app, options) => {
 
   ['SIGINT', 'SIGTERM'].forEach(sig => {
     process.on(sig, () => {
-      serverProcess.end();
+      // serverProcess.end();
       devServer.close();
       process.exit();
     });
   });
 
-  try {
-    await serverProcess.initialize();
-  } catch (error) {
-    console.log();
-    console.log(
-      chalk.red(`Couldn't find a server running on port ${chalk.bold(PORT)}`),
-    );
-    console.log(
-      chalk.red(
-        `Please check that ${chalk.bold(
-          options.server,
-        )} starts up correctly and that it listens on the expected port`,
-      ),
-    );
-    console.log();
-    console.log(chalk.red('Aborting'));
-    process.exit(1);
-  }
+  // try {
+  //   await serverProcess.initialize();
+  // } catch (error) {
+  //   console.log();
+  //   console.log(
+  //     chalk.red(`Couldn't find a server running on port ${chalk.bold(PORT)}`),
+  //   );
+  //   console.log(
+  //     chalk.red(
+  //       `Please check that ${chalk.bold(
+  //         options.server,
+  //       )} starts up correctly and that it listens on the expected port`,
+  //     ),
+  //   );
+  //   console.log();
+  //   console.log(chalk.red('Aborting'));
+  //   process.exit(1);
+  // }
 
   openBrowser(options.url || app.startUrl || `http://localhost:${PORT}`);
 };
