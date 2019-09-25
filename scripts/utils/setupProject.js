@@ -33,7 +33,7 @@ module.exports = async (templateDirectory, watchMode = false) => {
     if (watchMode) {
       const watcher = chokidar.watch(templateDirectory, {
         persistent: true,
-        ignoreInitial: false,
+        ignoreInitial: true,
         cwd: templateDirectory,
       });
 

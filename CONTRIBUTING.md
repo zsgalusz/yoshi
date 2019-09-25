@@ -95,7 +95,7 @@ npm run test:app-flow:js
 Example of flag filtering
 
 ```shell
-npm run test:app-flow -- --filterProject=kitchensink-javascript --watch
+npm run test:app-flow -- --filterProject=kitchensink-javascript --watch=svg-inclusion.spec
 ```
 
 ## Running test:templates

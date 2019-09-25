@@ -85,5 +85,7 @@ if (filterProject) {
   // Eventually, after all projects have finished, stop the local registry
   .finally(() => {
     cleanup();
-    process.exit();
+    if (!watchMode) {
+      process.exit();
+    }
   });

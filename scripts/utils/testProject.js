@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs-extra');
 const execa = require('execa');
 const chalk = require('chalk');
+const chokidar = require('chokidar');
 const Scripts = require('../../test/scripts');
 const { ciEnv, localEnv } = require('./constants');
 
@@ -37,7 +38,7 @@ module.exports = async ({
 
   const failures = [];
 
-  async function testProductionBuild(watch) {
+  async function testProductionBuild(pattern) {
     // Test production build (CI env)
     try {
       console.log(chalk.blue(`> Building project for production`));
@@ -51,7 +52,7 @@ module.exports = async ({
       );
       console.log();
 
-      await scripts.test(ciEnv);
+      await scripts.test(ciEnv, pattern);
 
       console.log();
       console.log(chalk.blue(`> Running production integration tests`));
@@ -61,8 +62,8 @@ module.exports = async ({
 
       try {
         await execa.shell(
-          watch
-            ? `${testProductionBuildScript} --watchAll`
+          pattern
+            ? `${testProductionBuildScript} ${pattern} --passWithNoTests`
             : testProductionBuildScript,
           options,
         );
@@ -74,7 +75,7 @@ module.exports = async ({
     }
   }
 
-  async function testLocalDevelopment(watch) {
+  async function testLocalDevelopment(pattern) {
     // Test local build (local env)
     try {
       console.log();
@@ -90,15 +91,15 @@ module.exports = async ({
         );
         console.log();
 
-        await scripts.test(localEnv);
+        await scripts.test(localEnv, pattern);
 
         console.log();
         console.log(chalk.blue(`> Running development integration tests`));
         console.log();
 
         await execa.shell(
-          watch
-            ? `${testLocalDevelopmentScript} --watchAll`
+          pattern
+            ? `${testLocalDevelopmentScript} ${pattern} --passWithNoTests`
             : testLocalDevelopmentScript,
           options,
         );
@@ -110,7 +111,7 @@ module.exports = async ({
     }
   }
 
-  async function runAdditionalTests(watch) {
+  async function runAdditionalTests(pattern) {
     // Run additional tests (errors, analyze)
     if (
       await fs.pathExists(
@@ -123,8 +124,8 @@ module.exports = async ({
         console.log();
 
         await execa.shell(
-          watch
-            ? `${runAdditionalTestsScript} --watchAll`
+          pattern
+            ? `${runAdditionalTestsScript} ${pattern} --passWithNoTests`
             : runAdditionalTestsScript,
           options,
         );
@@ -134,19 +135,27 @@ module.exports = async ({
     }
   }
 
-  if (watchMode) {
-    await Promise.all([
-      testProductionBuild(true),
-      testLocalDevelopment(true),
-      runAdditionalTests(true),
-    ]);
-  } else {
-    await testProductionBuild();
-    await testLocalDevelopment();
-    await runAdditionalTests();
+  async function runTests(pattern) {
+    await testProductionBuild(pattern);
+    await testLocalDevelopment(pattern);
+    await runAdditionalTests(pattern);
   }
-  // Clean eventually
-  await fs.remove(rootDirectory);
+
+  await runTests(typeof watchMode === 'string' ? [watchMode] : undefined);
+
+  if (watchMode) {
+    // watch over tests and re run them
+    chokidar
+      .watch(`**/*${watchMode}*`, {
+        persistent: true,
+        ignoreInitial: true,
+        cwd: templateDirectory,
+      })
+      .on('all', (event, filePath) => runTests(filePath));
+  } else {
+    // Clean eventually
+    await fs.remove(rootDirectory);
+  }
 
   // Fail testing this project if any errors happened
   if (failures.length > 0) {
