@@ -173,7 +173,7 @@ module.exports = async (app, options) => {
 
   // Start up webpack dev server
   await new Promise((resolve, reject) => {
-    devServer.listen(rootApp.servers.cdn.port, host, err =>
+    devServer.listen(app.servers.cdn.port, host, err =>
       err ? reject(err) : resolve(devServer),
     );
   });
