@@ -553,12 +553,12 @@ function createCommonWebpackConfig({
               loader: 'url-loader',
               exclude: [
                 new RegExp(
-                  extensions
-                    .map(ext => `${ext.replace(/\./g, '\\.')}$`)
-                    .join('|'),
+                  `\\.(${extensions
+                    .concat(['.html', '.ejs'])
+                    .map(ext => ext.replace(/\./g, ''))
+                    .join('|')})$`,
                 ),
                 reStyle,
-                /\.html$/,
               ],
               options: {
                 name: staticAssetName,
