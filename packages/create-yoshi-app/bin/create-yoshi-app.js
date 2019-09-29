@@ -8,6 +8,8 @@ const fs = require('fs-extra');
 const path = require('path');
 const program = require('commander');
 const chalk = require('chalk');
+const boxen = require('boxen');
+const wrap = require('word-wrap');
 const createApp = require('../src/createApp');
 const TemplateModel = require('../src/TemplateModel');
 const verifyDirectoryName = require('../src/verifyDirectoryName');
@@ -47,31 +49,56 @@ const templateModel = answersFile
 createApp({
   workingDir,
   templateModel,
-}).then(results => {
+}).then(({ templateModel: results, hasNode }) => {
+  if (!hasNode) {
+    console.log(
+      boxen(
+        wrap(
+          `Detected node version doesn't match .nvmrc so we skipped ${chalk.cyan(
+            'npm install',
+          )}ing. ` +
+            `Please install and use the correct node version and then run ${chalk.cyan(
+              'npm install',
+            )}.`,
+          { width: 60 },
+        ),
+        { padding: 1, borderColor: 'red', borderStyle: 'round' },
+      ),
+    );
+  }
+
   console.log(
     `\nSuccess! 🙌  Created ${chalk.magenta(
       results.projectName,
     )} at ${chalk.green(workingDir)}`,
   );
 
-  console.log('You can run the following commands:\n');
-  console.log(chalk.cyan('  npm start'));
-  console.log('    Start your app in development mode\n');
-  console.log(chalk.cyan('  npm test'));
-  console.log('    Run the test runner\n');
-  console.log(chalk.cyan('  npx yoshi lint'));
-  console.log('    Run the linter\n');
-  console.log(chalk.cyan('  npx yoshi build'));
-  console.log('    Build your app for production\n');
+  if (hasNode) {
+    console.log('You can run the following commands:\n');
+    console.log(chalk.cyan('  npm start'));
+    console.log('    Start your app in development mode\n');
+    console.log(chalk.cyan('  npm test'));
+    console.log('    Run the test runner\n');
+    console.log(chalk.cyan('  npx yoshi lint'));
+    console.log('    Run the linter\n');
+    console.log(chalk.cyan('  npx yoshi build'));
+    console.log('    Build your app for production\n');
+  }
 
   console.log(
     `We advise you'll start by running the following command${
-      customProjectDir ? 's' : ''
+      customProjectDir || !hasNode ? 's' : ''
     }:\n`,
   );
 
   if (customProjectDir) {
     console.log(chalk.cyan(`cd ${customProjectDir}`));
+  }
+
+  if (!hasNode) {
+    console.log(`${chalk.cyan(`nvm install`)} / ${chalk.cyan(`fnm install`)}`);
+    console.log(`${chalk.cyan(`nvm use`)} / ${chalk.cyan(`fnm use`)}`);
+    console.log(chalk.cyan('npm install'));
   }
 
   console.log(chalk.cyan('npm start\n'));
