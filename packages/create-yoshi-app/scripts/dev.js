@@ -170,7 +170,7 @@ async function init() {
       workingDir,
       install: false,
       lint: false,
-    });
+    }).templateModel;
   }
 
   // symlink yoshi's packages
