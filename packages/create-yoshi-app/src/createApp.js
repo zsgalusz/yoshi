@@ -8,6 +8,7 @@ const {
 } = require('./utils');
 const runPrompt = require('./runPrompt');
 const generateProject = require('./generateProject');
+const verifyNodeVersion = require('./verifyNodeVersion');
 
 module.exports = async ({
   workingDir,
@@ -40,13 +41,17 @@ module.exports = async ({
     gitInit(workingDir);
   }
 
-  if (install) {
-    npmInstall(workingDir);
+  const hasNode = verifyNodeVersion(workingDir);
+
+  if (hasNode) {
+    if (install) {
+      npmInstall(workingDir);
+    }
+
+    if (lint) {
+      lintFix(workingDir);
+    }
   }
 
-  if (lint) {
-    lintFix(workingDir);
-  }
-
-  return templateModel;
+  return { templateModel, hasNode };
 };
