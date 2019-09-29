@@ -49,6 +49,8 @@
     "validate-npm-package-name": "^3.0.0"
   },
   "devDependencies": {
+    "@types/fs-extra": "^8.0.0",
+    "@types/semver": "^6.0.2",
     "chokidar": "^2.0.4",
     "clipboardy": "^1.2.3",
     "expect": "^23.6.0",
