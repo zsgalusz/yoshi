@@ -12,6 +12,12 @@ const { PORT } = require('./constants');
 const { redirectMiddleware } = require('../src/tasks/cdn/server-api');
 const WebpackDevServer = require('webpack-dev-server');
 const Watchpack = require('watchpack');
+const {
+  shouldDeployToCDN,
+  inTeamCity,
+  isDevelopment,
+} = require('yoshi-helpers/queries');
+const { getProjectCDNBasePath } = require('yoshi-helpers/utils');
 
 const isInteractive = process.stdout.isTTY;
 const possibleServerEntries = ['./server', '../dev/server'];
@@ -268,6 +274,25 @@ function validateServerEntry(app, extensions) {
   return serverEntry;
 }
 
+function calculatePublicPath(app) {
+  // default public path
+  let publicPath = '/';
+
+  if (!inTeamCity() || isDevelopment()) {
+    // When on local machine or on dev environment,
+    // set the local dev-server url as the public path
+    publicPath = app.servers.cdn.url;
+  }
+
+  // In case we are running in CI and there is a pom.xml file, change the public path according to the path on the cdn
+  // The path is created using artifactName from pom.xml and artifact version from an environment param.
+  if (shouldDeployToCDN(app)) {
+    publicPath = getProjectCDNBasePath();
+  }
+
+  return publicPath;
+}
+
 module.exports = {
   createDevServer,
   createCompiler,
@@ -277,4 +302,5 @@ module.exports = {
   createServerEntries,
   watchDynamicEntries,
   validateServerEntry,
+  calculatePublicPath,
 };

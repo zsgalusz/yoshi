@@ -25,9 +25,7 @@ const { localIdentName } = require('../src/constants');
 const EnvironmentMarkPlugin = require('../src/webpack-plugins/environment-mark-plugin');
 const ExportDefaultPlugin = require('../src/webpack-plugins/export-default-plugin');
 const rootApp = require('yoshi-config/root-app');
-
 const {
-  shouldDeployToCDN,
   isSingleEntry,
   isProduction: checkIsProduction,
   inTeamCity: checkInTeamCity,
@@ -35,7 +33,6 @@ const {
 } = require('yoshi-helpers/queries');
 const {
   tryRequire,
-  getProjectCDNBasePath,
   toIdentifier,
   getProjectArtifactId,
   createBabelConfig,
@@ -47,6 +44,7 @@ const {
   overrideRules,
   createServerEntries,
   validateServerEntry,
+  calculatePublicPath,
 } = require('../src/webpack-utils');
 
 const { defaultEntry } = require('yoshi-helpers/constants');
@@ -78,21 +76,6 @@ const staticAssetName = addHashToAssetName(
   'media/[name].[hash:8].[ext]',
   'hash:8',
 );
-
-// default public path
-let publicPath = '/';
-
-if (!inTeamCity || isDevelopment) {
-  // When on local machine or on dev environment,
-  // set the local dev-server url as the public path
-  publicPath = rootApp.servers.cdn.url;
-}
-
-// In case we are running in CI and there is a pom.xml file, change the public path according to the path on the cdn
-// The path is created using artifactName from pom.xml and artifact version from an environment param.
-if (shouldDeployToCDN(rootApp)) {
-  publicPath = getProjectCDNBasePath();
-}
 
 function addHashToAssetName(name, hash = 'contenthash:8') {
   if (rootApp.experimentalBuildHtml && isProduction) {
@@ -321,11 +304,11 @@ function createCommonWebpackConfig({
 
     output: {
       path: app.STATICS_DIR,
-      publicPath,
+      publicPath: calculatePublicPath(app),
       pathinfo: isDebug,
       filename: isDebug
-        ? addHashToAssetName('[name].bundle.js')
-        : addHashToAssetName('[name].bundle.min.js'),
+        ? addHashToAssetName('[name].js')
+        : addHashToAssetName('[name].min.js'),
       chunkFilename: isDebug
         ? addHashToAssetName('[name].chunk.js')
         : addHashToAssetName('[name].chunk.min.js'),
@@ -722,7 +705,7 @@ function createClientWebpackConfig({
             ]),
 
             new InterpolateHtmlPlugin(HtmlWebpackPlugin, {
-              PUBLIC_PATH: publicPath,
+              PUBLIC_PATH: calculatePublicPath(app),
             }),
           ]
         : []),
