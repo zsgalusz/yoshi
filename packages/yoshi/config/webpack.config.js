@@ -511,18 +511,6 @@ function createCommonWebpackConfig({
             },
 
             {
-              test: /\.svelte$/,
-              loader: 'svelte-loader',
-              options: {
-                preprocess: {
-                  style: importCwd('svelte-preprocess-sass').sass({
-                    includePaths: ['src', 'node_modules'],
-                  }),
-                },
-              },
-            },
-
-            {
               test: /\.carmi.js$/,
               exclude: /node_modules/,
               loader: 'carmi/loader',
@@ -779,6 +767,19 @@ function createClientWebpackConfig({
       rules: [
         ...config.module.rules,
 
+        {
+          test: /\.svelte$/,
+          loader: 'svelte-loader',
+          options: {
+            // emitCss: true,
+            preprocess: {
+              style: importCwd('svelte-preprocess-sass').sass({
+                includePaths: ['src', 'node_modules'],
+              }),
+            },
+          },
+        },
+
         // Rules for Style Sheets
         ...styleLoaders,
 
@@ -824,6 +825,7 @@ function createClientWebpackConfig({
 // -----------------------------------------------------------------------------
 function createServerWebpackConfig({
   app = rootApp,
+  libs,
   isDebug = true,
   isHmr = false,
   hmrPort,
@@ -880,6 +882,19 @@ function createServerWebpackConfig({
       ...config.module,
 
       rules: [
+        {
+          test: /\.svelte$/,
+          loader: 'svelte-loader',
+          options: {
+            generate: 'ssr',
+            preprocess: {
+              style: importCwd('svelte-preprocess-sass').sass({
+                includePaths: ['src', 'node_modules'],
+              }),
+            },
+          },
+        },
+
         ...overrideRules(config.module.rules, rule => {
           // Override paths to static assets
           if (rule.loader === 'file-loader' || rule.loader === 'url-loader') {
@@ -930,7 +945,13 @@ function createServerWebpackConfig({
       // Treat node modules as external for a small (and fast) server
       // bundle
       nodeExternals({
-        whitelist: [reStyle, reAssets, /bootstrap-hot-loader/, /yoshi-server/],
+        whitelist: [
+          reStyle,
+          reAssets,
+          /bootstrap-hot-loader/,
+          /yoshi-server/,
+          ...libs.map(lib => new RegExp(lib.name)),
+        ],
       }),
       // Here for local integration tests as Yoshi's `node_modules`
       // are symlinked locally
@@ -943,11 +964,11 @@ function createServerWebpackConfig({
         modulesDir: path.resolve(__dirname, '../../yoshi-server/node_modules'),
         whitelist: [/yoshi-server/],
       }),
-      // Treat monorepo (hoisted) dependencies as external
-      rootApp.experimentalMonorepo &&
-        nodeExternals({
-          modulesDir: path.resolve(app.ROOT_DIR, 'node_modules'),
-        }),
+      // // Treat monorepo (hoisted) dependencies as external
+      // rootApp.experimentalMonorepo &&
+      //   nodeExternals({
+      //     modulesDir: path.resolve(app.ROOT_DIR, 'node_modules'),
+      //   }),
     ].filter(Boolean),
 
     plugins: [

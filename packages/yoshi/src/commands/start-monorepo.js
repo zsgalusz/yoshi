@@ -29,7 +29,7 @@ const [, appName] = cliArgs._;
 module.exports = async () => {
   // await verifyTypeScriptReferences();
 
-  const { apps } = await loadPackages();
+  const { apps, libs } = await loadPackages();
 
   let app;
 
@@ -55,7 +55,7 @@ module.exports = async () => {
     process.exit(1);
   }
 
-  await startSingleApp(app, cliArgs);
+  await startSingleApp(app, libs, cliArgs);
 
   return {
     persistent: true,
