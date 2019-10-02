@@ -52,7 +52,7 @@ const { defaultEntry } = require('yoshi-helpers/constants');
 
 const reScript = /\.js?$/;
 const reStyle = /\.(css|less|scss|sass)$/;
-const reAssets = /\.(png|jpg|jpeg|gif|woff|woff2|ttf|otf|eot|wav|mp3)$/;
+const reAssets = /\.(png|jpg|jpeg|gif|woff|woff2|ttf|otf|eot|wav|mp3|mp4)$/;
 
 const extensions = ['.js', '.jsx', '.ts', '.tsx', '.json'];
 

@@ -59,7 +59,8 @@ describe('Loaders', () => {
             require('./font.woff2');
             require('./font.eot');
             require('./beep.wav');
-            require('./beep.mp3');`,
+            require('./beep.mp3');
+            require('./vid.mp4');`,
           'src/server.js': `
             require('./some-css.scss');
             require('./foo.css');`,
@@ -106,6 +107,7 @@ describe('Loaders', () => {
           'src/font.eot': createAboveTheLimitFile(),
           'src/beep.wav': createAboveTheLimitFile(),
           'src/beep.mp3': createAboveTheLimitFile(),
+          'src/vid.mp4': createAboveTheLimitFile(),
           'package.json': `{\n
             "name": "a",
             "dependencies": {\n
@@ -280,10 +282,11 @@ describe('Loaders', () => {
         expect(content).to.match(fileAboveTheLimit('font.otf'));
       });
 
-      it('should load wav and mp3 files', () => {
+      it('should load wav, mp3 and mp4 files', () => {
         const content = test.content('dist/statics/app.bundle.js');
         expect(content).to.match(fileAboveTheLimit('beep.wav'));
         expect(content).to.match(fileAboveTheLimit('beep.mp3'));
+        expect(content).to.match(fileAboveTheLimit('vid.mp4'));
       });
     });
   });

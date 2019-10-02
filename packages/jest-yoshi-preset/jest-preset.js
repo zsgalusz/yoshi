@@ -141,6 +141,7 @@ const config = {
           'eot',
           'wav',
           'mp3',
+          'mp4',
           'html',
           'md',
         ];

@@ -24,6 +24,7 @@ require.extensions['.gif'] = mockMediaModules;
 
 require.extensions['.wav'] = mockMediaModules;
 require.extensions['.mp3'] = mockMediaModules;
+require.extensions['.mp4'] = mockMediaModules;
 
 function mockCss(module, filename) {
   return module.filename.endsWith('.st.css')
