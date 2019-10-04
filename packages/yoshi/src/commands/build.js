@@ -245,6 +245,7 @@ module.exports = runner.command(
             project: 'tsconfig.json',
             rootDir: '.',
             outDir: globs.dist({ esTarget }),
+            tsBuildInfoFile: globs.buildCache({ esTarget }),
             ...(esTarget ? { module: 'esNext' } : {}),
           }),
         );
@@ -254,6 +255,7 @@ module.exports = runner.command(
               project: 'tsconfig.json',
               rootDir: '.',
               outDir: globs.dist({ esTarget: false }),
+              tsBuildInfoFile: globs.buildCache({ esTarget: false }),
               module: 'commonjs',
             }),
           );

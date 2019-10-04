@@ -4,6 +4,8 @@ const distDir = 'dist';
 
 const esModulesDist = path.join(distDir, 'es');
 
+const buildCacheDir = 'buildcache';
+
 export const statics = path.join(distDir, 'statics');
 
 export const baseDirs = [
@@ -29,6 +31,9 @@ export const assetsBase = 'src';
 
 export const dist = ({ esTarget = false } = {}) =>
   esTarget ? esModulesDist : distDir;
+
+export const buildCache = ({ esTarget = false } = {}) =>
+  path.join(buildCacheDir, `.tsbuildinfo${esTarget ? '.estarget' : ''}`);
 
 export const babel = [
   ...baseDirs.map(dir => path.join(dir, '**', '*.js{,x}')),
